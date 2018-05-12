@@ -5,15 +5,15 @@ using System.Text;
 
 namespace Zetester.Data.Models
 {
-    public class Group
+    public class Test
     {
         [Key]
         public int Id { get; set; }
 
-        public string Name { get; set; }
+        public virtual Task Task { get; set; }
 
-        public virtual Group Parent { get; set; }
+        public string Input { get; set; }
 
-        public virtual ICollection<Group> SubGroups { get; set; }
+        public string Output { get; set; }
     }
 }

@@ -7,5 +7,6 @@ namespace Zetester.Data.Models
 {
     public class ApplicationUser: IdentityUser
     {
+        public virtual ICollection<UserTasks> Tasks { get; set; }
     }
 }
