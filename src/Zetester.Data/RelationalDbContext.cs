@@ -9,6 +9,11 @@ namespace Zetester.Data
 {
     public class RelationalDbContext: IdentityDbContext<ApplicationUser>
     {
+        public RelationalDbContext(DbContextOptions<RelationalDbContext> options):base(options)
+        {
+            
+        }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
