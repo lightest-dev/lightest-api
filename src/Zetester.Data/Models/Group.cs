@@ -12,8 +12,12 @@ namespace Zetester.Data.Models
 
         public string Name { get; set; }
 
+        public int? ParentId { get; set; }
+
         public virtual Group Parent { get; set; }
 
         public virtual ICollection<Group> SubGroups { get; set; }
+
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

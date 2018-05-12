@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Zetester.Data.Models
 {
-    public class UserTasks
+    public class UserTask
     {
         public int UserId { get; set; }
 

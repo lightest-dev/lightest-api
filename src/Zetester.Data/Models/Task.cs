@@ -12,6 +12,8 @@ namespace Zetester.Data.Models
 
         public virtual Category Category { get; set; }
 
+        public int CategoryId { get; set; }
+
         public string Name { get; set; }
 
         public bool Public { get; set; }
@@ -22,7 +24,7 @@ namespace Zetester.Data.Models
 
         public virtual ICollection <TaskLanguage> Languages { get; set; }
 
-        public virtual ICollection<UserTasks> Users { get; set; }
+        public virtual ICollection<UserTask> Users { get; set; }
 
         public virtual ICollection<Test> Tests { get; set; }
     }
