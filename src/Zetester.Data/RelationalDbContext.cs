@@ -9,6 +9,16 @@ namespace Zetester.Data
 {
     public class RelationalDbContext: IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Group> Groups { get; set; }
+
+        public DbSet<Language> Languages { get; set; }
+
+        public DbSet<Task> Tasks { get; set; }
+
+        public DbSet<Test> Tests { get; set; }
+
         public RelationalDbContext(DbContextOptions<RelationalDbContext> options):base(options)
         {
             
@@ -16,7 +26,15 @@ namespace Zetester.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            //todo: Configure ignore fields for user
             base.OnModelCreating(builder);
+
+            builder.Entity<ApplicationUser>()
+                .Ignore(u => u.PhoneNumber)
+                .Ignore(u => u.PhoneNumberConfirmed)
+                .Ignore(u => u.LockoutEnabled)
+                .Ignore(u => u.LockoutEnd)
+                .Ignore(u => u.AccessFailedCount);
 
             builder.Entity<CategoryUser>()
                 .HasKey(cu => new { cu.CategoryId, cu.UserId });
