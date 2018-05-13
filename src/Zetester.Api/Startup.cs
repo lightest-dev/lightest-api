@@ -32,7 +32,7 @@ namespace Zetester.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<RelationalDbContext>(options =>
             {
-                options.UseNpgsql(Configuration.GetConnectionString("PostgreSQL"), b => b.MigrationsAssembly("Zetester.Api"));
+                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Zetester.Api"));
             });
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
@@ -40,7 +40,16 @@ namespace Zetester.Api
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddConfigurationStore(options =>
+                {
+                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Zetester.Api"));
+                })
+                .AddOperationalStore(options => 
+                {
+                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Zetester.Api"));
+                    options.EnableTokenCleanup = true;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

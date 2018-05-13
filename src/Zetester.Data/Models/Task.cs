@@ -22,6 +22,8 @@ namespace Zetester.Data.Models
 
         public string Examples { get; set; }
 
+        public int Points { get; set; }
+
         public virtual ICollection <TaskLanguage> Languages { get; set; }
 
         public virtual ICollection<UserTask> Users { get; set; }
