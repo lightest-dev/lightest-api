@@ -1,8 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MongoDB.Bson.Serialization.Attributes;
 
 namespace Zetester.Data.Models
 {
@@ -10,7 +6,7 @@ namespace Zetester.Data.Models
     {
         [BsonId]
         public string UploadId { get; set; }
-        
+
         public string Code { get; set; }
 
         public string Language { get; set; }

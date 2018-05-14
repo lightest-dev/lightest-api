@@ -2,11 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using IdentityServer4.EntityFramework.Mappers;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Zetester.Data;
 using Zetester.Data.Models;
 
@@ -19,22 +16,7 @@ namespace Zetester.Api
             using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 scope.ServiceProvider.GetRequiredService<PersistedGrantDbContext>().Database.Migrate();
-                SeedConfig(scope);
                 SeedRelational(scope);
-            }
-        }
-
-        private static void SeedConfig(IServiceScope scope)
-        {
-            var context = scope.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-            context.Database.Migrate();
-            if (!context.Clients.Any())
-            {
-                /*foreach (var client in Config.GetClients().ToList())
-                {
-                    context.Clients.Add(client.ToEntity());
-                }*/
-                context.SaveChanges();
             }
         }
 
@@ -54,9 +36,9 @@ namespace Zetester.Api
                 if (!result.Succeeded)
                 {
                     throw new Exception(result.Errors.First().Description);
-                }                
+                }
             }
             context.SaveChanges();
-        }    
-}
+        }
+    }
 }

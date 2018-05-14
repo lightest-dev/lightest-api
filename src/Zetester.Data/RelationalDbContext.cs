@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Zetester.Data.Models;
 
 namespace Zetester.Data
 {
-    public class RelationalDbContext: IdentityDbContext<ApplicationUser>
+    public class RelationalDbContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Category> Categories { get; set; }
 
@@ -19,9 +16,8 @@ namespace Zetester.Data
 
         public DbSet<Test> Tests { get; set; }
 
-        public RelationalDbContext(DbContextOptions<RelationalDbContext> options):base(options)
+        public RelationalDbContext(DbContextOptions<RelationalDbContext> options) : base(options)
         {
-            
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -62,7 +58,6 @@ namespace Zetester.Data
                 .HasForeignKey(tl => tl.LanguageId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
             builder.Entity<UserTask>()
                 .HasKey(ut => new { ut.TaskId, ut.UserId });
             builder.Entity<UserTask>()
@@ -92,7 +87,8 @@ namespace Zetester.Data
                 .HasOne(g => g.Parent)
                 .WithMany(p => p.SubGroups)
                 .HasForeignKey(g => g.ParentId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.SetNull)
+                .IsRequired(false);
 
             builder.Entity<Task>()
                 .HasOne(t => t.Category)

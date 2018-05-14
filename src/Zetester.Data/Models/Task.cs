@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text;
 
 namespace Zetester.Data.Models
 {
@@ -24,7 +22,7 @@ namespace Zetester.Data.Models
 
         public int Points { get; set; }
 
-        public virtual ICollection <TaskLanguage> Languages { get; set; }
+        public virtual ICollection<TaskLanguage> Languages { get; set; }
 
         public virtual ICollection<UserTask> Users { get; set; }
 

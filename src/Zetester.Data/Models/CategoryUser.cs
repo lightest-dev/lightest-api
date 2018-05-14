@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Zetester.Data.Models
+﻿namespace Zetester.Data.Models
 {
     public class CategoryUser
     {

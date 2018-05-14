@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Zetester.Data;
 using Zetester.Data.Models;
 
@@ -28,7 +21,7 @@ namespace Zetester.Api
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {                
+        {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<RelationalDbContext>(options =>
             {
@@ -41,11 +34,10 @@ namespace Zetester.Api
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Zetester.Api"));
-                })
-                .AddOperationalStore(options => 
+                .AddInMemoryClients(Configuration.GetSection("clients"))
+                .AddInMemoryIdentityResources(Configuration.GetSection("identity_resources"))
+                .AddInMemoryApiResources(Configuration.GetSection("api_resources"))
+                .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Zetester.Api"));
                     options.EnableTokenCleanup = true;
