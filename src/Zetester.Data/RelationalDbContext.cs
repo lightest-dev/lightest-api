@@ -45,6 +45,19 @@ namespace Zetester.Data
                 .HasForeignKey(cu => cu.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<UserGroup>()
+                .HasKey(ug => new { ug.GroupId, ug.UserId });
+            builder.Entity<UserGroup>()
+                .HasOne(ug => ug.User)
+                .WithMany(u => u.Groups)
+                .HasForeignKey(ug => ug.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<UserGroup>()
+                .HasOne(ug => ug.Group)
+                .WithMany(g => g.Users)
+                .HasForeignKey(ug => ug.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<TaskLanguage>()
                 .HasKey(tl => new { tl.LanguageId, tl.TaskId });
             builder.Entity<TaskLanguage>()
@@ -70,12 +83,6 @@ namespace Zetester.Data
                 .WithMany(t => t.Users)
                 .HasForeignKey(ut => ut.TaskId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<ApplicationUser>()
-                .HasOne(u => u.Group)
-                .WithMany(g => g.Users)
-                .HasForeignKey(u => u.GroupId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Category>()
                 .HasOne(c => c.Parent)

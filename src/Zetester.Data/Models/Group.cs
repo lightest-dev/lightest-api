@@ -16,6 +16,6 @@ namespace Zetester.Data.Models
 
         public virtual ICollection<Group> SubGroups { get; set; }
 
-        public virtual ICollection<ApplicationUser> Users { get; set; }
+        public virtual ICollection<UserGroup> Users { get; set; }
     }
 }

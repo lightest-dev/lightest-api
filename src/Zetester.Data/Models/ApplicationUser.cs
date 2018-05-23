@@ -9,8 +9,6 @@ namespace Zetester.Data.Models
 
         public virtual ICollection<CategoryUser> AvailableCategories { get; set; }
 
-        public int? GroupId { get; set; }
-
-        public virtual Group Group { get; set; }
+        public virtual ICollection<UserGroup> Groups { get; set; }
     }
 }
