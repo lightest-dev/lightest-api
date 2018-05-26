@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-namespace Zetester.Api.Controllers
+namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

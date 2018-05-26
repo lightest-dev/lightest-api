@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 
-namespace Zetester.Data.Models
+namespace Lightest.Data.Models
 {
     public class ApplicationUser : IdentityUser
     {

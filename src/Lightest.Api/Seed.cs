@@ -4,10 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using Zetester.Data;
-using Zetester.Data.Models;
+using Lightest.Data;
+using Lightest.Data.Models;
 
-namespace Zetester.Api
+namespace Lightest.Api
 {
     public static class Seed
     {

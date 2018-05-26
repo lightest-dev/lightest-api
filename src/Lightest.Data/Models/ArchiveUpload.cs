@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace Zetester.Data.Models
+namespace Lightest.Data.Models
 {
     public class ArchiveUpload
     {

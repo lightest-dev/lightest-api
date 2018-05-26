@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
-using Zetester.Data.Models;
+using Lightest.Data.Models;
 
-namespace Zetester.Data
+namespace Lightest.Data
 {
     public class CodeStorageContext
     {

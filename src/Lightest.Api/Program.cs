@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
 
-namespace Zetester.Api
+namespace Lightest.Api
 {
     public class Program
     {

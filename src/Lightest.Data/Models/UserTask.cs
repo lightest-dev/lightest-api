@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zetester.Data.Models
+namespace Lightest.Data.Models
 {
     public class UserTask
     {

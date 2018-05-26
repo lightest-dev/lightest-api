@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zetester.Data.Models
+namespace Lightest.Data.Models
 {
     [Flags]
     public enum AccessRights : int

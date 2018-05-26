@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Zetester.Data.Models;
+using Lightest.Data.Models;
 
-namespace Zetester.Data
+namespace Lightest.Data
 {
     public class RelationalDbContext : IdentityDbContext<ApplicationUser>
     {

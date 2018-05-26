@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.27703.2000
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zetester.Data", "src\Zetester.Data\Zetester.Data.csproj", "{0A091015-4513-4AE5-BEC0-03A0B3E37B98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Data", "src\Lightest.Data\Lightest.Data.csproj", "{0A091015-4513-4AE5-BEC0-03A0B3E37B98}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9654540D-389B-40CC-94F9-CE5BEB98B66B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zetester.Api", "src\Zetester.Api\Zetester.Api.csproj", "{9C13F36E-5668-4C10-B991-585F446C205B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Api", "src\Lightest.Api\Lightest.Api.csproj", "{9C13F36E-5668-4C10-B991-585F446C205B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47F612E8-54CF-4DED-A7D2-C3805458DE72}"
 	ProjectSection(SolutionItems) = preProject

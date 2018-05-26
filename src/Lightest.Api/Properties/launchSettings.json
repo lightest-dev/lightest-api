@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Zetester.Api": {
+    "Lightest.Api": {
       "commandName": "Project",
       "commandLineArgs": "--seed",
       "launchBrowser": true,

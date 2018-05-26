@@ -5,10 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Zetester.Data;
-using Zetester.Data.Models;
+using Lightest.Data;
+using Lightest.Data.Models;
 
-namespace Zetester.Api
+namespace Lightest.Api
 {
     public class Startup
     {
@@ -25,7 +25,7 @@ namespace Zetester.Api
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddDbContext<RelationalDbContext>(options =>
             {
-                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Zetester.Api"));
+                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
             });
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
@@ -39,9 +39,13 @@ namespace Zetester.Api
                 .AddInMemoryApiResources(Configuration.GetSection("api_resources"))
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Zetester.Api"));
+                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Lightest.Api"));
                     options.EnableTokenCleanup = true;
                 });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,6 +62,8 @@ namespace Zetester.Api
             app.UseIdentityServer();
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
     }
 }

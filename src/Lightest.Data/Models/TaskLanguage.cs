@@ -1,4 +1,4 @@
-﻿namespace Zetester.Data.Models
+﻿namespace Lightest.Data.Models
 {
     public class TaskLanguage
     {
