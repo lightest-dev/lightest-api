@@ -14,12 +14,13 @@
     <PackageReference Include="IdentityServer4.EntityFramework" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0-rc1-final" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0-rc1-final" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="2.1.0-rc1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Zetester.Data\Lightest.Data.csproj" />
+    <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
   </ItemGroup>
 
 </Project>
