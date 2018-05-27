@@ -63,7 +63,10 @@ namespace Lightest.Api
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c => 
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contacts API V1");
+            });
         }
     }
 }

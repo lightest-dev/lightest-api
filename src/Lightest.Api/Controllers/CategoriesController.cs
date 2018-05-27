@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Lightest.Data;
+using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lightest.Data;
-using Lightest.Data.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -23,9 +21,9 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        public IEnumerable<Category> GetCategories()
+        public IActionResult GetCategories()
         {
-            return _context.Categories;
+            return Ok(_context.Categories);
         }
 
         // GET: api/Categories/5
@@ -37,14 +35,31 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var category = await _context.Categories.FindAsync(id);
+            var category = await _context.Categories
+                .Include(c => c.SubCategories)
+                .Include(c => c.Users)
+                .ThenInclude(u => u.User)
+                .Include(c => c.Tasks)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (!CheckReadAccess(category))
+            {
+                return StatusCode(403);
+            }
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            return Ok(category);
+            return Ok(new
+            {
+                category.Id,
+                category.Name,
+                category.Parent,
+                category.SubCategories,
+                Users = category.Users.Select(u => new { u.User.Id, u.User.UserName, u.UserRights }),
+                Tasks = category.Tasks.Select(t => new { t.Id, t.Name })
+            });
         }
 
         // PUT: api/Categories/5
@@ -61,39 +76,48 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(category).State = EntityState.Modified;
+            if (!CategoryExists(id))
+            {
+                return NotFound();
+            }
+
+            var dbEntry = await _context.Categories.FindAsync(id);
+            if (!CheckWriteAccess(dbEntry))
+            {
+                return StatusCode(403);
+            }
+            dbEntry.Name = category.Name;
+            dbEntry.ParentId = category.ParentId;
 
             try
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!CategoryExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500);
             }
 
-            return NoContent();
+            return Ok();
         }
 
         // POST: api/Categories
         [HttpPost]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
+            if (!CheckWriteAccess(null))
+            {
+                return StatusCode(403);
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-
+            category.Users.Add(new CategoryUser { UserId = User.Identity.Name, CategoryId = category.Id, UserRights = AccessRights.Owner });
+            await _context.SaveChangesAsync();
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
@@ -111,16 +135,67 @@ namespace Lightest.Api.Controllers
             {
                 return NotFound();
             }
-
+            if (!CheckWriteAccess(category))
+            {
+                return StatusCode(403);
+            }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
             return Ok(category);
         }
 
+        [HttpPost("ChangeAccess/{id}")]
+        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]string userId, [FromBody]int accessRights)
+        {            
+            if (!CategoryExists(id))
+            {
+                return NotFound();
+            }
+            var access = (AccessRights)accessRights;
+            var category = await _context.Categories
+                .Include(c => c.Users)
+                .FirstOrDefaultAsync(c => c.Id == id);
+            if (!CheckAdminAccess(category))
+            {
+                return StatusCode(403);
+            }
+            if (category == null || !_context.Users.Any(u => u.Id == userId))
+            {
+                return BadRequest();
+            }
+
+            var user = category.Users.SingleOrDefault(u => u.UserId == userId);
+            if (user == null)
+            {
+                category.Users.Add(new CategoryUser { CategoryId = category.Id, UserId = userId, UserRights = access });
+            }
+            else
+            {
+                user.UserRights = access;
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         private bool CategoryExists(int id)
         {
             return _context.Categories.Any(e => e.Id == id);
+        }
+
+        private bool CheckWriteAccess(Category category)
+        {
+            return true;
+        }
+
+        private bool CheckReadAccess(Category category)
+        {
+            return true;
+        }
+
+        private bool CheckAdminAccess(Category category)
+        {
+            return true;
         }
     }
 }
