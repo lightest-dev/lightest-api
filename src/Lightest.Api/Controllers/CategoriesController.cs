@@ -76,28 +76,20 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            if (!CategoryExists(id))
+            var dbEntry = await _context.Categories.FindAsync(id);
+
+            if (dbEntry == null)
             {
                 return NotFound();
             }
 
-            var dbEntry = await _context.Categories.FindAsync(id);
             if (!CheckWriteAccess(dbEntry))
             {
-                return StatusCode(403);
+                return Forbid();
             }
             dbEntry.Name = category.Name;
             dbEntry.ParentId = category.ParentId;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
-
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
@@ -105,15 +97,18 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
-            if (!CheckWriteAccess(null))
-            {
-                return StatusCode(403);
-            }
 
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+
+            if (!CheckWriteAccess(category))
+            {
+                return Forbid();
+            }
+
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             category.Users.Add(new CategoryUser { UserId = User.Identity.Name, CategoryId = category.Id, UserRights = AccessRights.Owner });
@@ -158,7 +153,7 @@ namespace Lightest.Api.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
             if (!CheckAdminAccess(category))
             {
-                return StatusCode(403);
+                return Forbid();
             }
             if (category == null || !_context.Users.Any(u => u.Id == userId))
             {
