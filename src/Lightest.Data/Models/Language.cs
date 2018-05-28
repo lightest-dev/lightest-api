@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models
@@ -10,6 +11,7 @@ namespace Lightest.Data.Models
 
         public string Name { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<TaskLanguage> Tasks { get; set; }
     }
 }

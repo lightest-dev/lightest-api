@@ -28,60 +28,6 @@ namespace Lightest.Api.Controllers
             return _context.Languages;
         }
 
-        // GET: api/Languages/5
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetLanguage([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var language = await _context.Languages.FindAsync(id);
-
-            if (language == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(language);
-        }
-
-        // PUT: api/Languages/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutLanguage([FromRoute] int id, [FromBody] Language language)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != language.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(language).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!LanguageExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
         // POST: api/Languages
         [HttpPost]
         public async Task<IActionResult> PostLanguage([FromBody] Language language)
@@ -89,6 +35,11 @@ namespace Lightest.Api.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (!CheckWriteAccess())
+            {
+                return Forbid();
             }
 
             _context.Languages.Add(language);
@@ -106,6 +57,11 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!CheckWriteAccess())
+            {
+                return Forbid();
+            }
+
             var language = await _context.Languages.FindAsync(id);
             if (language == null)
             {
@@ -121,6 +77,11 @@ namespace Lightest.Api.Controllers
         private bool LanguageExists(int id)
         {
             return _context.Languages.Any(e => e.Id == id);
+        }
+
+        private bool CheckWriteAccess()
+        {
+            return true;
         }
     }
 }
