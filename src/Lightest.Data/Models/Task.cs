@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models
@@ -22,10 +23,13 @@ namespace Lightest.Data.Models
 
         public int Points { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<TaskLanguage> Languages { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<UserTask> Users { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Test> Tests { get; set; }
     }
 }

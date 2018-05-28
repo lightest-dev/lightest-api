@@ -21,7 +21,7 @@
       "commandName": "Project",
       "commandLineArgs": "--seed",
       "launchBrowser": true,
-      "launchUrl": "api/values",
+      "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

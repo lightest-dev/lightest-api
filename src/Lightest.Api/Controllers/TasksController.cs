@@ -20,9 +20,13 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        public IEnumerable<Data.Models.Task> GetTasks()
+        public IActionResult GetTasks()
         {
-            return _context.Tasks;
+            if (!CheckListAccess())
+            {
+                return Forbid();
+            }
+            return Ok(_context.Tasks);
         }
 
         // GET: api/Tasks/5
@@ -34,14 +38,35 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _context.Tasks
+                .Include(t => t.Tests)
+                .Include(t => t.Languages)
+                .ThenInclude(l => l.Language)
+                .SingleOrDefaultAsync(t =>t.Id == id);
 
             if (task == null)
             {
                 return NotFound();
             }
 
-            return Ok(task);
+            if (!CheckReadAccess(task))
+            {
+                return Forbid();
+            }
+
+            return Ok(new
+            {
+                task.Id,
+                task.Name,
+                task.Points,
+                task.Public,
+                task.Examples,
+                task.Description,
+                task.CategoryId,
+                Tests = task.Tests.Select(t => new { t.Id, t.Input, t.Output }),
+                Languages = task.Languages.Select(l => new { Id = l.LanguageId, l.Language.Name,
+                    l.MemoryLimitation, l.TimeLimitation })
+            });
         }
 
         // PUT: api/Tasks/5
@@ -58,25 +83,25 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(task).State = EntityState.Modified;
+            var dbEntry = _context.Tasks.Find(id);
 
-            try
+            if (dbEntry == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TaskExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
+            if (!CheckWriteAccess(dbEntry))
+            {
+                return Forbid();
+            }
+
+            dbEntry.CategoryId = task.CategoryId;
+            dbEntry.Examples = task.Examples;
+            dbEntry.Points = task.Points;
+            dbEntry.Public = dbEntry.Public;
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         // POST: api/Tasks
@@ -89,6 +114,12 @@ namespace Lightest.Api.Controllers
             }
 
             _context.Tasks.Add(task);
+
+            if (!CheckWriteAccess(task))
+            {
+                return Forbid();
+            }
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTask", new { id = task.Id }, task);
@@ -109,6 +140,11 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
+            if (!CheckWriteAccess(task))
+            {
+                return Forbid();
+            }
+
             _context.Tasks.Remove(task);
             await _context.SaveChangesAsync();
 
@@ -118,6 +154,21 @@ namespace Lightest.Api.Controllers
         private bool TaskExists(int id)
         {
             return _context.Tasks.Any(e => e.Id == id);
+        }
+
+        private bool CheckListAccess()
+        {
+            return true;
+        }
+
+        private bool CheckReadAccess(Data.Models.Task task)
+        {
+            return true;
+        }
+
+        private bool CheckWriteAccess(Data.Models.Task task)
+        {
+            return true;
         }
     }
 }

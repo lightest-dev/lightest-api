@@ -176,6 +176,39 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
+        [HttpPost("{groupId}/AddUsers")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<int> userIds)
+        {
+            var group = await _context.Groups.FindAsync(groupId);
+            if (group == null)
+            {
+                return NotFound();
+            }
+            if (!CheckWriteAccess(group))
+            {
+                return Forbid();
+            }
+            var users = new List<ApplicationUser>();
+            foreach (var userId in userIds)
+            {
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                users.Add(user);
+            }
+            foreach(var user in users)
+            {
+                group.Users.Add(new UserGroup { GroupId = group.Id, UserId = user.Id });
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         private bool GroupExists(int id)
         {
             return _context.Groups.Any(e => e.Id == id);
