@@ -20,6 +20,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories
         [HttpGet]
+        [ProducesResponseType(200,Type = typeof(Category))]
         public IActionResult GetCategories()
         {
             return Ok(_context.Categories);
@@ -27,6 +28,10 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetCategory([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -63,6 +68,10 @@ namespace Lightest.Api.Controllers
 
         // PUT: api/Categories/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> PutCategory([FromRoute] int id, [FromBody] Category category)
         {
             if (!ModelState.IsValid)
@@ -94,6 +103,9 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Categories
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Category))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
             if (!ModelState.IsValid)
@@ -115,6 +127,10 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Categories/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Category))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteCategory([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -129,7 +145,7 @@ namespace Lightest.Api.Controllers
             }
             if (!CheckWriteAccess(category))
             {
-                return StatusCode(403);
+                return Forbid();
             }
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
@@ -138,6 +154,9 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("ChangeAccess/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]string userId, [FromBody]int accessRights)
         {
             if (!CategoryExists(id))

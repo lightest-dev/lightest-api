@@ -21,6 +21,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Languages
         [HttpGet]
+        [ProducesResponseType(200)]
         public IEnumerable<Language> GetLanguages()
         {
             return _context.Languages;
@@ -28,6 +29,9 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Languages
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Language))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> PostLanguage([FromBody] Language language)
         {
             if (!ModelState.IsValid)
@@ -48,6 +52,11 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Languages/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Language))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(409)]
         public async Task<IActionResult> DeleteLanguage([FromRoute] int id)
         {
             if (!ModelState.IsValid)

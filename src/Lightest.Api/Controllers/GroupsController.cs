@@ -28,6 +28,10 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -64,6 +68,10 @@ namespace Lightest.Api.Controllers
 
         // PUT: api/Groups/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group group)
         {
             if (!ModelState.IsValid)
@@ -96,6 +104,9 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Groups
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Group))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
             if (!ModelState.IsValid)
@@ -116,6 +127,10 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Groups/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Group))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteGroup([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -141,6 +156,9 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("{groupId}/AddUser/{userID}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromRoute]string userId)
         {
             var group = await _context.Groups.FindAsync(groupId);

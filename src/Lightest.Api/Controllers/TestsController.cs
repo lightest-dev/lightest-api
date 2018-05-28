@@ -19,6 +19,10 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tests/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetTest([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -44,6 +48,10 @@ namespace Lightest.Api.Controllers
 
         // PUT: api/Tests/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> PutTest([FromRoute] int id, [FromBody] Test test)
         {
             if (!ModelState.IsValid)
@@ -77,6 +85,9 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tests
         [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Test))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> PostTest([FromBody] Test test)
         {
             if (!ModelState.IsValid)
@@ -97,6 +108,10 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Tests/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200,Type = typeof(Test))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteTest([FromRoute] int id)
         {
             if (!ModelState.IsValid)
