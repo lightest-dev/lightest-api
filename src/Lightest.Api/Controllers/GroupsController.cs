@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Lightest.Data;
+using Lightest.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lightest.Data;
-using Lightest.Data.Models;
 
 namespace Lightest.Api.Controllers
 {
@@ -44,7 +42,6 @@ namespace Lightest.Api.Controllers
                 .Where(g => g.Id == id)
                 .SingleOrDefaultAsync();
 
-
             if (group == null)
             {
                 return NotFound();
@@ -55,9 +52,13 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            return Ok(new {group.Id, group.Name, group.ParentId,
-                Users = group.Users.Select(u => new {u.UserId, u.User.UserName }),
-                Subgroups = group.SubGroups.Select(g => new { g.Id, g.Name})
+            return Ok(new
+            {
+                group.Id,
+                group.Name,
+                group.ParentId,
+                Users = group.Users.Select(u => new { u.UserId, u.User.UserName }),
+                Subgroups = group.SubGroups.Select(g => new { g.Id, g.Name })
             });
         }
 
@@ -75,12 +76,16 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-
             var dbEntry = await _context.Groups.FindAsync(id);
 
             if (dbEntry == null)
             {
                 return NotFound();
+            }
+
+            if (!CheckWriteAccess(dbEntry))
+            {
+                return Forbid();
             }
 
             dbEntry.Name = group.Name;

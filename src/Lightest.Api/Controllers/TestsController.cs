@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Lightest.Data;
+using Lightest.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lightest.Data;
-using Lightest.Data.Models;
 
 namespace Lightest.Api.Controllers
 {
@@ -21,13 +17,6 @@ namespace Lightest.Api.Controllers
             _context = context;
         }
 
-        // GET: api/Tests
-        [HttpGet]
-        public IEnumerable<Test> GetTests()
-        {
-            return _context.Tests;
-        }
-
         // GET: api/Tests/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTest([FromRoute] int id)
@@ -38,6 +27,12 @@ namespace Lightest.Api.Controllers
             }
 
             var test = await _context.Tests.FindAsync(id);
+
+            //user can only view test if he can edit it
+            if (!CheckWriteAccess(test))
+            {
+                return Forbid();
+            }
 
             if (test == null)
             {
@@ -61,25 +56,23 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(test).State = EntityState.Modified;
+            var dbEntry = await _context.Tests.FindAsync(id);
 
-            try
+            if (!CheckWriteAccess(dbEntry))
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TestExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return Forbid();
             }
 
-            return NoContent();
+            if (dbEntry == null)
+            {
+                return NotFound();
+            }
+
+            dbEntry.Input = test.Input;
+            dbEntry.Output = test.Output;
+
+            await _context.SaveChangesAsync();
+            return Ok();
         }
 
         // POST: api/Tests
@@ -89,6 +82,11 @@ namespace Lightest.Api.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (!CheckWriteAccess(test))
+            {
+                return Forbid();
             }
 
             _context.Tests.Add(test);
@@ -112,6 +110,11 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
+            if (!CheckWriteAccess(test))
+            {
+                return Forbid();
+            }
+
             _context.Tests.Remove(test);
             await _context.SaveChangesAsync();
 
@@ -121,6 +124,12 @@ namespace Lightest.Api.Controllers
         private bool TestExists(int id)
         {
             return _context.Tests.Any(e => e.Id == id);
+        }
+
+        private bool CheckWriteAccess(Test test)
+        {
+            //check if user has write access to parent
+            return true;
         }
     }
 }

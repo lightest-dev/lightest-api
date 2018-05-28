@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models
 {
@@ -9,6 +10,7 @@ namespace Lightest.Data.Models
 
         public int TaskId { get; set; }
 
+        [JsonIgnore]
         public virtual Task Task { get; set; }
 
         public string Input { get; set; }

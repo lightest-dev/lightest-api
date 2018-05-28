@@ -2,7 +2,6 @@
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,7 +42,7 @@ namespace Lightest.Api.Controllers
                 .FirstOrDefaultAsync(c => c.Id == id);
             if (!CheckReadAccess(category))
             {
-                return StatusCode(403);
+                return Forbid();
             }
 
             if (category == null)
@@ -97,12 +96,10 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-
 
             if (!CheckWriteAccess(category))
             {
@@ -142,7 +139,7 @@ namespace Lightest.Api.Controllers
 
         [HttpPost("ChangeAccess/{id}")]
         public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]string userId, [FromBody]int accessRights)
-        {            
+        {
             if (!CategoryExists(id))
             {
                 return NotFound();

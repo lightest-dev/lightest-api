@@ -1,11 +1,11 @@
 ﻿using IdentityServer4.EntityFramework.DbContexts;
+using Lightest.Data;
+using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using Lightest.Data;
-using Lightest.Data.Models;
 
 namespace Lightest.Api
 {

@@ -1,5 +1,5 @@
-﻿using MongoDB.Driver;
-using Lightest.Data.Models;
+﻿using Lightest.Data.Models;
+using MongoDB.Driver;
 
 namespace Lightest.Data
 {

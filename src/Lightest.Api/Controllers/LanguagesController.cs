@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Lightest.Data;
+using Lightest.Data.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Lightest.Data;
-using Lightest.Data.Models;
 
 namespace Lightest.Api.Controllers
 {
@@ -68,8 +66,15 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            _context.Languages.Remove(language);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Languages.Remove(language);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(409);
+            }
 
             return Ok(language);
         }
