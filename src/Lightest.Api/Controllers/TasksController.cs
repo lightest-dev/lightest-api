@@ -20,6 +20,8 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
+        [ProducesResponseType(typeof(Task),200)]
+        [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
             if (!CheckListAccess())
@@ -31,6 +33,10 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetTask([FromRoute] int id)
         {
             if (!ModelState.IsValid)
@@ -69,8 +75,42 @@ namespace Lightest.Api.Controllers
             });
         }
 
+        [HttpGet("Users/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetUsers([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks
+                .Include(t => t.Users)
+                .ThenInclude(u => u.User)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!CheckReadAccess(task))
+            {
+                return Forbid();
+            }
+
+            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName }));
+        }
+
         // PUT: api/Tasks/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.Task task)
         {
             if (!ModelState.IsValid)
@@ -106,6 +146,9 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tasks
         [HttpPost]
+        [ProducesResponseType(typeof(Task),201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> PostTask([FromBody] Data.Models.Task task)
         {
             if (!ModelState.IsValid)
@@ -127,6 +170,10 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Tasks/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteTask([FromRoute] int id)
         {
             if (!ModelState.IsValid)
