@@ -1,4 +1,5 @@
 ﻿using Lightest.Data;
+using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType(typeof(Task),200)]
+        [ProducesResponseType(typeof(Data.Models.Task),200)]
         [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
@@ -146,7 +147,7 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tasks
         [HttpPost]
-        [ProducesResponseType(typeof(Task),201)]
+        [ProducesResponseType(typeof(Data.Models.Task),201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostTask([FromBody] Data.Models.Task task)
@@ -196,6 +197,67 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(task);
+        }
+
+        [HttpPost("SetTests/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> SetTests([FromRoute] int id, [FromBody] Test[] tests)
+        {
+            var task = await _context.Tasks
+                .Include(t => t.Tests)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!CheckWriteAccess(task))
+            {
+                return Forbid();
+            }
+
+            task.Tests.Clear();
+
+            foreach(var test in tests)
+            {
+                test.TaskId = id;
+                task.Tests.Add(test);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("SetLanguages/{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> SetLanguages([FromRoute] int id, [FromBody] TaskLanguage[] languages)
+        {
+            var task = await _context.Tasks
+                .Include(t => t.Languages)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!CheckWriteAccess(task))
+            {
+                return Forbid();
+            }
+
+            task.Languages.Clear();
+
+            foreach(var l in languages)
+            {
+                l.TaskId = id;
+                task.Languages.Add(l);
+            }
+            return Ok();
         }
 
         private bool TaskExists(int id)
