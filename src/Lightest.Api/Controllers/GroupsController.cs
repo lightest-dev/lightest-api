@@ -1,5 +1,6 @@
 ﻿using Lightest.Data;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
+    [Authorize]
     public class GroupsController : Controller
     {
         private readonly RelationalDbContext _context;

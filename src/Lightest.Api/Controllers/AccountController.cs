@@ -49,7 +49,7 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Login")]
-        public async Task<IActionResult> Login(LogInViewModel model)
+        public async Task<IActionResult> Login([FromBody]LogInViewModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("Logout")]
-        public async Task<IActionResult> Logout(string clientName)
+        public async Task<IActionResult> Logout([FromBody]string clientName)
         {
             var idp = User?.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
             var subjectId = HttpContext.User.Identity.GetSubjectId();

@@ -1,12 +1,19 @@
-﻿using Lightest.Data;
+﻿using IdentityServer4;
+using IdentityServer4.AccessTokenValidation;
+using IdentityServer4.Models;
+using Lightest.Data;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace Lightest.Api
 {
@@ -22,7 +29,12 @@ namespace Lightest.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvcCore()
+                .AddAuthorization()
+                .AddJsonFormatters()
+                .AddApiExplorer()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                
             services.AddDbContext<RelationalDbContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
@@ -34,13 +46,20 @@ namespace Lightest.Api
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddInMemoryClients(Configuration.GetSection("clients"))
-                .AddInMemoryIdentityResources(Configuration.GetSection("identity_resources"))
-                .AddInMemoryApiResources(Configuration.GetSection("api_resources"))
+                .AddInMemoryClients(GetClients())
+                .AddInMemoryIdentityResources(GetIdentityResources())
+                .AddInMemoryApiResources(GetApiResources())
                 .AddOperationalStore(options =>
                 {
-                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), s => s.MigrationsAssembly("Lightest.Api"));
+                    options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"), 
+                        s => s.MigrationsAssembly("Lightest.Api"));
                     options.EnableTokenCleanup = true;
+                });
+            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+                .AddIdentityServerAuthentication(options =>
+                {
+                    options.ApiName = "api";
+                    //todo: add api url
                 });
             services.AddSwaggerGen(c =>
             {
@@ -67,6 +86,56 @@ namespace Lightest.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lightest API V1");
             });
+        }
+
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new List<IdentityResource>
+            {
+                new IdentityResources.OpenId()
+            };
+        }
+
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
+            {
+                new ApiResource()
+                {
+                    Name = "api",
+                    DisplayName = "Api",
+                    Scopes =
+                    {
+                        new Scope("api", "API")
+                    }
+                }
+            };
+        }
+
+        public static IEnumerable<Client> GetClients()
+        {
+            return new List<Client>
+            {
+                new Client()
+                {
+                    ClientId = "client",
+                    ClientName = "client",
+                    AllowedScopes = {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        "api"
+                    },
+                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AllowOfflineAccess = true,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { "https://lightest.tk", "https://localhost" },
+                    RequireConsent = false,
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+                    AccessTokenType = AccessTokenType.Jwt
+                }
+            };
         }
     }
 }
