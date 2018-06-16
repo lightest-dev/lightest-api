@@ -23,12 +23,14 @@ Logging in requires 3 steps, all URLs are listed for development mode and should
 Some of the provided values are currently hard-coded, but will be replaced with config files.
 
 1. POST `https://localhost:5000/api/Account/Login` with following body in json format
-```{
+```json
+{
   "login": "string",
   "password": "string",
   "rememberMe": bool
-}```
-2. POST `https://localhost:5000/connect/authorize` with body in URL encoded form format:
+}
+```
+2. POST `https://localhost:5000/connect/authorize` with body in URL encoded form format with following fields:
 ```
 client_id=client
 response_type=code id_token
@@ -37,7 +39,8 @@ scope=openid profile api
 nonce=int
 ```
 If user is logged in, redirect will occur to redirect_uri, path will include code, which will be used in next step.
-3. POST `https://localhost:5000/connect/token` with body in URL encoded form format:
+
+3. POST `https://localhost:5000/connect/token` with body in URL encoded form format with following fields:
 ```
 client_id=client
 client_secret=secret
