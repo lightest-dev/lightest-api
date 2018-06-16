@@ -16,6 +16,8 @@ namespace Lightest.Data
 
         public DbSet<Test> Tests { get; set; }
 
+        public DbSet<Checker> Checkers { get; set; }
+
         public RelationalDbContext(DbContextOptions<RelationalDbContext> options) : base(options)
         {
         }
@@ -101,6 +103,12 @@ namespace Lightest.Data
                 .HasOne(t => t.Category)
                 .WithMany(c => c.Tasks)
                 .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Task>()
+                .HasOne(t => t.Checker)
+                .WithMany(c => c.Tasks)
+                .HasForeignKey(t => t.CheckerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Test>()

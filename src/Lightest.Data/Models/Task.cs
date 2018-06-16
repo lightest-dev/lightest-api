@@ -23,6 +23,10 @@ namespace Lightest.Data.Models
 
         public int Points { get; set; }
 
+        public int CheckerId { get; set; }
+
+        public virtual Checker Checker { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<TaskLanguage> Languages { get; set; }
 

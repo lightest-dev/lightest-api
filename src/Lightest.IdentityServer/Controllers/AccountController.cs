@@ -55,7 +55,6 @@ namespace Lightest.IdentityServer.Controllers
             {
                 return BadRequest();
             }
-            var returnUrl = model.ReturnUrl;
 
             if (ModelState.IsValid)
             {

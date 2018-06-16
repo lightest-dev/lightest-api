@@ -16,5 +16,8 @@ namespace Lightest.Data.Models
         public string Input { get; set; }
 
         public string Output { get; set; }
+
+        [JsonIgnore]
+        public bool Cached { get; set; }
     }
 }
