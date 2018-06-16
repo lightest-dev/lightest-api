@@ -16,3 +16,34 @@ If successful, result should look like:
 3. dotnet ef migrations add Config --context ConfigurationDbContext
 
 Output should contain only info with created sql and `Done.` in the end.
+
+# Logging in to Lightest.Api
+Api project is split into 2 parts: API itself and IdentityServer, which provides log in and register functionality.
+Logging in requires 3 steps, all URLs are listed for development mode and should be changed in production.
+Some of the provided values are currently hard-coded, but will be replaced with config files.
+
+1. POST `https://localhost:5000/api/Account/Login` with following body in json format
+```{
+  "login": "string",
+  "password": "string",
+  "rememberMe": bool
+}```
+2. POST `https://localhost:5000/connect/authorize` with body in URL encoded form format:
+```
+client_id=client
+response_type=code id_token
+redirect_uri=url
+scope=openid profile api
+nonce=int
+```
+If user is logged in, redirect will occur to redirect_uri, path will include code, which will be used in next step.
+3. POST `https://localhost:5000/connect/token` with body in URL encoded form format:
+```
+client_id=client
+client_secret=secret
+grant_type=authorization_code
+scope=openid profile api
+redirect_uri=url
+code={code from step 2.}
+```
+Access token returned can be used to work with API and should be included. Refresh token are not currently supported.
