@@ -1,4 +1,5 @@
-﻿using Lightest.Data;
+﻿using IdentityServer4.EntityFramework.DbContexts;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 
-namespace Lightest.Api
+namespace Lightest.IdentityServer
 {
     public static class Seed
     {
@@ -20,22 +21,10 @@ namespace Lightest.Api
 
         private static void SeedRelational(IServiceScope scope)
         {
+            //todo
+            return;
             var context = scope.ServiceProvider.GetRequiredService<RelationalDbContext>();
             context.Database.Migrate();
-            /*var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var testUser = userManager.FindByNameAsync("test").Result;
-            if (testUser == null)
-            {
-                testUser = new ApplicationUser
-                {
-                    UserName = "test"
-                };
-                var result = userManager.CreateAsync(testUser, "Password12$").Result;
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-            }*/
             context.SaveChanges();
         }
     }

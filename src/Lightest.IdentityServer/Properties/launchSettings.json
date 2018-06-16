@@ -1,13 +1,13 @@
-{
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:41106",
-      "sslPort": 44372
+      "applicationUrl": "http://localhost:54222",
+      "sslPort": 44377
     }
   },
-  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
@@ -17,14 +17,13 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Lightest.Api": {
+    "Lightest.IdentityServer": {
       "commandName": "Project",
-      "commandLineArgs": "--seed",
-      "launchUrl": "swagger",
+      "launchUrl": "api/values",
+      "applicationUrl": "https://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:5001"
+      }
     }
   }
 }

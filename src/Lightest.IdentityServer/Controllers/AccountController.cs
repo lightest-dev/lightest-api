@@ -8,7 +8,7 @@ using IdentityServer4;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
-using Lightest.Api.ViewModels;
+using Lightest.IdentityServer.ViewModels;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Lightest.Api.Controllers
+namespace Lightest.IdentityServer.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
