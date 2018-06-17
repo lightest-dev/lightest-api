@@ -1,5 +1,6 @@
 ﻿using Lightest.Data;
 using Lightest.Data.Models;
+using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType(typeof(Data.Models.Task),200)]
+        [ProducesResponseType(typeof(Data.Models.TaskModels.Task),200)]
         [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
@@ -114,7 +115,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.Task task)
+        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.TaskModels.Task task)
         {
             if (!ModelState.IsValid)
             {
@@ -149,10 +150,10 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tasks
         [HttpPost]
-        [ProducesResponseType(typeof(Data.Models.Task),201)]
+        [ProducesResponseType(typeof(Data.Models.TaskModels.Task),201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> PostTask([FromBody] Data.Models.Task task)
+        public async Task<IActionResult> PostTask([FromBody] Data.Models.TaskModels.Task task)
         {
             if (!ModelState.IsValid)
             {
@@ -272,12 +273,12 @@ namespace Lightest.Api.Controllers
             return true;
         }
 
-        private bool CheckReadAccess(Data.Models.Task task)
+        private bool CheckReadAccess(Data.Models.TaskModels.Task task)
         {
             return true;
         }
 
-        private bool CheckWriteAccess(Data.Models.Task task)
+        private bool CheckWriteAccess(Data.Models.TaskModels.Task task)
         {
             return true;
         }

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Lightest.Data.Models
+namespace Lightest.Data.Models.TaskModels
 {
     public class TaskLanguage
     {

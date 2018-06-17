@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lightest.Data.Models.TaskModels;
+using System;
 
 namespace Lightest.Data.Models
 {

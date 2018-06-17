@@ -1,4 +1,5 @@
 ﻿using Lightest.Data.Models;
+using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -116,6 +117,42 @@ namespace Lightest.Data
                 .WithMany(t => t.Tests)
                 .HasForeignKey(t => t.TaskId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ArchiveUpload>()
+                .HasOne(up => up.Task)
+                .WithMany(t => t.ArchiveUploads)
+                .HasForeignKey(up => up.TaskId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<ArchiveUpload>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.ArchiveUploads)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ArchiveUpload>()
+                .HasOne(up => up.Language)
+                .WithMany(l => l.ArchiveUploads)
+                .HasForeignKey(up => up.LanguageId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<CodeUpload>()
+                .HasOne(up => up.Task)
+                .WithMany(t => t.CodeUploads)
+                .HasForeignKey(up => up.TaskId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<CodeUpload>()
+                .HasOne(up => up.User)
+                .WithMany(u => u.CodeUploads)
+                .HasForeignKey(up => up.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CodeUpload>()
+                .HasOne(up => up.Language)
+                .WithMany(l => l.CodeUploads)
+                .HasForeignKey(up => up.LanguageId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

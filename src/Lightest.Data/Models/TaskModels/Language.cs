@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Data.Models
+namespace Lightest.Data.Models.TaskModels
 {
     public class Language
     {
@@ -13,5 +13,11 @@ namespace Lightest.Data.Models
 
         [JsonIgnore]
         public virtual ICollection<TaskLanguage> Tasks { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<CodeUpload> CodeUploads { get; set; }
     }
 }

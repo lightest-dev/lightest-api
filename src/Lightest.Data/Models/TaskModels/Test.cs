@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Data.Models
+namespace Lightest.Data.Models.TaskModels
 {
     public class Test
     {

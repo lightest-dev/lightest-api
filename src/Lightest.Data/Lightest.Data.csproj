@@ -6,9 +6,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.0" />
-    <PackageReference Include="MongoDB.Bson" Version="2.6.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.6.0" />
-    <PackageReference Include="MongoDB.Driver.Core" Version="2.6.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
 
   </ItemGroup>

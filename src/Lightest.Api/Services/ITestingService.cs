@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Lightest.Data.Models;
+using Lightest.Data.Models.TaskModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,11 +9,16 @@ namespace Lightest.Api.Services
 {
     interface ITestingService
     {
-        //todo: create specific type
-        Task<bool> BeginTestigs(Task task);
+        Task<bool> BeginTesting(CodeUpload task);
 
-        Task<bool> CheckStatus(object task);
+        Task<bool> CheckStatus(CodeUpload task);
 
-        Task<double> GetResult(object task);
+        Task<double> GetResult(CodeUpload task);
+
+        Task<bool> BeginTesting(ArchiveUpload task);
+
+        Task<bool> CheckStatus(ArchiveUpload task);
+
+        Task<double> GetResult(ArchiveUpload task);
     }
 }

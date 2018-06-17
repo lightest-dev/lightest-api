@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Data.Models
+namespace Lightest.Data.Models.TaskModels
 {
     public class Task
     {
@@ -35,5 +35,11 @@ namespace Lightest.Data.Models
 
         [JsonIgnore]
         public virtual ICollection<Test> Tests { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<CodeUpload> CodeUploads { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
     }
 }
