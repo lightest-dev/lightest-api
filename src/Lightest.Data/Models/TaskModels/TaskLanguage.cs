@@ -6,7 +6,7 @@ namespace Lightest.Data.Models.TaskModels
     {
         public int TaskId { get; set; }
         [JsonIgnore]
-        public Task Task { get; set; }
+        public TaskDefinition Task { get; set; }
 
         public int LanguageId { get; set; }
         [JsonIgnore]

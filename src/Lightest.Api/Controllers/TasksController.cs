@@ -24,7 +24,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType(typeof(Data.Models.TaskModels.Task),200)]
+        [ProducesResponseType(typeof(Data.Models.TaskModels.TaskDefinition),200)]
         [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
@@ -79,7 +79,7 @@ namespace Lightest.Api.Controllers
             });
         }
 
-        [HttpGet("Users/{id}")]
+        [HttpGet("{id}/users")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
@@ -115,7 +115,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.TaskModels.Task task)
+        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.TaskModels.TaskDefinition task)
         {
             if (!ModelState.IsValid)
             {
@@ -150,10 +150,10 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tasks
         [HttpPost]
-        [ProducesResponseType(typeof(Data.Models.TaskModels.Task),201)]
+        [ProducesResponseType(typeof(TaskDefinition),201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> PostTask([FromBody] Data.Models.TaskModels.Task task)
+        public async Task<IActionResult> PostTask([FromBody] Data.Models.TaskModels.TaskDefinition task)
         {
             if (!ModelState.IsValid)
             {
@@ -202,7 +202,7 @@ namespace Lightest.Api.Controllers
             return Ok(task);
         }
 
-        [HttpPost("SetTests/{id}")]
+        [HttpPost("{id}/tests")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -233,7 +233,7 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        [HttpPost("SetLanguages/{id}")]
+        [HttpPost("{id}/languages")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -273,12 +273,12 @@ namespace Lightest.Api.Controllers
             return true;
         }
 
-        private bool CheckReadAccess(Data.Models.TaskModels.Task task)
+        private bool CheckReadAccess(Data.Models.TaskModels.TaskDefinition task)
         {
             return true;
         }
 
-        private bool CheckWriteAccess(Data.Models.TaskModels.Task task)
+        private bool CheckWriteAccess(Data.Models.TaskModels.TaskDefinition task)
         {
             return true;
         }

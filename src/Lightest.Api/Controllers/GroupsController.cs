@@ -157,7 +157,7 @@ namespace Lightest.Api.Controllers
             return Ok(group);
         }
 
-        [HttpPost("{groupId}/AddUser/{userID}")]
+        [HttpPost("{groupId}/add-user/{userID}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -178,7 +178,7 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        [HttpPost("{groupId}/AddUsers")]
+        [HttpPost("{groupId}/add-users")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]

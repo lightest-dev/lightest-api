@@ -153,7 +153,7 @@ namespace Lightest.Api.Controllers
             return Ok(category);
         }
 
-        [HttpPost("ChangeAccess/{id}")]
+        [HttpPost("{id}/access")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]

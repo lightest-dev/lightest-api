@@ -24,6 +24,6 @@ namespace Lightest.Data.Models
         public virtual ICollection<CategoryUser> Users { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<TaskDefinition> Tasks { get; set; }
     }
 }

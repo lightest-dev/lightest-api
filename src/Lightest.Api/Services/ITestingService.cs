@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Lightest.Api.Services
 {
-    interface ITestingService
+    public interface ITestingService
     {
         Task<bool> BeginTesting(CodeUpload task);
 

@@ -11,7 +11,7 @@ namespace Lightest.Data.Models
 
         public int TaskId { get; set; }
 
-        public Task Task { get; set; }
+        public TaskDefinition Task { get; set; }
 
         public AccessRights UserRights { get; set; }
 

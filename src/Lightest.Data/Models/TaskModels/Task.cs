@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models.TaskModels
 {
-    public class Task
+    public class TaskDefinition
     {
         [Key]
         public int Id { get; set; }

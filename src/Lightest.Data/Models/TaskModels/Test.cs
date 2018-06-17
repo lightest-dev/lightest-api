@@ -11,7 +11,7 @@ namespace Lightest.Data.Models.TaskModels
         public int TaskId { get; set; }
 
         [JsonIgnore]
-        public virtual Task Task { get; set; }
+        public virtual TaskDefinition Task { get; set; }
 
         public string Input { get; set; }
 

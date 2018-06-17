@@ -13,7 +13,7 @@ namespace Lightest.Data
 
         public DbSet<Language> Languages { get; set; }
 
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TaskDefinition> Tasks { get; set; }
 
         public DbSet<Test> Tests { get; set; }
 
@@ -100,13 +100,13 @@ namespace Lightest.Data
                 .OnDelete(DeleteBehavior.SetNull)
                 .IsRequired(false);
 
-            builder.Entity<Task>()
+            builder.Entity<TaskDefinition>()
                 .HasOne(t => t.Category)
                 .WithMany(c => c.Tasks)
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<Task>()
+            builder.Entity<TaskDefinition>()
                 .HasOne(t => t.Checker)
                 .WithMany(c => c.Tasks)
                 .HasForeignKey(t => t.CheckerId)

@@ -22,6 +22,6 @@ namespace Lightest.Data.Models
         public string Name { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<Task> Tasks { get; set; }
+        public virtual ICollection<TaskDefinition> Tasks { get; set; }
     }
 }

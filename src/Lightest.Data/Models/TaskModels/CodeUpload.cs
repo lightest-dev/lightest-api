@@ -6,11 +6,15 @@ namespace Lightest.Data.Models.TaskModels
     public class CodeUpload
     {
         [Key]
-        public string UploadId { get; set; }
+        public int UploadId { get; set; }
 
         public string Code { get; set; }
 
+        [JsonIgnore]
         public double Points { get; set; }
+
+        [JsonIgnore]
+        public string Status { get; set; }
 
         public int LanguageId { get; set; }
 
@@ -25,6 +29,6 @@ namespace Lightest.Data.Models.TaskModels
         public int TaskId { get; set; }
 
         [JsonIgnore]
-        public virtual Task Task { get; set; }
+        public virtual TaskDefinition Task { get; set; }
     }
 }
