@@ -24,7 +24,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType(typeof(Data.Models.TaskModels.TaskDefinition),200)]
+        [ProducesResponseType(typeof(TaskDefinition),200)]
         [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
@@ -115,7 +115,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] Data.Models.TaskModels.TaskDefinition task)
+        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
         {
             if (!ModelState.IsValid)
             {
@@ -153,7 +153,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(typeof(TaskDefinition),201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> PostTask([FromBody] Data.Models.TaskModels.TaskDefinition task)
+        public async Task<IActionResult> PostTask([FromBody] TaskDefinition task)
         {
             if (!ModelState.IsValid)
             {

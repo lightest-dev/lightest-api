@@ -19,6 +19,10 @@ namespace Lightest.Data
 
         public DbSet<Checker> Checkers { get; set; }
 
+        public DbSet<ArchiveUpload> ArchiveUploads { get; set; }
+
+        public DbSet<CodeUpload> CodeUploads { get; set; }
+
         public RelationalDbContext(DbContextOptions<RelationalDbContext> options) : base(options)
         {
         }
