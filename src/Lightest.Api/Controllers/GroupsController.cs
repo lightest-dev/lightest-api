@@ -203,7 +203,7 @@ namespace Lightest.Api.Controllers
                 }
                 users.Add(user);
             }
-            foreach(var user in users)
+            foreach (var user in users)
             {
                 group.Users.Add(new UserGroup { GroupId = group.Id, UserId = user.Id });
             }

@@ -20,7 +20,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        [ProducesResponseType(200,Type = typeof(Category))]
+        [ProducesResponseType(200, Type = typeof(Category))]
         public IActionResult GetCategories()
         {
             return Ok(_context.Categories);

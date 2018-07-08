@@ -1,10 +1,7 @@
 ﻿using Lightest.Data;
-using Lightest.Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 
 namespace Lightest.Api
 {

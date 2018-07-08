@@ -4,7 +4,6 @@ using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -24,7 +23,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [ProducesResponseType(typeof(TaskDefinition),200)]
+        [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
         public IActionResult GetTasks()
         {
@@ -52,14 +51,14 @@ namespace Lightest.Api.Controllers
                 .Include(t => t.Tests)
                 .Include(t => t.Languages)
                 .ThenInclude(l => l.Language)
-                .SingleOrDefaultAsync(t =>t.Id == id);
+                .SingleOrDefaultAsync(t => t.Id == id);
 
             if (task == null)
             {
                 return NotFound();
             }
 
-            if (!CheckReadAccess(task))
+            if (!task.CheckReadAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -74,8 +73,13 @@ namespace Lightest.Api.Controllers
                 task.Description,
                 task.CategoryId,
                 Tests = task.Tests.Select(t => new { t.Id, t.Input, t.Output }),
-                Languages = task.Languages.Select(l => new { Id = l.LanguageId, l.Language.Name,
-                    l.MemoryLimitation, l.TimeLimitation })
+                Languages = task.Languages.Select(l => new
+                {
+                    Id = l.LanguageId,
+                    l.Language.Name,
+                    l.MemoryLimitation,
+                    l.TimeLimitation
+                })
             });
         }
 
@@ -101,7 +105,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckReadAccess(task))
+            if (!task.CheckReadAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -134,7 +138,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(dbEntry))
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -150,7 +154,7 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Tasks
         [HttpPost]
-        [ProducesResponseType(typeof(TaskDefinition),201)]
+        [ProducesResponseType(typeof(TaskDefinition), 201)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostTask([FromBody] TaskDefinition task)
@@ -162,7 +166,7 @@ namespace Lightest.Api.Controllers
 
             _context.Tasks.Add(task);
 
-            if (!CheckWriteAccess(task))
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -191,7 +195,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(task))
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -217,14 +221,14 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(task))
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
 
             task.Tests.Clear();
 
-            foreach(var test in tests)
+            foreach (var test in tests)
             {
                 test.TaskId = id;
                 task.Tests.Add(test);
@@ -248,14 +252,14 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(task))
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
 
             task.Languages.Clear();
 
-            foreach(var l in languages)
+            foreach (var l in languages)
             {
                 l.TaskId = id;
                 task.Languages.Add(l);
@@ -273,14 +277,9 @@ namespace Lightest.Api.Controllers
             return true;
         }
 
-        private bool CheckReadAccess(Data.Models.TaskModels.TaskDefinition task)
+        private ApplicationUser GetCurrentUser()
         {
-            return true;
-        }
-
-        private bool CheckWriteAccess(Data.Models.TaskModels.TaskDefinition task)
-        {
-            return true;
+            return null;
         }
     }
 }

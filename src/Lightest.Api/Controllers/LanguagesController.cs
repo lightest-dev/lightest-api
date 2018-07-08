@@ -1,5 +1,4 @@
 ﻿using Lightest.Data;
-using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using System;

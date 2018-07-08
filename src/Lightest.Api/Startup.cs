@@ -1,18 +1,11 @@
-﻿using IdentityServer4;
-using IdentityServer4.AccessTokenValidation;
+﻿using IdentityServer4.AccessTokenValidation;
 using Lightest.Data;
-using Lightest.Data.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 
 namespace Lightest.Api
 {
@@ -30,12 +23,12 @@ namespace Lightest.Api
         {
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-                
+
             services.AddDbContext<RelationalDbContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
             });
-            
+
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
@@ -68,6 +61,6 @@ namespace Lightest.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lightest API V1");
             });
-        }        
+        }
     }
 }

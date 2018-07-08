@@ -41,5 +41,15 @@ namespace Lightest.Data.Models.TaskModels
 
         [JsonIgnore]
         public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
+
+        public bool CheckReadAccess(ApplicationUser user)
+        {
+            return true;
+        }
+
+        public bool CheckWriteAccess(ApplicationUser user)
+        {
+            return true;
+        }
     }
 }

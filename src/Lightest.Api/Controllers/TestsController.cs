@@ -2,6 +2,7 @@
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -31,17 +32,19 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var test = await _context.Tests.FindAsync(id);
-
-            //user can only view test if he can edit it
-            if (!CheckWriteAccess(test))
-            {
-                return Forbid();
-            }
+            var test = await _context.Tests
+                .Include(t => t.Task)
+                .SingleOrDefaultAsync(t => t.Id == id);
 
             if (test == null)
             {
                 return NotFound();
+            }
+
+            //user can only view test if he can edit it
+            if (!test.Task.CheckWriteAccess(GetCurrentUser()))
+            {
+                return Forbid();
             }
 
             return Ok(test);
@@ -65,16 +68,18 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            var dbEntry = await _context.Tests.FindAsync(id);
-
-            if (!CheckWriteAccess(dbEntry))
-            {
-                return Forbid();
-            }
+            var dbEntry = await _context.Tests
+                .Include(t => t.Task)
+                .SingleOrDefaultAsync(t => t.Id == id);
 
             if (dbEntry == null)
             {
                 return NotFound();
+            }
+
+            if (!dbEntry.Task.CheckWriteAccess(GetCurrentUser()))
+            {
+                return Forbid();
             }
 
             dbEntry.Input = test.Input;
@@ -96,7 +101,14 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!CheckWriteAccess(test))
+            var task = await _context.Tasks.FindAsync(test.Id);
+
+            if (task == null)
+            {
+                return BadRequest();
+            }
+
+            if (!task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -109,7 +121,7 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Tests/5
         [HttpDelete("{id}")]
-        [ProducesResponseType(200,Type = typeof(Test))]
+        [ProducesResponseType(200, Type = typeof(Test))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -120,13 +132,16 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var test = await _context.Tests.FindAsync(id);
+            var test = await _context.Tests
+                            .Include(t => t.Task)
+                            .SingleOrDefaultAsync(t => t.Id == id);
+
             if (test == null)
             {
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(test))
+            if (!test.Task.CheckWriteAccess(GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -142,10 +157,9 @@ namespace Lightest.Api.Controllers
             return _context.Tests.Any(e => e.Id == id);
         }
 
-        private bool CheckWriteAccess(Test test)
+        private ApplicationUser GetCurrentUser()
         {
-            //check if user has write access to parent
-            return true;
+            return null;
         }
     }
 }

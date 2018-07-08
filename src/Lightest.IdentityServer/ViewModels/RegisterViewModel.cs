@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Lightest.IdentityServer.ViewModels
+﻿namespace Lightest.IdentityServer.ViewModels
 {
     public class RegisterViewModel
     {

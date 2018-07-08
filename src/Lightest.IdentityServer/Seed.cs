@@ -1,11 +1,7 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
-using Lightest.Data;
-using Lightest.Data.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Lightest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
 
 namespace Lightest.IdentityServer
 {

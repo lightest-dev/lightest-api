@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models.TaskModels
 {
-    public class CodeUpload
+    public class CodeUpload : IUpload
     {
         [Key]
         public int UploadId { get; set; }
