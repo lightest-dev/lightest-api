@@ -11,7 +11,7 @@ namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadsController : ControllerBase
+    public class UploadsController : Controller
     {
         private readonly ITestingService _testingService;
         private readonly RelationalDbContext _context;
