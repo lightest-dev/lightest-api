@@ -12,5 +12,7 @@ namespace Lightest.Api.Services
         Task<bool> CheckStatus(IUpload task);
 
         Task<double> GetResult(IUpload task);
+
+        Task ReportResult(CheckerResult result);
     }
 }
