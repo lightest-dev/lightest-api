@@ -12,6 +12,9 @@ namespace Lightest.Data.Models.TaskModels
         public string Name { get; set; }
 
         [JsonIgnore]
+        public string Extension { get; set; }
+
+        [JsonIgnore]
         public virtual ICollection<TaskLanguage> Tasks { get; set; }
 
         [JsonIgnore]

@@ -5,9 +5,7 @@ namespace Lightest.Api.Services
 {
     public interface ITestingService
     {
-        Task<bool> BeginTesting(CodeUpload task);
-
-        Task<bool> BeginTesting(ArchiveUpload task);
+        Task<bool> BeginTesting(IUpload task);
 
         Task<bool> CheckStatus(IUpload task);
 

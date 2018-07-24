@@ -50,6 +50,34 @@ namespace Lightest.Api.Services
             return true;
         }
 
+        public async Task<bool> SendFile(string filename, byte[] data)
+        {
+            var result = await SendMessage($"name:{filename}");
+            if (!result)
+            {
+                return false;
+            }
+            using (var client = new TcpClient())
+            {
+                await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
+                if (!client.Connected)
+                {
+                    return false;
+                }
+                using (var netStream = client.GetStream())
+                using (var writer = new BinaryWriter(netStream))
+                {
+                    var length = data.Length;
+                    //+1 because type is written
+                    writer.Write(length + 1);
+                    //todo: to enum
+                    writer.Write(2);
+                    writer.Write(data);
+                }
+            }
+            return true;
+        }
+
         public async Task<bool> SendMessage(string message)
         {
             using (var client = new TcpClient())

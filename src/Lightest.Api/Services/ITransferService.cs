@@ -13,5 +13,7 @@ namespace Lightest.Api.Services
         Task<bool> SendMessage(string message);
 
         Task<bool> SendFile(string path);
+
+        Task<bool> SendFile(string filename, byte[] data);
     }
 }
