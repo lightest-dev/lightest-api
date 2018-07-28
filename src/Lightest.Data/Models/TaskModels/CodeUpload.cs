@@ -10,6 +10,10 @@ namespace Lightest.Data.Models.TaskModels
 
         public string Code { get; set; }
 
+        public string Message { get; set; }
+
+        public bool TestingFinished { get; set; }
+
         [JsonIgnore]
         public double Points { get; set; }
 

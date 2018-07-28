@@ -10,6 +10,10 @@ namespace Lightest.Data.Models.TaskModels
 
         public byte[] File { get; set; }
 
+        public string Message { get; set; }
+
+        public bool TestingFinished { get; set; }
+
         [JsonIgnore]
         public double Points { get; set; }
 

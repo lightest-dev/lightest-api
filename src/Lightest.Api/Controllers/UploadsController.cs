@@ -23,6 +23,9 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("code")]
+        [ProducesResponseType(200, Type = typeof(int))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> UploadCode([FromBody] CodeUpload upload)
         {
             var user = GetCurrentUser();
@@ -56,12 +59,15 @@ namespace Lightest.Api.Controllers
             var succesful = await _testingService.BeginTesting(upload);
             if (succesful)
             {
-                return Ok(task.Id);
+                return Ok(upload.UploadId);
             }
             return BadRequest();
         }
 
         [HttpPost("project")]
+        [ProducesResponseType(200, Type = typeof(int))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> UploadProject([FromBody] ArchiveUpload upload)
         {
             var user = GetCurrentUser();
@@ -96,12 +102,15 @@ namespace Lightest.Api.Controllers
             var succesful = await _testingService.BeginTesting(upload);
             if (succesful)
             {
-                return Ok(task.Id);
+                return Ok(upload.UploadId);
             }
             return BadRequest();
         }
 
         [HttpGet("{type}/{id}/status")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
         {
             IUpload upload;
@@ -124,10 +133,13 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            return Ok(await _testingService.GetResult(upload));
+            return Ok(upload.TestingFinished);
         }
 
         [HttpGet("{type}/{id}/result")]
+        [ProducesResponseType(200, Type = typeof(IUpload))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
         {
             IUpload upload;
@@ -150,9 +162,10 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            if (upload.Status != "New")
+            if (upload.TestingFinished)
             {
-                return Ok(await _testingService.GetResult(upload));
+                var result = new { upload.Status, upload.Message, upload.Points };
+                return Ok();
             }
 
             return BadRequest();

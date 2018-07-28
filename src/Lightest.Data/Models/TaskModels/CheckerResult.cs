@@ -6,7 +6,9 @@ namespace Lightest.Data.Models.TaskModels
 {
     public class CheckerResult
     {
-        public int TaskId { get; set; }
+        public int UploadId { get; set; }
+
+        public string Type { get; set; }
 
         public string Status { get; set; }
 
