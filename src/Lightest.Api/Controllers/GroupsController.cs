@@ -163,7 +163,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromRoute]string userId)
         {
-            var group = await _context.Groups.FindAsync(groupId);
+            var group = await _context.Groups.Include(g => g.Users).SingleOrDefaultAsync(g => g.Id == groupId);
             var user = await _context.Users.FindAsync(userId);
             if (user == null || group == null)
             {

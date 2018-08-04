@@ -47,7 +47,7 @@ namespace Lightest.Api.Controllers
             _context.Languages.Add(language);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLanguage", new { id = language.Id }, language);
+            return Ok(language.Id);
         }
 
         // DELETE: api/Languages/5

@@ -2,6 +2,7 @@
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -113,6 +114,15 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+
+            if (id == null)
+            {
+                return BadRequest("id");
+            }
+
+            var user = _context.Users.Find(id.Value);
+
             if (!CheckWriteAccess(category))
             {
                 return Forbid();
@@ -120,7 +130,8 @@ namespace Lightest.Api.Controllers
 
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
-            category.Users.Add(new CategoryUser { UserId = User.Identity.Name, CategoryId = category.Id, UserRights = AccessRights.Owner });
+            category.Users = new List<CategoryUser>();
+            category.Users.Add(new CategoryUser { UserId = id.Value, CategoryId = category.Id, UserRights = AccessRights.Owner });
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }

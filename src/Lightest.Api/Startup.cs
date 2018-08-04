@@ -1,4 +1,5 @@
 ﻿using IdentityServer4.AccessTokenValidation;
+using Lightest.Api.Services;
 using Lightest.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,17 +30,21 @@ namespace Lightest.Api
                 options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
             });
 
+            var auth = Configuration.GetSection("Authority").Value;
+
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
                     options.ApiName = "api";
-                    options.Authority = "https://localhost:5000";
+                    options.Authority = auth;
                     options.RequireHttpsMetadata = false;
                 });
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
+            services.AddSingleton<ServerRepostitory>();
+            services.AddTransient<ITestingService, TestingService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

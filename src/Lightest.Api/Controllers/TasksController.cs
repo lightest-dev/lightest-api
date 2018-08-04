@@ -4,6 +4,7 @@ using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -110,7 +111,7 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName }));
+            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.UserRights }));
         }
 
         // PUT: api/Tasks/5
@@ -164,12 +165,22 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            _context.Tasks.Add(task);
+            var user = GetCurrentUser();
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (user == null)
+            {
+                return BadRequest("id");
+            }
+
+            if (!task.CheckWriteAccess(user))
             {
                 return Forbid();
             }
+
+            task.Users = new List<UserTask>();
+            task.Users.Add(new UserTask { UserId = user.Id, UserRights = AccessRights.Owner | AccessRights.Read | AccessRights.Write | AccessRights.AssignAdmin });
+
+            _context.Tasks.Add(task);
 
             await _context.SaveChangesAsync();
 
@@ -234,6 +245,8 @@ namespace Lightest.Api.Controllers
                 task.Tests.Add(test);
             }
 
+            await _context.SaveChangesAsync();
+
             return Ok();
         }
 
@@ -264,6 +277,52 @@ namespace Lightest.Api.Controllers
                 l.TaskId = id;
                 task.Languages.Add(l);
             }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/users")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody] UserTask[] users)
+        {
+            var task = await _context.Tasks
+               .Include(t => t.Users)
+               .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!task.CheckWriteAccess(GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            foreach (var user in users)
+            {
+                var existingUser = task.Users.SingleOrDefault(u => u.UserId == user.UserId);
+                if (existingUser == null)
+                {
+                    user.TaskId = id;
+                    task.Users.Add(user);
+                }
+                else
+                {
+                    if (existingUser.UserRights.HasFlag(AccessRights.Owner))
+                    {
+                        continue;
+                    }
+                    //todo: add rights check
+                    existingUser.Deadline = user.Deadline;
+                    existingUser.UserRights = user.UserRights;
+                }
+            }
+            await _context.SaveChangesAsync();
             return Ok();
         }
 
@@ -279,7 +338,9 @@ namespace Lightest.Api.Controllers
 
         private ApplicationUser GetCurrentUser()
         {
-            return null;
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var user = _context.Users.Find(id.Value);
+            return user;
         }
     }
 }

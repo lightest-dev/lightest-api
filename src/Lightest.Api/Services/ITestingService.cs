@@ -1,5 +1,4 @@
 ﻿using Lightest.Data.Models.TaskModels;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Lightest.Api.Services

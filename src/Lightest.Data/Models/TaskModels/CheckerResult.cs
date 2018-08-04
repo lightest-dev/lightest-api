@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lightest.Data.Models.TaskModels
+﻿namespace Lightest.Data.Models.TaskModels
 {
     public class CheckerResult
     {

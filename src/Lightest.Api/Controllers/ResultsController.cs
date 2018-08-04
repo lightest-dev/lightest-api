@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Lightest.Api.Services;
+﻿using Lightest.Api.Services;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -12,7 +12,7 @@ namespace Lightest.Api.Controllers
     [ApiController]
     public class ResultsController : ControllerBase
     {
-        ITestingService _testingService;
+        private ITestingService _testingService;
 
         public ResultsController(ITestingService testingService)
         {

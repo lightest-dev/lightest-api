@@ -91,8 +91,14 @@ namespace Lightest.IdentityServer
             };
         }
 
-        public static IEnumerable<Client> GetClients()
+        public IEnumerable<Client> GetClients()
         {
+            var uris = Configuration.GetSection("URIs").GetChildren();
+            var links = new List<string>();
+            foreach (var uri in uris)
+            {
+                links.Add(uri.Value);
+            }
             return new List<Client>
             {
                 new Client()
@@ -107,7 +113,7 @@ namespace Lightest.IdentityServer
                     AllowedGrantTypes = GrantTypes.Hybrid,
                     AllowOfflineAccess = true,
                     AllowAccessTokensViaBrowser = true,
-                    RedirectUris = { "https://lightest.tk", "https://localhost" },
+                    RedirectUris = links,
                     RequireConsent = false,
                     ClientSecrets =
                     {

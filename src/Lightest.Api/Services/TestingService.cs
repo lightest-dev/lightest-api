@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Lightest.Data;
+﻿using Lightest.Data;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Lightest.Api.Services
 {
@@ -25,7 +23,7 @@ namespace Lightest.Api.Services
 
         private bool AddToList(IUpload upload)
         {
-            _uploads.Add(upload);            
+            _uploads.Add(upload);
             upload.Status = "Queue";
             _context.Add(upload);
             _context.SaveChanges();
@@ -49,6 +47,7 @@ namespace Lightest.Api.Services
                 case CodeUpload code:
                     result = await SendData(code, transferService);
                     break;
+
                 default:
                     throw new NotImplementedException();
             }
