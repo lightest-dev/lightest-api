@@ -9,9 +9,10 @@ namespace Lightest.Data.Models.TaskModels
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
-        [JsonIgnore]
+        [Required]
         public string Extension { get; set; }
 
         [JsonIgnore]

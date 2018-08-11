@@ -14,9 +14,11 @@ namespace Lightest.Data.Models
         [JsonIgnore]
         public bool Compiled { get; set; }
 
+        [Required]
         [Column(TypeName = "text")]
         public string Code { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
         [JsonIgnore]

@@ -73,6 +73,7 @@ namespace Lightest.Api.Controllers
                 task.Examples,
                 task.Description,
                 task.CategoryId,
+                task.CheckerId,
                 Tests = task.Tests.Select(t => new { t.Id, t.Input, t.Output }),
                 Languages = task.Languages.Select(l => new
                 {
@@ -148,6 +149,7 @@ namespace Lightest.Api.Controllers
             dbEntry.Examples = task.Examples;
             dbEntry.Points = task.Points;
             dbEntry.Public = dbEntry.Public;
+            dbEntry.CheckerId = task.CheckerId;
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -177,8 +179,10 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            task.Users = new List<UserTask>();
-            task.Users.Add(new UserTask { UserId = user.Id, UserRights = AccessRights.Owner | AccessRights.Read | AccessRights.Write | AccessRights.AssignAdmin });
+            task.Users = new List<UserTask>
+            {
+                new UserTask { UserId = user.Id, UserRights = AccessRights.Owner | AccessRights.Read | AccessRights.Write | AccessRights.AssignAdmin }
+            };
 
             _context.Tasks.Add(task);
 

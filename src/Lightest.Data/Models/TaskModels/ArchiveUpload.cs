@@ -8,6 +8,7 @@ namespace Lightest.Data.Models.TaskModels
         [Key]
         public int UploadId { get; set; }
 
+        [Required]
         public byte[] File { get; set; }
 
         public string Message { get; set; }
@@ -20,6 +21,7 @@ namespace Lightest.Data.Models.TaskModels
         [JsonIgnore]
         public string Status { get; set; }
 
+        [Required]
         public int LanguageId { get; set; }
 
         [JsonIgnore]
@@ -30,6 +32,7 @@ namespace Lightest.Data.Models.TaskModels
         [JsonIgnore]
         public virtual ApplicationUser User { get; set; }
 
+        [Required]
         public int TaskId { get; set; }
 
         [JsonIgnore]
