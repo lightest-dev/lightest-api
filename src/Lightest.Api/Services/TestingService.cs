@@ -87,7 +87,7 @@ namespace Lightest.Api.Services
                 }
             }
             await save;
-            result = await transferService.SendFile($"code{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
+            result = await transferService.SendFile($"code.{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
             return result;
         }
 

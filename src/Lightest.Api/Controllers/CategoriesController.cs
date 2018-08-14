@@ -1,4 +1,7 @@
-﻿using Lightest.Data;
+﻿using Lightest.Api.Extensions;
+using Lightest.Api.Services.AccessServices;
+using Lightest.Api.ViewModels;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +16,8 @@ namespace Lightest.Api.Controllers
     public class CategoriesController : Controller
     {
         private readonly RelationalDbContext _context;
+
+        private readonly CategoriesAccessService _accessService;
 
         public CategoriesController(RelationalDbContext context)
         {
@@ -29,7 +34,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(CompleteCategoryViewModel))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -46,25 +51,22 @@ namespace Lightest.Api.Controllers
                 .ThenInclude(u => u.User)
                 .Include(c => c.Tasks)
                 .FirstOrDefaultAsync(c => c.Id == id);
-            if (!CheckReadAccess(category))
-            {
-                return Forbid();
-            }
+
+            var currentUser = GetCurrentUser();
 
             if (category == null)
             {
                 return NotFound();
             }
 
-            return Ok(new
+            if (!_accessService.CheckReadAccess(category, currentUser))
             {
-                category.Id,
-                category.Name,
-                category.Parent,
-                category.SubCategories,
-                Users = category.Users.Select(u => new { u.User.Id, u.User.UserName, u.UserRights }),
-                Tasks = category.Tasks.Select(t => new { t.Id, t.Name })
-            });
+                return Forbid();
+            }
+
+            var result = CompleteCategoryViewModel.FromCategory(category);
+
+            return Ok(result);
         }
 
         // PUT: api/Categories/5
@@ -92,10 +94,13 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(dbEntry))
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(dbEntry, currentUser))
             {
                 return Forbid();
             }
+
             dbEntry.Name = category.Name;
             dbEntry.ParentId = category.ParentId;
             await _context.SaveChangesAsync();
@@ -104,7 +109,7 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Categories
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(Category))]
+        [ProducesResponseType(201, Type = typeof(CompleteCategoryViewModel))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
@@ -114,24 +119,18 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var currentUser = GetCurrentUser();
 
-            if (id == null)
-            {
-                return BadRequest("id");
-            }
-
-            var user = _context.Users.Find(id.Value);
-
-            if (!CheckWriteAccess(category))
+            if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
             }
 
             _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
             category.Users = new List<CategoryUser>();
-            category.Users.Add(new CategoryUser { UserId = id.Value, CategoryId = category.Id, UserRights = AccessRights.Owner });
+            var categoryUser = new CategoryUser { UserId = currentUser.Id, CategoryId = category.Id };
+            categoryUser.SetFullRights();
+            category.Users.Add(categoryUser);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
@@ -154,10 +153,14 @@ namespace Lightest.Api.Controllers
             {
                 return NotFound();
             }
-            if (!CheckWriteAccess(category))
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
             }
+
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
@@ -168,33 +171,39 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]string userId, [FromBody]int accessRights)
+        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]AccessRightsViewModel model)
         {
-            if (!CategoryExists(id))
-            {
-                return NotFound();
-            }
-            var access = (AccessRights)accessRights;
             var category = await _context.Categories
                 .Include(c => c.Users)
                 .FirstOrDefaultAsync(c => c.Id == id);
-            if (!CheckAdminAccess(category))
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckAdminAccess(category, currentUser))
             {
                 return Forbid();
             }
-            if (category == null || !_context.Users.Any(u => u.Id == userId))
+
+            if (!_context.Users.Any(u => u.Id == model.UserId))
             {
                 return BadRequest();
             }
 
-            var user = category.Users.SingleOrDefault(u => u.UserId == userId);
+            var user = category.Users.SingleOrDefault(u => u.UserId == model.UserId);
             if (user == null)
             {
-                category.Users.Add(new CategoryUser { CategoryId = category.Id, UserId = userId, UserRights = access });
+                var categoryUser = new CategoryUser { CategoryId = category.Id, UserId = model.UserId };
+                model.CopyTo(categoryUser);
+                category.Users.Add(categoryUser);
             }
             else
             {
-                user.UserRights = access;
+                model.CopyTo(user);
             }
             await _context.SaveChangesAsync();
             return Ok();
@@ -205,19 +214,11 @@ namespace Lightest.Api.Controllers
             return _context.Categories.Any(e => e.Id == id);
         }
 
-        private bool CheckWriteAccess(Category category)
+        private ApplicationUser GetCurrentUser()
         {
-            return true;
-        }
-
-        private bool CheckReadAccess(Category category)
-        {
-            return true;
-        }
-
-        private bool CheckAdminAccess(Category category)
-        {
-            return true;
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var user = _context.Users.Find(id.Value);
+            return user;
         }
     }
 }

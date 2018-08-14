@@ -1,4 +1,5 @@
 ﻿using Lightest.Api.Services;
+using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -15,6 +16,8 @@ namespace Lightest.Api.Controllers
     {
         private readonly ITestingService _testingService;
         private readonly RelationalDbContext _context;
+
+        private readonly TaskAccessService _accessService;
 
         public UploadsController(ITestingService testingService, RelationalDbContext context)
         {
@@ -38,7 +41,7 @@ namespace Lightest.Api.Controllers
             {
                 return BadRequest();
             }
-            if (!task.CheckReadAccess(user))
+            if (!_accessService.CheckReadAccess(task, user))
             {
                 return Forbid();
             }
@@ -81,7 +84,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest("task");
             }
 
-            if (!task.CheckReadAccess(user))
+            if (!_accessService.CheckReadAccess(task, user))
             {
                 return Forbid();
             }

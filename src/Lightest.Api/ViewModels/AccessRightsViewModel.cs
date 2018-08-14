@@ -1,29 +1,27 @@
-﻿using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Models;
+using Lightest.Data.Models.TaskModels;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Data.Models
+namespace Lightest.Api.ViewModels
 {
-    public class CategoryUser : IAccessRights
+    public class AccessRightsViewModel : IAccessRights
     {
-        [Required]
         public string UserId { get; set; }
 
         [JsonIgnore]
         public ApplicationUser User { get; set; }
 
         [Required]
-        public int CategoryId { get; set; }
-
-        [JsonIgnore]
-        public Category Category { get; set; }
-
         public bool CanRead { get; set; }
 
+        [Required]
         public bool CanWrite { get; set; }
 
+        [Required]
         public bool CanChangeAccess { get; set; }
 
+        [JsonIgnore]
         public bool IsOwner { get; set; }
     }
 }

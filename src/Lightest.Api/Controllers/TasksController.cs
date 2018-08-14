@@ -1,4 +1,5 @@
-﻿using Lightest.Data;
+﻿using Lightest.Api.Extensions;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.Api.Services.AccessServices;
 
 namespace Lightest.Api.Controllers
 {
@@ -16,6 +18,7 @@ namespace Lightest.Api.Controllers
     public class TasksController : Controller
     {
         private readonly RelationalDbContext _context;
+        private readonly TaskAccessService _accessService;
 
         public TasksController(RelationalDbContext context)
         {
@@ -59,7 +62,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckReadAccess(GetCurrentUser()))
+            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -107,12 +110,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckReadAccess(GetCurrentUser()))
+            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
 
-            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.UserRights }));
+            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.CanRead, u.CanWrite, u.CanChangeAccess, u.IsOwner }));
         }
 
         // PUT: api/Tasks/5
@@ -140,7 +143,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -174,14 +177,14 @@ namespace Lightest.Api.Controllers
                 return BadRequest("id");
             }
 
-            if (!task.CheckWriteAccess(user))
+            if (!_accessService.CheckWriteAccess(task, user))
             {
                 return Forbid();
             }
 
             task.Users = new List<UserTask>
             {
-                new UserTask { UserId = user.Id, UserRights = AccessRights.Owner | AccessRights.Read | AccessRights.Write | AccessRights.AssignAdmin }
+                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
             };
 
             _context.Tasks.Add(task);
@@ -210,7 +213,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -236,7 +239,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -269,7 +272,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -302,7 +305,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -317,13 +320,14 @@ namespace Lightest.Api.Controllers
                 }
                 else
                 {
-                    if (existingUser.UserRights.HasFlag(AccessRights.Owner))
+                    if (existingUser.IsOwner)
                     {
                         continue;
                     }
                     //todo: add rights check
                     existingUser.Deadline = user.Deadline;
-                    existingUser.UserRights = user.UserRights;
+                    existingUser.CanRead = user.CanRead;
+                    existingUser.CanWrite = user.CanWrite;
                 }
             }
             await _context.SaveChangesAsync();

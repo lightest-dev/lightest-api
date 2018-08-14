@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Data.Models
 {
-    public class UserTask
+    public class UserTask : IAccessRights
     {
         [Required]
         public string UserId { get; set; }
@@ -19,9 +19,18 @@ namespace Lightest.Data.Models
         [JsonIgnore]
         public TaskDefinition Task { get; set; }
 
-        [Required]
-        public AccessRights UserRights { get; set; }
-
         public DateTime Deadline { get; set; }
+
+        [Required]
+        public bool CanRead { get; set; }
+
+        [Required]
+        public bool CanWrite { get; set; }
+
+        [Required]
+        public bool CanChangeAccess { get; set; }
+
+        [Required]
+        public bool IsOwner { get; set; }
     }
 }

@@ -1,7 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-
-namespace Lightest.Data.Models.TaskModels
+﻿namespace Lightest.Data.Models.TaskModels
 {
     public class ArchiveUpload : IUpload
     {

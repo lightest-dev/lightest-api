@@ -1,4 +1,6 @@
-﻿using Lightest.Data;
+﻿using Lightest.Api.Extensions;
+using Lightest.Api.Services.AccessServices;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +15,8 @@ namespace Lightest.Api.Controllers
     public class TestsController : Controller
     {
         private readonly RelationalDbContext _context;
+
+        private readonly TaskAccessService _accessService;
 
         public TestsController(RelationalDbContext context)
         {
@@ -42,7 +46,7 @@ namespace Lightest.Api.Controllers
             }
 
             //user can only view test if he can edit it
-            if (!test.Task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -77,7 +81,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!dbEntry.Task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(dbEntry.Task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -108,7 +112,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            if (!task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -141,7 +145,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!test.Task.CheckWriteAccess(GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
             {
                 return Forbid();
             }
