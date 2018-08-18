@@ -114,6 +114,7 @@ namespace Lightest.Api.Controllers
             }
 
             var task = await _context.Tasks
+                .AsNoTracking()
                 .Include(t => t.Tests)
                 .Include(t => t.Languages)
                 .ThenInclude(l => l.Language)
@@ -166,6 +167,7 @@ namespace Lightest.Api.Controllers
         {
             var user = GetCurrentUser();
             var tasks = _context.Tasks
+                .AsNoTracking()
                 .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
             return Ok(tasks);
         }
@@ -183,6 +185,7 @@ namespace Lightest.Api.Controllers
             }
 
             var task = await _context.Tasks
+                .AsNoTracking()
                 .Include(t => t.Users)
                 .ThenInclude(u => u.User)
                 .SingleOrDefaultAsync(t => t.Id == id);

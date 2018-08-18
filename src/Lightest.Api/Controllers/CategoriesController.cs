@@ -122,6 +122,7 @@ namespace Lightest.Api.Controllers
             }
 
             var category = await _context.Categories
+                .AsNoTracking()
                 .Include(c => c.SubCategories)
                 .Include(c => c.Users)
                 .ThenInclude(u => u.User)

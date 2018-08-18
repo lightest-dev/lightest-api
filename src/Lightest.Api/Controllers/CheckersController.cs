@@ -64,7 +64,9 @@ namespace Lightest.Api.Controllers
         [HttpGet]
         public IEnumerable<BasicCheckerViewModel> GetCheckers()
         {
-            return _context.Checkers.Select(c => new BasicCheckerViewModel { Id = c.Id, Name = c.Name });
+            return _context.Checkers
+                .AsNoTracking()
+                .Select(c => new BasicCheckerViewModel { Id = c.Id, Name = c.Name });
         }
 
         // POST: api/Checkers

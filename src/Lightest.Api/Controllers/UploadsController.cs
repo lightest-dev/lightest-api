@@ -14,11 +14,13 @@ namespace Lightest.Api.Controllers
     [ApiController]
     public class UploadsController : Controller
     {
-        private readonly IAccessService<TaskDefinition> _accessService;
+        private readonly IAccessService<IUpload> _accessService;
         private readonly RelationalDbContext _context;
         private readonly ITestingService _testingService;
 
-        public UploadsController(ITestingService testingService, RelationalDbContext context, IAccessService<TaskDefinition> accessService)
+        public UploadsController(ITestingService testingService,
+            RelationalDbContext context,
+            IAccessService<IUpload> accessService)
         {
             _testingService = testingService;
             _context = context;
@@ -31,22 +33,27 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
         {
+            var user = GetCurrentUser();
             IUpload upload;
 
             if (type.ToLower() == "code")
             {
-                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+                upload = await _context.CodeUploads
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(u => u.UploadId == id);
             }
             else if (type.ToLower() == "project")
             {
-                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+                upload = await _context.ArchiveUploads
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(u => u.UploadId == id);
             }
             else
             {
                 return BadRequest();
             }
 
-            if (!CheckReadAccess(upload))
+            if (!_accessService.CheckReadAccess(upload, user))
             {
                 return Forbid();
             }
@@ -60,22 +67,27 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
         {
+            var user = GetCurrentUser();
             IUpload upload;
 
             if (type.ToLower() == "code")
             {
-                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+                upload = await _context.CodeUploads
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(u => u.UploadId == id);
             }
             else if (type.ToLower() == "project")
             {
-                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+                upload = await _context.ArchiveUploads
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(u => u.UploadId == id);
             }
             else
             {
                 return BadRequest();
             }
 
-            if (!CheckReadAccess(upload))
+            if (!_accessService.CheckReadAccess(upload, user))
             {
                 return Forbid();
             }
@@ -105,7 +117,10 @@ namespace Lightest.Api.Controllers
             {
                 return BadRequest();
             }
-            if (!_accessService.CheckReadAccess(task, user))
+
+            upload.Task = task;
+
+            if (!_accessService.CheckWriteAccess(upload, user))
             {
                 return Forbid();
             }
@@ -148,7 +163,9 @@ namespace Lightest.Api.Controllers
                 return BadRequest("task");
             }
 
-            if (!_accessService.CheckReadAccess(task, user))
+            upload.Task = task;
+
+            if (!_accessService.CheckWriteAccess(upload, user))
             {
                 return Forbid();
             }
@@ -174,14 +191,11 @@ namespace Lightest.Api.Controllers
             return BadRequest();
         }
 
-        private bool CheckReadAccess(IUpload upload)
-        {
-            return true;
-        }
-
         private ApplicationUser GetCurrentUser()
         {
-            return null;
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var user = _context.Users.Find(id.Value);
+            return user;
         }
     }
 }

@@ -69,6 +69,7 @@ namespace Lightest.Api.Controllers
             }
 
             var test = await _context.Tests
+                .AsNoTracking()
                 .Include(t => t.Task)
                 .SingleOrDefaultAsync(t => t.Id == id);
 

@@ -73,6 +73,7 @@ namespace Lightest.Api
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();
             services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();
             services.AddTransient<IAccessService<Language>, LanguagesAccessService>();
+            services.AddTransient<IAccessService<IUpload>, UploadsAccessService>();
         }
     }
 }

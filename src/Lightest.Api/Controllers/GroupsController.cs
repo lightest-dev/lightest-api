@@ -143,6 +143,7 @@ namespace Lightest.Api.Controllers
             }
 
             var group = await _context.Groups
+                .AsNoTracking()
                 .Include(g => g.SubGroups)
                 .Include(g => g.Users)
                 .ThenInclude(u => u.User)
@@ -188,6 +189,7 @@ namespace Lightest.Api.Controllers
             var user = GetCurrentUser();
             //todo: check if admin and return all
             return _context.Groups
+                .AsNoTracking()
                 .Include(g => g.Users)
                 .Where(g => g.Users.Select(u => u.UserId).Contains(user.Id));
         }
