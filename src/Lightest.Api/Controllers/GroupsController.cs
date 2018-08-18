@@ -1,11 +1,14 @@
-﻿using Lightest.Data;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Lightest.Api.Extensions;
+using Lightest.Api.Services.AccessServices;
+using Lightest.Api.ViewModels;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -14,23 +17,121 @@ namespace Lightest.Api.Controllers
     [Authorize]
     public class GroupsController : Controller
     {
+        private readonly IAccessService<Group> _accessService;
         private readonly RelationalDbContext _context;
 
-        public GroupsController(RelationalDbContext context)
+        public GroupsController(RelationalDbContext context, IAccessService<Group> accessService)
         {
             _context = context;
+            _accessService = accessService;
         }
 
-        // GET: api/Groups
-        [HttpGet]
-        public IEnumerable<Group> GetGroups()
+        [HttpPost("{groupId}/add-user")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromBody]AccessRightsViewModel user)
         {
-            return _context.Groups;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!UserExists(user.UserId))
+            {
+                return NotFound(nameof(user));
+            }
+
+            var group = await _context.Groups.Include(g => g.Users).SingleOrDefaultAsync(g => g.Id == groupId);
+
+            if (group == null)
+            {
+                return NotFound(nameof(group));
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(group, currentUser))
+            {
+                return Forbid();
+            }
+
+            var userGroup = new UserGroup { GroupId = group.Id, UserId = user.UserId };
+            user.CopyTo(userGroup);
+
+            group.Users.Add(userGroup);
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("{groupId}/add-users")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<AccessRightsViewModel> users)
+        {
+            var group = await _context.Groups.FindAsync(groupId);
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(group, currentUser))
+            {
+                return Forbid();
+            }
+
+            foreach (var user in users)
+            {
+                if (!UserExists(user.UserId))
+                {
+                    continue;
+                }
+                var userGroup = new UserGroup { GroupId = group.Id, UserId = user.UserId };
+                user.CopyTo(userGroup);
+                group.Users.Add(userGroup);
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // DELETE: api/Groups/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Group))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteGroup([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var group = await _context.Groups.FindAsync(id);
+            if (group == null)
+            {
+                return NotFound();
+            }
+
+            var user = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(group, user))
+            {
+                return Forbid();
+            }
+
+            _context.Groups.Remove(group);
+            await _context.SaveChangesAsync();
+
+            return Ok(group);
         }
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(CompleteGroupViewModel))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -53,19 +154,67 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckReadAccess(group))
+            var user = GetCurrentUser();
+
+            if (!_accessService.CheckReadAccess(group, user))
             {
                 return Forbid();
             }
 
-            return Ok(new
+            var result = new CompleteGroupViewModel
             {
-                group.Id,
-                group.Name,
-                group.ParentId,
-                Users = group.Users.Select(u => new { u.UserId, u.User.UserName }),
-                Subgroups = group.SubGroups.Select(g => new { g.Id, g.Name })
-            });
+                Id = group.Id,
+                Name = group.Name,
+                Parent = group.Parent,
+                SubGroups = group.SubGroups,
+                Users = group.Users.Select(u => new AccessRightsUserViewModel
+                {
+                    Id = u.User.Id,
+                    UserName = u.User.UserName,
+                    CanRead = u.CanRead,
+                    CanWrite = u.CanWrite,
+                    CanChangeAccess = u.CanChangeAccess,
+                    IsOwner = u.IsOwner
+                })
+            };
+
+            return Ok(result);
+        }
+
+        // GET: api/Groups
+        [HttpGet]
+        public IEnumerable<Group> GetGroups()
+        {
+            var user = GetCurrentUser();
+            //todo: check if admin and return all
+            return _context.Groups
+                .Include(g => g.Users)
+                .Where(g => g.Users.Select(u => u.UserId).Contains(user.Id));
+        }
+
+        // POST: api/Groups
+        [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Group))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> PostGroup([FromBody] Group group)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(group, user))
+            {
+                return Forbid();
+            }
+
+            _context.Groups.Add(group);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetGroup", new { id = group.Id }, group);
         }
 
         // PUT: api/Groups/5
@@ -93,7 +242,9 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!CheckWriteAccess(dbEntry))
+            var user = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(group, user))
             {
                 return Forbid();
             }
@@ -104,111 +255,11 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        // POST: api/Groups
-        [HttpPost]
-        [ProducesResponseType(201, Type = typeof(Group))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> PostGroup([FromBody] Group group)
+        private ApplicationUser GetCurrentUser()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!CheckWriteAccess(group))
-            {
-                return Forbid();
-            }
-
-            _context.Groups.Add(group);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetGroup", new { id = group.Id }, group);
-        }
-
-        // DELETE: api/Groups/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(Group))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteGroup([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var group = await _context.Groups.FindAsync(id);
-            if (group == null)
-            {
-                return NotFound();
-            }
-
-            if (!CheckWriteAccess(group))
-            {
-                return Forbid();
-            }
-
-            _context.Groups.Remove(group);
-            await _context.SaveChangesAsync();
-
-            return Ok(group);
-        }
-
-        [HttpPost("{groupId}/add-user/{userID}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromRoute]string userId)
-        {
-            var group = await _context.Groups.Include(g => g.Users).SingleOrDefaultAsync(g => g.Id == groupId);
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null || group == null)
-            {
-                return NotFound();
-            }
-            if (!CheckWriteAccess(group))
-            {
-                return Forbid();
-            }
-            group.Users.Add(new UserGroup { GroupId = group.Id, UserId = user.Id });
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        [HttpPost("{groupId}/add-users")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<int> userIds)
-        {
-            var group = await _context.Groups.FindAsync(groupId);
-            if (group == null)
-            {
-                return NotFound();
-            }
-            if (!CheckWriteAccess(group))
-            {
-                return Forbid();
-            }
-            var users = new List<ApplicationUser>();
-            foreach (var userId in userIds)
-            {
-                var user = await _context.Users.FindAsync(userId);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-                users.Add(user);
-            }
-            foreach (var user in users)
-            {
-                group.Users.Add(new UserGroup { GroupId = group.Id, UserId = user.Id });
-            }
-            await _context.SaveChangesAsync();
-            return Ok();
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var user = _context.Users.Find(id.Value);
+            return user;
         }
 
         private bool GroupExists(int id)
@@ -216,14 +267,9 @@ namespace Lightest.Api.Controllers
             return _context.Groups.Any(e => e.Id == id);
         }
 
-        private bool CheckReadAccess(Group group)
+        private bool UserExists(string id)
         {
-            return true;
-        }
-
-        private bool CheckWriteAccess(Group group)
-        {
-            return true;
+            return _context.Users.Any(u => u.Id == id);
         }
     }
 }

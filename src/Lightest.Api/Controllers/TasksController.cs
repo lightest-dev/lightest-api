@@ -1,14 +1,14 @@
-﻿using Lightest.Api.Extensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Lightest.Api.Services.AccessServices;
+using Lightest.Api.ViewModels;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Lightest.Api.Services.AccessServices;
 
 namespace Lightest.Api.Controllers
 {
@@ -17,277 +17,13 @@ namespace Lightest.Api.Controllers
     [Authorize]
     public class TasksController : Controller
     {
+        private readonly IAccessService<TaskDefinition> _accessService;
         private readonly RelationalDbContext _context;
-        private readonly TaskAccessService _accessService;
 
-        public TasksController(RelationalDbContext context)
+        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService)
         {
             _context = context;
-        }
-
-        // GET: api/Tasks
-        [HttpGet]
-        [ProducesResponseType(typeof(TaskDefinition), 200)]
-        [ProducesResponseType(403)]
-        public IActionResult GetTasks()
-        {
-            if (!CheckListAccess())
-            {
-                return Forbid();
-            }
-            return Ok(_context.Tasks);
-        }
-
-        // GET: api/Tasks/5
-        [HttpGet("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> GetTask([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var task = await _context.Tasks
-                .Include(t => t.Tests)
-                .Include(t => t.Languages)
-                .ThenInclude(l => l.Language)
-                .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            return Ok(new
-            {
-                task.Id,
-                task.Name,
-                task.Points,
-                task.Public,
-                task.Examples,
-                task.Description,
-                task.CategoryId,
-                task.CheckerId,
-                Tests = task.Tests.Select(t => new { t.Id, t.Input, t.Output }),
-                Languages = task.Languages.Select(l => new
-                {
-                    Id = l.LanguageId,
-                    l.Language.Name,
-                    l.MemoryLimitation,
-                    l.TimeLimitation
-                })
-            });
-        }
-
-        [HttpGet("{id}/users")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> GetUsers([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var task = await _context.Tasks
-                .Include(t => t.Users)
-                .ThenInclude(u => u.User)
-                .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.CanRead, u.CanWrite, u.CanChangeAccess, u.IsOwner }));
-        }
-
-        // PUT: api/Tasks/5
-        [HttpPut("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != task.Id)
-            {
-                return BadRequest();
-            }
-
-            var dbEntry = _context.Tasks.Find(id);
-
-            if (dbEntry == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            dbEntry.CategoryId = task.CategoryId;
-            dbEntry.Examples = task.Examples;
-            dbEntry.Points = task.Points;
-            dbEntry.Public = dbEntry.Public;
-            dbEntry.CheckerId = task.CheckerId;
-
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        // POST: api/Tasks
-        [HttpPost]
-        [ProducesResponseType(typeof(TaskDefinition), 201)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> PostTask([FromBody] TaskDefinition task)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = GetCurrentUser();
-
-            if (user == null)
-            {
-                return BadRequest("id");
-            }
-
-            if (!_accessService.CheckWriteAccess(task, user))
-            {
-                return Forbid();
-            }
-
-            task.Users = new List<UserTask>
-            {
-                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
-            };
-
-            _context.Tasks.Add(task);
-
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTask", new { id = task.Id }, task);
-        }
-
-        // DELETE: api/Tasks/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTask([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-
-            return Ok(task);
-        }
-
-        [HttpPost("{id}/tests")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> SetTests([FromRoute] int id, [FromBody] Test[] tests)
-        {
-            var task = await _context.Tasks
-                .Include(t => t.Tests)
-                .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            task.Tests.Clear();
-
-            foreach (var test in tests)
-            {
-                test.TaskId = id;
-                task.Tests.Add(test);
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
-        }
-
-        [HttpPost("{id}/languages")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> SetLanguages([FromRoute] int id, [FromBody] TaskLanguage[] languages)
-        {
-            var task = await _context.Tasks
-                .Include(t => t.Languages)
-                .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            task.Languages.Clear();
-
-            foreach (var l in languages)
-            {
-                l.TaskId = id;
-                task.Languages.Add(l);
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok();
+            _accessService = accessService;
         }
 
         [HttpPost("{id}/users")]
@@ -334,14 +70,276 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        private bool TaskExists(int id)
+        // DELETE: api/Tasks/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteTask([FromRoute] int id)
         {
-            return _context.Tasks.Any(e => e.Id == id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            _context.Tasks.Remove(task);
+            await _context.SaveChangesAsync();
+
+            return Ok(task);
         }
 
-        private bool CheckListAccess()
+        // GET: api/Tasks/5
+        [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetTask([FromRoute] int id)
         {
-            return true;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks
+                .Include(t => t.Tests)
+                .Include(t => t.Languages)
+                .ThenInclude(l => l.Language)
+                .Include(t => t.Category)
+                .Include(t => t.Checker)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            var result = new CompleteTaskViewModel
+            {
+                Id = task.Id,
+                Name = task.Name,
+                Points = task.Points,
+                Public = task.Public,
+                Examples = task.Examples,
+                Description = task.Description,
+                Category = task.Category,
+                Checker = new BasicCheckerViewModel
+                {
+                    Id = task.Checker.Id,
+                    Name = task.Checker.Name
+                },
+                Tests = task.Tests,
+                Languages = task.Languages.Select(t => new LanguageViewModel
+                {
+                    Id = t.LanguageId,
+                    Name = t.Language.Name,
+                    MemoryLimit = t.MemoryLimit,
+                    TimeLimit = t.TimeLimit
+                })
+            };
+
+            return Ok(result);
+        }
+
+        // GET: api/Tasks
+        [HttpGet]
+        [ProducesResponseType(typeof(TaskDefinition), 200)]
+        [ProducesResponseType(403)]
+        public IActionResult GetTasks()
+        {
+            var user = GetCurrentUser();
+            var tasks = _context.Tasks
+                .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
+            return Ok(tasks);
+        }
+
+        [HttpGet("{id}/users")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetUsers([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks
+                .Include(t => t.Users)
+                .ThenInclude(u => u.User)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.CanRead, u.CanWrite, u.CanChangeAccess, u.IsOwner }));
+        }
+
+        // POST: api/Tasks
+        [HttpPost]
+        [ProducesResponseType(typeof(TaskDefinition), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> PostTask([FromBody] TaskDefinition task)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var user = GetCurrentUser();
+
+            if (user == null)
+            {
+                return BadRequest("id");
+            }
+
+            if (!_accessService.CheckWriteAccess(task, user))
+            {
+                return Forbid();
+            }
+
+            task.Users = new List<UserTask>
+            {
+                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
+            };
+
+            _context.Tasks.Add(task);
+
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTask", new { id = task.Id }, task);
+        }
+
+        // PUT: api/Tasks/5
+        [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != task.Id)
+            {
+                return BadRequest();
+            }
+
+            var dbEntry = _context.Tasks.Find(id);
+
+            if (dbEntry == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            dbEntry.CategoryId = task.CategoryId;
+            dbEntry.Examples = task.Examples;
+            dbEntry.Points = task.Points;
+            dbEntry.Public = dbEntry.Public;
+            dbEntry.CheckerId = task.CheckerId;
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        [HttpPost("{id}/languages")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> SetLanguages([FromRoute] int id, [FromBody] TaskLanguage[] languages)
+        {
+            var task = await _context.Tasks
+                .Include(t => t.Languages)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            task.Languages.Clear();
+
+            foreach (var l in languages)
+            {
+                l.TaskId = id;
+                task.Languages.Add(l);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/tests")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> SetTests([FromRoute] int id, [FromBody] Test[] tests)
+        {
+            var task = await _context.Tasks
+                .Include(t => t.Tests)
+                .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            task.Tests.Clear();
+
+            foreach (var test in tests)
+            {
+                test.TaskId = id;
+                task.Tests.Add(test);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private ApplicationUser GetCurrentUser()
@@ -349,6 +347,11 @@ namespace Lightest.Api.Controllers
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
             var user = _context.Users.Find(id.Value);
             return user;
+        }
+
+        private bool TaskExists(int id)
+        {
+            return _context.Tasks.Any(e => e.Id == id);
         }
     }
 }

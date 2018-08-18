@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Lightest.Data.Models
 {
@@ -12,10 +12,10 @@ namespace Lightest.Data.Models
         [Required]
         public string Name { get; set; }
 
-        public int? ParentId { get; set; }
-
         [JsonIgnore]
         public virtual Group Parent { get; set; }
+
+        public int? ParentId { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Group> SubGroups { get; set; }

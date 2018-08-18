@@ -1,6 +1,6 @@
 ﻿namespace Lightest.Api.ViewModels
 {
-    public class BasicTaskViewModel
+    public class BasicCheckerViewModel
     {
         public int Id { get; set; }
 

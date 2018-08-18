@@ -1,12 +1,12 @@
-﻿using Lightest.Api.Services;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Lightest.Api.Services;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -14,15 +14,79 @@ namespace Lightest.Api.Controllers
     [ApiController]
     public class UploadsController : Controller
     {
-        private readonly ITestingService _testingService;
+        private readonly IAccessService<TaskDefinition> _accessService;
         private readonly RelationalDbContext _context;
+        private readonly ITestingService _testingService;
 
-        private readonly TaskAccessService _accessService;
-
-        public UploadsController(ITestingService testingService, RelationalDbContext context)
+        public UploadsController(ITestingService testingService, RelationalDbContext context, IAccessService<TaskDefinition> accessService)
         {
             _testingService = testingService;
             _context = context;
+            _accessService = accessService;
+        }
+
+        [HttpGet("{type}/{id}/status")]
+        [ProducesResponseType(200, Type = typeof(bool))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
+        {
+            IUpload upload;
+
+            if (type.ToLower() == "code")
+            {
+                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+            }
+            else if (type.ToLower() == "project")
+            {
+                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            if (!CheckReadAccess(upload))
+            {
+                return Forbid();
+            }
+
+            return Ok(upload.TestingFinished);
+        }
+
+        [HttpGet("{type}/{id}/result")]
+        [ProducesResponseType(200, Type = typeof(IUpload))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
+        {
+            IUpload upload;
+
+            if (type.ToLower() == "code")
+            {
+                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+            }
+            else if (type.ToLower() == "project")
+            {
+                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
+            if (!CheckReadAccess(upload))
+            {
+                return Forbid();
+            }
+
+            if (upload.TestingFinished)
+            {
+                var result = new { upload.Status, upload.Message, upload.Points };
+                return Ok();
+            }
+
+            return BadRequest();
         }
 
         [HttpPost("code")]
@@ -110,78 +174,14 @@ namespace Lightest.Api.Controllers
             return BadRequest();
         }
 
-        [HttpGet("{type}/{id}/status")]
-        [ProducesResponseType(200, Type = typeof(bool))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
+        private bool CheckReadAccess(IUpload upload)
         {
-            IUpload upload;
-
-            if (type.ToLower() == "code")
-            {
-                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else if (type.ToLower() == "project")
-            {
-                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            if (!CheckReadAccess(upload))
-            {
-                return Forbid();
-            }
-
-            return Ok(upload.TestingFinished);
-        }
-
-        [HttpGet("{type}/{id}/result")]
-        [ProducesResponseType(200, Type = typeof(IUpload))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
-        {
-            IUpload upload;
-
-            if (type.ToLower() == "code")
-            {
-                upload = await _context.CodeUploads.SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else if (type.ToLower() == "project")
-            {
-                upload = await _context.ArchiveUploads.SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            if (!CheckReadAccess(upload))
-            {
-                return Forbid();
-            }
-
-            if (upload.TestingFinished)
-            {
-                var result = new { upload.Status, upload.Message, upload.Points };
-                return Ok();
-            }
-
-            return BadRequest();
+            return true;
         }
 
         private ApplicationUser GetCurrentUser()
         {
             return null;
-        }
-
-        private bool CheckReadAccess(IUpload upload)
-        {
-            return true;
         }
     }
 }

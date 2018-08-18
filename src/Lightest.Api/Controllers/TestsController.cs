@@ -1,12 +1,11 @@
-﻿using Lightest.Api.Extensions;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -14,13 +13,46 @@ namespace Lightest.Api.Controllers
     [Route("api/[controller]")]
     public class TestsController : Controller
     {
+        private readonly IAccessService<TaskDefinition> _accessService;
         private readonly RelationalDbContext _context;
 
-        private readonly TaskAccessService _accessService;
-
-        public TestsController(RelationalDbContext context)
+        public TestsController(RelationalDbContext context, IAccessService<TaskDefinition> accessService)
         {
             _context = context;
+            _accessService = accessService;
+        }
+
+        // DELETE: api/Tests/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Test))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteTest([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var test = await _context.Tests
+                            .Include(t => t.Task)
+                            .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            _context.Tests.Remove(test);
+            await _context.SaveChangesAsync();
+
+            return Ok(test);
         }
 
         // GET: api/Tests/5
@@ -52,6 +84,36 @@ namespace Lightest.Api.Controllers
             }
 
             return Ok(test);
+        }
+
+        // POST: api/Tests
+        [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Test))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> PostTest([FromBody] Test test)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks.FindAsync(test.Id);
+
+            if (task == null)
+            {
+                return BadRequest();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            _context.Tests.Add(test);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetTest", new { id = test.Id }, test);
         }
 
         // PUT: api/Tests/5
@@ -93,77 +155,14 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        // POST: api/Tests
-        [HttpPost]
-        [ProducesResponseType(201, Type = typeof(Test))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> PostTest([FromBody] Test test)
+        private ApplicationUser GetCurrentUser()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var task = await _context.Tasks.FindAsync(test.Id);
-
-            if (task == null)
-            {
-                return BadRequest();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            _context.Tests.Add(test);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetTest", new { id = test.Id }, test);
-        }
-
-        // DELETE: api/Tests/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(Test))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTest([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var test = await _context.Tests
-                            .Include(t => t.Task)
-                            .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            _context.Tests.Remove(test);
-            await _context.SaveChangesAsync();
-
-            return Ok(test);
+            return null;
         }
 
         private bool TestExists(int id)
         {
             return _context.Tests.Any(e => e.Id == id);
-        }
-
-        private ApplicationUser GetCurrentUser()
-        {
-            return null;
         }
     }
 }

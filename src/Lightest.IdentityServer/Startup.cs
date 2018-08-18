@@ -1,4 +1,5 @@
-﻿using IdentityServer4;
+﻿using System.Collections.Generic;
+using IdentityServer4;
 using IdentityServer4.Models;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 
 namespace Lightest.IdentityServer
 {
@@ -22,6 +22,47 @@ namespace Lightest.IdentityServer
         }
 
         public IConfiguration Configuration { get; }
+
+        public static IEnumerable<ApiResource> GetApiResources()
+        {
+            return new List<ApiResource>
+            {
+                new ApiResource()
+                {
+                    Name = "api",
+                    DisplayName = "Api",
+                    Scopes =
+                    {
+                        new Scope("api", "API")
+                    }
+                }
+            };
+        }
+
+        public static IEnumerable<IdentityResource> GetIdentityResources()
+        {
+            return new List<IdentityResource>
+            {
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile()
+            };
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseHsts();
+            }
+            app.UseIdentityServer();
+            app.UseHttpsRedirection();
+            app.UseMvc();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -48,47 +89,6 @@ namespace Lightest.IdentityServer
                     options.EnableTokenCleanup = true;
                 })
                 .AddProfileService<ProfileService>();
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-            app.UseIdentityServer();
-            app.UseHttpsRedirection();
-            app.UseMvc();
-        }
-
-        public static IEnumerable<IdentityResource> GetIdentityResources()
-        {
-            return new List<IdentityResource>
-            {
-                new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
-            };
-        }
-
-        public static IEnumerable<ApiResource> GetApiResources()
-        {
-            return new List<ApiResource>
-            {
-                new ApiResource()
-                {
-                    Name = "api",
-                    DisplayName = "Api",
-                    Scopes =
-                    {
-                        new Scope("api", "API")
-                    }
-                }
-            };
         }
 
         public IEnumerable<Client> GetClients()

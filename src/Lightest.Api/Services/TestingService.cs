@@ -1,33 +1,24 @@
-﻿using Lightest.Data;
-using Lightest.Data.Models.TaskModels;
-using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Lightest.Data;
+using Lightest.Data.Models.TaskModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.Api.Services
 {
     public class TestingService : ITestingService
     {
-        private readonly List<IUpload> _uploads;
         private readonly RelationalDbContext _context;
         private readonly ServerRepostitory _repostitory;
+        private readonly List<IUpload> _uploads;
 
         public TestingService(ServerRepostitory repostitory, RelationalDbContext context)
         {
             _context = context;
             _repostitory = repostitory;
             _uploads = new List<IUpload>();
-        }
-
-        private bool AddToList(IUpload upload)
-        {
-            _uploads.Add(upload);
-            upload.Status = "Queue";
-            _context.Add(upload);
-            _context.SaveChanges();
-            return _uploads.Count == 1;
         }
 
         public async Task<bool> BeginTesting(IUpload upload)
@@ -63,6 +54,37 @@ namespace Lightest.Api.Services
             return result;
         }
 
+        public async Task ReportCodeResult(CheckerResult result)
+        {
+            var upload = await _context.CodeUploads.Include(u => u.Task).SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
+            var totalTests = upload.Task.Tests.Count;
+            upload.Points = (double)result.SuccessfulTests / totalTests;
+            upload.Status = result.Status;
+            upload.Message = result.Message;
+            var save = _context.SaveChangesAsync();
+            var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
+            _uploads.Remove(listUpload);
+            await save;
+        }
+
+        public async Task ReportResult(CheckerResult result)
+        {
+            if (result.Type == "Code")
+            {
+                await ReportCodeResult(result);
+            }
+            else throw new NotImplementedException();
+        }
+
+        private bool AddToList(IUpload upload)
+        {
+            _uploads.Add(upload);
+            upload.Status = "Queue";
+            _context.Add(upload);
+            _context.SaveChanges();
+            return _uploads.Count == 1;
+        }
+
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
         {
             upload.Status = "Queue";
@@ -89,28 +111,6 @@ namespace Lightest.Api.Services
             await save;
             result = await transferService.SendFile($"code.{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
             return result;
-        }
-
-        public async Task ReportResult(CheckerResult result)
-        {
-            if (result.Type == "Code")
-            {
-                await ReportCodeResult(result);
-            }
-            else throw new NotImplementedException();
-        }
-
-        public async Task ReportCodeResult(CheckerResult result)
-        {
-            var upload = await _context.CodeUploads.Include(u => u.Task).SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
-            var totalTests = upload.Task.Tests.Count;
-            upload.Points = (double)result.SuccessfulTests / totalTests;
-            upload.Status = result.Status;
-            upload.Message = result.Message;
-            var save = _context.SaveChangesAsync();
-            var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
-            _uploads.Remove(listUpload);
-            await save;
         }
     }
 }

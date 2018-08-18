@@ -13,11 +13,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Api", "src\Lightes
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{47F612E8-54CF-4DED-A7D2-C3805458DE72}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightest.IdentityServer", "src\Lightest.IdentityServer\Lightest.IdentityServer.csproj", "{5382A1B3-082F-4AA2-9BF8-CDDD18CAF66E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.IdentityServer", "src\Lightest.IdentityServer\Lightest.IdentityServer.csproj", "{5382A1B3-082F-4AA2-9BF8-CDDD18CAF66E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

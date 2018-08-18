@@ -1,13 +1,23 @@
-﻿using Microsoft.AspNetCore;
+﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Linq;
 
 namespace Lightest.IdentityServer
 {
     public class Program
     {
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        {
+            return WebHost.CreateDefaultBuilder(args)
+.UseStartup<Startup>()
+.ConfigureAppConfiguration((context, config) =>
+{
+    config.AddJsonFile("dbsettings.json");
+});
+        }
+
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
@@ -17,13 +27,5 @@ namespace Lightest.IdentityServer
             }
             host.Run();
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-            .ConfigureAppConfiguration((context, config) =>
-            {
-                config.AddJsonFile("dbsettings.json");
-            });
     }
 }

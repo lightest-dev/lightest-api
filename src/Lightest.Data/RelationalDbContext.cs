@@ -7,7 +7,17 @@ namespace Lightest.Data
 {
     public class RelationalDbContext : IdentityDbContext<ApplicationUser>
     {
+        public RelationalDbContext(DbContextOptions<RelationalDbContext> options) : base(options)
+        {
+        }
+
+        public DbSet<ArchiveUpload> ArchiveUploads { get; set; }
+
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Checker> Checkers { get; set; }
+
+        public DbSet<CodeUpload> CodeUploads { get; set; }
 
         public DbSet<Group> Groups { get; set; }
 
@@ -16,16 +26,6 @@ namespace Lightest.Data
         public DbSet<TaskDefinition> Tasks { get; set; }
 
         public DbSet<Test> Tests { get; set; }
-
-        public DbSet<Checker> Checkers { get; set; }
-
-        public DbSet<ArchiveUpload> ArchiveUploads { get; set; }
-
-        public DbSet<CodeUpload> CodeUploads { get; set; }
-
-        public RelationalDbContext(DbContextOptions<RelationalDbContext> options) : base(options)
-        {
-        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -1,7 +1,7 @@
-﻿using Lightest.Data;
+﻿using System;
+using Lightest.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Lightest.IdentityServer
 {

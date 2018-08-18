@@ -1,9 +1,9 @@
-﻿using IdentityServer4.Extensions;
+﻿using System.Security.Claims;
+using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
 
 namespace Lightest.IdentityServer.Services
 {

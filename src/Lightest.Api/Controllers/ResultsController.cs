@@ -1,7 +1,7 @@
-﻿using Lightest.Api.Services;
+﻿using System.Threading.Tasks;
+using Lightest.Api.Services;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Lightest.Api.Controllers
 {
@@ -20,6 +20,9 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost]
-        public async Task AddResult([FromBody] CheckerResult result) => await _testingService.ReportResult(result);
+        public async Task AddResult([FromBody] CheckerResult result)
+        {
+            await _testingService.ReportResult(result);
+        }
     }
 }

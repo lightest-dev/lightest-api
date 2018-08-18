@@ -1,19 +1,20 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Lightest.Data.Models.TaskModels
 {
     public class CodeUpload : IUpload
     {
-        [Key]
-        public int UploadId { get; set; }
-
         [Required]
         public string Code { get; set; }
 
-        public string Message { get; set; }
+        [JsonIgnore]
+        public virtual Language Language { get; set; }
 
-        public bool TestingFinished { get; set; }
+        [Required]
+        public int LanguageId { get; set; }
+
+        public string Message { get; set; }
 
         [JsonIgnore]
         public double Points { get; set; }
@@ -21,21 +22,20 @@ namespace Lightest.Data.Models.TaskModels
         [JsonIgnore]
         public string Status { get; set; }
 
-        [Required]
-        public int LanguageId { get; set; }
-
         [JsonIgnore]
-        public virtual Language Language { get; set; }
-
-        public string UserId { get; set; }
-
-        [JsonIgnore]
-        public virtual ApplicationUser User { get; set; }
+        public virtual TaskDefinition Task { get; set; }
 
         [Required]
         public int TaskId { get; set; }
 
+        public bool TestingFinished { get; set; }
+
+        [Key]
+        public int UploadId { get; set; }
+
         [JsonIgnore]
-        public virtual TaskDefinition Task { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
+        public string UserId { get; set; }
     }
 }

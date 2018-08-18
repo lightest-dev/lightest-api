@@ -7,10 +7,10 @@ namespace Lightest.Api.Services
     /// </summary>
     public interface ITransferService
     {
-        Task<bool> SendMessage(string message);
-
         Task<bool> SendFile(string path);
 
         Task<bool> SendFile(string filename, byte[] data);
+
+        Task<bool> SendMessage(string message);
     }
 }
