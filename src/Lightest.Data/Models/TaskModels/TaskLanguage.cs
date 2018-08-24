@@ -11,9 +11,6 @@ namespace Lightest.Data.Models.TaskModels
         [Required]
         public int LanguageId { get; set; }
 
-        [Required]
-        public int MemoryLimit { get; set; }
-
         [JsonIgnore]
         public TaskDefinition Task { get; set; }
 
@@ -22,5 +19,8 @@ namespace Lightest.Data.Models.TaskModels
 
         [Required]
         public int TimeLimit { get; set; }
+
+        [Required]
+        public int MemoryLimit { get; set; }
     }
 }

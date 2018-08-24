@@ -2,11 +2,11 @@
 {
     public interface IAccessRights
     {
-        bool CanChangeAccess { get; set; }
-
         bool CanRead { get; set; }
 
         bool CanWrite { get; set; }
+
+        bool CanChangeAccess { get; set; }
 
         bool IsOwner { get; set; }
 

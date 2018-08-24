@@ -14,7 +14,7 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    [AllowAnonymous]
+    [Authorize]
     public class CategoriesController : Controller
     {
         private readonly IAccessService<Category> _accessService;
@@ -24,80 +24,6 @@ namespace Lightest.Api.Controllers
         {
             _context = context;
             _accessService = accessService;
-        }
-
-        [HttpPost("{id}/access")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]AccessRightsViewModel model)
-        {
-            var category = await _context.Categories
-                .Include(c => c.Users)
-                .FirstOrDefaultAsync(c => c.Id == id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            var currentUser = GetCurrentUser();
-
-            if (!_accessService.CheckAdminAccess(category, currentUser))
-            {
-                return Forbid();
-            }
-
-            if (!_context.Users.Any(u => u.Id == model.UserId))
-            {
-                return BadRequest();
-            }
-
-            var user = category.Users.SingleOrDefault(u => u.UserId == model.UserId);
-            if (user == null)
-            {
-                var categoryUser = new CategoryUser { CategoryId = category.Id, UserId = model.UserId };
-                model.CopyTo(categoryUser);
-                category.Users.Add(categoryUser);
-            }
-            else
-            {
-                model.CopyTo(user);
-            }
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        // DELETE: api/Categories/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(Category))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            var currentUser = GetCurrentUser();
-
-            if (!_accessService.CheckWriteAccess(category, currentUser))
-            {
-                return Forbid();
-            }
-
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-
-            return Ok(category);
         }
 
         // GET: api/Categories
@@ -194,6 +120,48 @@ namespace Lightest.Api.Controllers
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
+        [HttpPost("{id}/access")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]AccessRightsViewModel model)
+        {
+            var category = await _context.Categories
+                .Include(c => c.Users)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckAdminAccess(category, currentUser))
+            {
+                return Forbid();
+            }
+
+            if (!_context.Users.Any(u => u.Id == model.UserId))
+            {
+                return BadRequest();
+            }
+
+            var user = category.Users.SingleOrDefault(u => u.UserId == model.UserId);
+            if (user == null)
+            {
+                var categoryUser = new CategoryUser { CategoryId = category.Id, UserId = model.UserId };
+                model.CopyTo(categoryUser);
+                category.Users.Add(categoryUser);
+            }
+            else
+            {
+                model.CopyTo(user);
+            }
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
         // PUT: api/Categories/5
         [HttpPut("{id}")]
         [ProducesResponseType(200)]
@@ -230,6 +198,38 @@ namespace Lightest.Api.Controllers
             dbEntry.ParentId = category.ParentId;
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        // DELETE: api/Categories/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Category))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(category, currentUser))
+            {
+                return Forbid();
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
+
+            return Ok(category);
         }
 
         private bool CategoryExists(int id)

@@ -5,6 +5,9 @@ namespace Lightest.Data.Models.TaskModels
 {
     public class ArchiveUpload : IUpload
     {
+        [Key]
+        public int UploadId { get; set; }
+
         [Required]
         public byte[] File { get; set; }
 
@@ -29,9 +32,6 @@ namespace Lightest.Data.Models.TaskModels
         public int TaskId { get; set; }
 
         public bool TestingFinished { get; set; }
-
-        [Key]
-        public int UploadId { get; set; }
 
         [JsonIgnore]
         public virtual ApplicationUser User { get; set; }

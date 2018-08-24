@@ -22,6 +22,39 @@ namespace Lightest.Api.Controllers
             _accessService = accessService;
         }
 
+        // GET: api/Languages
+        [HttpGet]
+        [ProducesResponseType(200)]
+        public IEnumerable<Language> GetLanguages()
+        {
+            return _context.Languages;
+        }
+
+        // POST: api/Languages
+        [HttpPost]
+        [ProducesResponseType(201, Type = typeof(Language))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> PostLanguage([FromBody] Language language)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentUser = GetCurrentUser();
+
+            if (!_accessService.CheckWriteAccess(language, currentUser))
+            {
+                return Forbid();
+            }
+
+            _context.Languages.Add(language);
+            await _context.SaveChangesAsync();
+
+            return Ok(language.Id);
+        }
+
         // DELETE: api/Languages/5
         [HttpDelete("{id}")]
         [ProducesResponseType(200, Type = typeof(Language))]
@@ -60,39 +93,6 @@ namespace Lightest.Api.Controllers
             }
 
             return Ok(language);
-        }
-
-        // GET: api/Languages
-        [HttpGet]
-        [ProducesResponseType(200)]
-        public IEnumerable<Language> GetLanguages()
-        {
-            return _context.Languages;
-        }
-
-        // POST: api/Languages
-        [HttpPost]
-        [ProducesResponseType(201, Type = typeof(Language))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> PostLanguage([FromBody] Language language)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var currentUser = GetCurrentUser();
-
-            if (!_accessService.CheckWriteAccess(language, currentUser))
-            {
-                return Forbid();
-            }
-
-            _context.Languages.Add(language);
-            await _context.SaveChangesAsync();
-
-            return Ok(language.Id);
         }
 
         private ApplicationUser GetCurrentUser()

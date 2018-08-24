@@ -26,78 +26,17 @@ namespace Lightest.Api.Controllers
             _accessService = accessService;
         }
 
-        [HttpPost("{id}/users")]
-        [ProducesResponseType(200)]
+        // GET: api/Tasks
+        [HttpGet]
+        [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody] UserTask[] users)
+        public IActionResult GetTasks()
         {
-            var task = await _context.Tasks
-               .Include(t => t.Users)
-               .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            foreach (var user in users)
-            {
-                var existingUser = task.Users.SingleOrDefault(u => u.UserId == user.UserId);
-                if (existingUser == null)
-                {
-                    user.TaskId = id;
-                    task.Users.Add(user);
-                }
-                else
-                {
-                    if (existingUser.IsOwner)
-                    {
-                        continue;
-                    }
-                    //todo: add rights check
-                    existingUser.Deadline = user.Deadline;
-                    existingUser.CanRead = user.CanRead;
-                    existingUser.CanWrite = user.CanWrite;
-                }
-            }
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
-        // DELETE: api/Tasks/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTask([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var task = await _context.Tasks.FindAsync(id);
-            if (task == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
-
-            return Ok(task);
+            var user = GetCurrentUser();
+            var tasks = _context.Tasks
+                .AsNoTracking()
+                .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
+            return Ok(tasks);
         }
 
         // GET: api/Tasks/5
@@ -159,19 +98,6 @@ namespace Lightest.Api.Controllers
             return Ok(result);
         }
 
-        // GET: api/Tasks
-        [HttpGet]
-        [ProducesResponseType(typeof(TaskDefinition), 200)]
-        [ProducesResponseType(403)]
-        public IActionResult GetTasks()
-        {
-            var user = GetCurrentUser();
-            var tasks = _context.Tasks
-                .AsNoTracking()
-                .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
-            return Ok(tasks);
-        }
-
         [HttpGet("{id}/users")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -200,7 +126,15 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            return Ok(task.Users.Select(u => new { u.UserId, u.User.UserName, u.CanRead, u.CanWrite, u.CanChangeAccess, u.IsOwner }));
+            return Ok(task.Users.Select(u => new
+            {
+                u.UserId,
+                u.User.UserName,
+                u.CanRead,
+                u.CanWrite,
+                u.CanChangeAccess,
+                u.IsOwner
+            }));
         }
 
         // POST: api/Tasks
@@ -239,27 +173,17 @@ namespace Lightest.Api.Controllers
             return CreatedAtAction("GetTask", new { id = task.Id }, task);
         }
 
-        // PUT: api/Tasks/5
-        [HttpPut("{id}")]
+        [HttpPost("{id}/users")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
+        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody] UserTask[] users)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var task = await _context.Tasks
+               .Include(t => t.Users)
+               .SingleOrDefaultAsync(t => t.Id == id);
 
-            if (id != task.Id)
-            {
-                return BadRequest();
-            }
-
-            var dbEntry = _context.Tasks.Find(id);
-
-            if (dbEntry == null)
+            if (task == null)
             {
                 return NotFound();
             }
@@ -269,12 +193,26 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            dbEntry.CategoryId = task.CategoryId;
-            dbEntry.Examples = task.Examples;
-            dbEntry.Points = task.Points;
-            dbEntry.Public = dbEntry.Public;
-            dbEntry.CheckerId = task.CheckerId;
-
+            foreach (var user in users)
+            {
+                var existingUser = task.Users.SingleOrDefault(u => u.UserId == user.UserId);
+                if (existingUser == null)
+                {
+                    user.TaskId = id;
+                    task.Users.Add(user);
+                }
+                else
+                {
+                    if (existingUser.IsOwner)
+                    {
+                        continue;
+                    }
+                    //todo: add rights check
+                    existingUser.Deadline = user.Deadline;
+                    existingUser.CanRead = user.CanRead;
+                    existingUser.CanWrite = user.CanWrite;
+                }
+            }
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -343,6 +281,76 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        // PUT: api/Tasks/5
+        [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != task.Id)
+            {
+                return BadRequest();
+            }
+
+            var dbEntry = _context.Tasks.Find(id);
+
+            if (dbEntry == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            dbEntry.CategoryId = task.CategoryId;
+            dbEntry.Examples = task.Examples;
+            dbEntry.Points = task.Points;
+            dbEntry.Public = dbEntry.Public;
+            dbEntry.CheckerId = task.CheckerId;
+
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
+
+        // DELETE: api/Tasks/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteTask([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var task = await _context.Tasks.FindAsync(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            _context.Tasks.Remove(task);
+            await _context.SaveChangesAsync();
+
+            return Ok(task);
         }
 
         private ApplicationUser GetCurrentUser()

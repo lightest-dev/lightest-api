@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lightest.Api.ViewModels;
 using Lightest.Data;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class CheckersController : ControllerBase
     {
         private readonly RelationalDbContext _context;
@@ -20,25 +22,13 @@ namespace Lightest.Api.Controllers
             _context = context;
         }
 
-        // DELETE: api/Checkers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteChecker([FromRoute] int id)
+        // GET: api/Checkers
+        [HttpGet]
+        public IEnumerable<BasicCheckerViewModel> GetCheckers()
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var checker = await _context.Checkers.FindAsync(id);
-            if (checker == null)
-            {
-                return NotFound();
-            }
-
-            _context.Checkers.Remove(checker);
-            await _context.SaveChangesAsync();
-
-            return Ok(checker);
+            return _context.Checkers
+                .AsNoTracking()
+                .Select(c => new BasicCheckerViewModel { Id = c.Id, Name = c.Name });
         }
 
         // GET: api/Checkers/5
@@ -58,15 +48,6 @@ namespace Lightest.Api.Controllers
             }
 
             return Ok(checker);
-        }
-
-        // GET: api/Checkers
-        [HttpGet]
-        public IEnumerable<BasicCheckerViewModel> GetCheckers()
-        {
-            return _context.Checkers
-                .AsNoTracking()
-                .Select(c => new BasicCheckerViewModel { Id = c.Id, Name = c.Name });
         }
 
         // POST: api/Checkers
@@ -108,6 +89,27 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok();
+        }
+
+        // DELETE: api/Checkers/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteChecker([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var checker = await _context.Checkers.FindAsync(id);
+            if (checker == null)
+            {
+                return NotFound();
+            }
+
+            _context.Checkers.Remove(checker);
+            await _context.SaveChangesAsync();
+
+            return Ok(checker);
         }
 
         private bool CheckerExists(int id)

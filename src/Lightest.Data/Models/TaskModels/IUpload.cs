@@ -2,6 +2,8 @@
 {
     public interface IUpload
     {
+        int UploadId { get; set; }
+
         string Message { get; set; }
 
         double Points { get; set; }
@@ -9,8 +11,6 @@
         string Status { get; set; }
 
         bool TestingFinished { get; set; }
-
-        int UploadId { get; set; }
 
         ApplicationUser User { get; set; }
 

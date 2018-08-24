@@ -8,18 +8,18 @@ namespace Lightest.Data.Models
 {
     public class Checker
     {
+        [Key]
+        public int Id { get; set; }
+
+        [Required]
+        public string Name { get; set; }
+
         [Required]
         [Column(TypeName = "text")]
         public string Code { get; set; }
 
         [JsonIgnore]
         public bool Compiled { get; set; }
-
-        [Key]
-        public int Id { get; set; }
-
-        [Required]
-        public string Name { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<TaskDefinition> Tasks { get; set; }

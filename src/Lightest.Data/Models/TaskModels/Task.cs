@@ -6,8 +6,8 @@ namespace Lightest.Data.Models.TaskModels
 {
     public class TaskDefinition
     {
-        [JsonIgnore]
-        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [JsonIgnore]
         public virtual Category Category { get; set; }
@@ -28,12 +28,6 @@ namespace Lightest.Data.Models.TaskModels
 
         public string Examples { get; set; }
 
-        [Key]
-        public int Id { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<TaskLanguage> Languages { get; set; }
-
         [Required]
         public string Name { get; set; }
 
@@ -48,5 +42,11 @@ namespace Lightest.Data.Models.TaskModels
 
         [JsonIgnore]
         public virtual ICollection<UserTask> Users { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<TaskLanguage> Languages { get; set; }
     }
 }

@@ -22,39 +22,6 @@ namespace Lightest.Api.Controllers
             _accessService = accessService;
         }
 
-        // DELETE: api/Tests/5
-        [HttpDelete("{id}")]
-        [ProducesResponseType(200, Type = typeof(Test))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTest([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var test = await _context.Tests
-                            .Include(t => t.Task)
-                            .SingleOrDefaultAsync(t => t.Id == id);
-
-            if (test == null)
-            {
-                return NotFound();
-            }
-
-            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
-            _context.Tests.Remove(test);
-            await _context.SaveChangesAsync();
-
-            return Ok(test);
-        }
-
         // GET: api/Tests/5
         [HttpGet("{id}")]
         [ProducesResponseType(200)]
@@ -154,6 +121,39 @@ namespace Lightest.Api.Controllers
 
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        // DELETE: api/Tests/5
+        [HttpDelete("{id}")]
+        [ProducesResponseType(200, Type = typeof(Test))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> DeleteTest([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var test = await _context.Tests
+                            .Include(t => t.Task)
+                            .SingleOrDefaultAsync(t => t.Id == id);
+
+            if (test == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
+            _context.Tests.Remove(test);
+            await _context.SaveChangesAsync();
+
+            return Ok(test);
         }
 
         private ApplicationUser GetCurrentUser()

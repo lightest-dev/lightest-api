@@ -5,11 +5,11 @@ namespace Lightest.Data.Models.TaskModels
 {
     public class Test
     {
-        [JsonIgnore]
-        public bool Cached { get; set; }
-
         [Key]
         public int Id { get; set; }
+
+        [JsonIgnore]
+        public bool Cached { get; set; }
 
         [Required]
         public string Input { get; set; }
