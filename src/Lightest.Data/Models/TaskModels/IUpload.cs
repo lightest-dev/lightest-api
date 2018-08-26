@@ -15,5 +15,9 @@
         ApplicationUser User { get; set; }
 
         string UserId { get; set; }
+
+        TaskDefinition Task { get; set; }
+
+        int TaskId { get; set; }
     }
 }

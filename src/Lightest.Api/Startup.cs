@@ -67,7 +67,8 @@ namespace Lightest.Api
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
-            services.AddSingleton<ServerRepostitory>();
+            services.AddSingleton<IServerRepository, ServerRepository>();
+            services.AddSingleton<ITransferServiceFactory, TransferServiceFactory>();
             services.AddTransient<ITestingService, TestingService>();
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();

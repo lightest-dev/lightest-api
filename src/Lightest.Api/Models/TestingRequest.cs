@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Lightest.Api.ViewModels
+﻿namespace Lightest.Api.Models
 {
-    public class TestingRequestViewModel
+    public class TestingRequest
     {
         public int UploadId { get; set; }
 

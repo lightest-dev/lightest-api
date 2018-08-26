@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lightest.Api.ViewModels;
+using Lightest.Api.Models;
 using Lightest.Data;
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,13 +15,15 @@ namespace Lightest.Api.Services
     public class TestingService : ITestingService
     {
         private readonly RelationalDbContext _context;
-        private readonly ServerRepostitory _repostitory;
+        private readonly IServerRepository _repostitory;
         private readonly List<IUpload> _uploads;
+        private readonly ITransferServiceFactory _transferServiceFactory;
 
-        public TestingService(ServerRepostitory repostitory, RelationalDbContext context)
+        public TestingService(IServerRepository repostitory, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
         {
             _context = context;
             _repostitory = repostitory;
+            _transferServiceFactory = transferServiceFactory;
             _uploads = new List<IUpload>();
         }
 
@@ -31,11 +34,24 @@ namespace Lightest.Api.Services
                 return false;
             }
             bool result;
-            var transferService = _repostitory.GetFreeServer();
-            if (transferService == null)
+
+            var server = _repostitory.GetFreeServer();
+            if (server == null)
             {
                 return false;
             }
+
+            var transferService = _transferServiceFactory.Create(server.ServerAdress, 10000);
+
+            result = await CacheChecker(server, upload.Task.Checker, transferService);
+
+            if (!result)
+            {
+                result = AddToList(upload);
+                _repostitory.ReportFreeServer(server.ServerAdress);
+                return result;
+            }
+
             switch (upload)
             {
                 case CodeUpload code:
@@ -45,6 +61,7 @@ namespace Lightest.Api.Services
                 default:
                     throw new NotImplementedException();
             }
+
             if (result)
             {
                 upload.Status = "Testing";
@@ -53,11 +70,21 @@ namespace Lightest.Api.Services
             else
             {
                 result = AddToList(upload);
+                _repostitory.ReportFreeServer(server.ServerAdress);
             }
             return result;
         }
 
-        public async Task ReportCodeResult(CheckerResult result)
+        public async Task ReportResult(CheckerResult result)
+        {
+            if (result.Type == "Code")
+            {
+                await ReportCodeResult(result);
+            }
+            else throw new NotImplementedException();
+        }
+
+        private async Task ReportCodeResult(CheckerResult result)
         {
             var upload = await _context.CodeUploads.Include(u => u.Task).SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
             var totalTests = upload.Task.Tests.Count;
@@ -68,15 +95,6 @@ namespace Lightest.Api.Services
             var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
             _uploads.Remove(listUpload);
             await save;
-        }
-
-        public async Task ReportResult(CheckerResult result)
-        {
-            if (result.Type == "Code")
-            {
-                await ReportCodeResult(result);
-            }
-            else throw new NotImplementedException();
         }
 
         private bool AddToList(IUpload upload)
@@ -93,7 +111,7 @@ namespace Lightest.Api.Services
             upload.Status = "Queue";
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
-            var request = new TestingRequestViewModel
+            var request = new TestingRequest
             {
                 UploadId = upload.UploadId,
                 MemoryLimit = language.MemoryLimit,
@@ -124,6 +142,26 @@ namespace Lightest.Api.Services
             }
             await save;
             result = await transferService.SendFile($"code.{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
+            return result;
+        }
+
+        private async Task<bool> SendChecker(Checker checker, ITransferService transferService)
+        {
+            var result = await transferService.SendMessage(JsonConvert.SerializeObject(checker));
+            return result;
+        }
+
+        private async Task<bool> CacheChecker(TestingServer server, Checker checker, ITransferService transferService)
+        {
+            var result = true;
+            if (!server.CachedCheckerIds.Contains(checker.Id))
+            {
+                result = await SendChecker(checker, transferService);
+                if (result)
+                {
+                    server.CachedCheckerIds.Add(checker.Id);
+                }
+            }
             return result;
         }
     }
