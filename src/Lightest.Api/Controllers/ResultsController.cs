@@ -12,7 +12,7 @@ namespace Lightest.Api.Controllers
     [ApiController]
     public class ResultsController : ControllerBase
     {
-        private ITestingService _testingService;
+        private readonly ITestingService _testingService;
 
         public ResultsController(ITestingService testingService)
         {

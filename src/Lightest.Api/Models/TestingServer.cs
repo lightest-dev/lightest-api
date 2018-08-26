@@ -10,7 +10,7 @@ namespace Lightest.Api.Models
             CachedCheckerIds = new List<int>();
         }
 
-        public IPAddress ServerAdress { get; set; }
+        public IPAddress ServerAddress { get; set; }
 
         public List<int> CachedCheckerIds { get; }
 

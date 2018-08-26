@@ -2,7 +2,7 @@
 
 namespace Lightest.Api.Services.AccessServices
 {
-    public interface IAccessService<T>
+    public interface IAccessService<in T>
     {
         bool CheckAdminAccess(T category, ApplicationUser user);
 

@@ -15,14 +15,14 @@ namespace Lightest.Api.Services
     public class TestingService : ITestingService
     {
         private readonly RelationalDbContext _context;
-        private readonly IServerRepository _repostitory;
+        private readonly IServerRepository _repository;
         private readonly List<IUpload> _uploads;
         private readonly ITransferServiceFactory _transferServiceFactory;
 
-        public TestingService(IServerRepository repostitory, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
+        public TestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
         {
             _context = context;
-            _repostitory = repostitory;
+            _repository = repository;
             _transferServiceFactory = transferServiceFactory;
             _uploads = new List<IUpload>();
         }
@@ -33,22 +33,21 @@ namespace Lightest.Api.Services
             {
                 return false;
             }
-            bool result;
 
-            var server = _repostitory.GetFreeServer();
+            var server = _repository.GetFreeServer();
             if (server == null)
             {
                 return false;
             }
 
-            var transferService = _transferServiceFactory.Create(server.ServerAdress, 10000);
+            var transferService = _transferServiceFactory.Create(server.ServerAddress, 10000);
 
-            result = await CacheChecker(server, upload.Task.Checker, transferService);
+            var result = await CacheChecker(server, upload.Task.Checker, transferService);
 
             if (!result)
             {
                 result = AddToList(upload);
-                _repostitory.ReportFreeServer(server.ServerAdress);
+                _repository.ReportFreeServer(server.ServerAddress);
                 return result;
             }
 
@@ -70,7 +69,7 @@ namespace Lightest.Api.Services
             else
             {
                 result = AddToList(upload);
-                _repostitory.ReportFreeServer(server.ServerAdress);
+                _repository.ReportFreeServer(server.ServerAddress);
             }
             return result;
         }

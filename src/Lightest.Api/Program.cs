@@ -11,11 +11,11 @@ namespace Lightest.Api
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-.UseStartup<Startup>()
-.ConfigureAppConfiguration((context, config) =>
-{
-    config.AddJsonFile("dbsettings.json");
-});
+                .UseStartup<Startup>()
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("dbsettings.json");
+                });
         }
 
         public static void Main(string[] args)
@@ -23,7 +23,7 @@ namespace Lightest.Api
             var host = CreateWebHostBuilder(args).Build();
             if (args.Contains("--seed"))
             {
-                Seed.EnsureDataSeeded(host.Services);
+                host.Services.EnsureDataSeeded();
             }
             host.Run();
         }

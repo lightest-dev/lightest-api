@@ -92,13 +92,14 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            if (upload.TestingFinished)
+            if (!upload.TestingFinished)
             {
-                var result = new { upload.Status, upload.Message, upload.Points };
-                return Ok();
+                return BadRequest();
             }
 
-            return BadRequest();
+            var result = new { upload.Status, upload.Message, upload.Points };
+            return Ok(result);
+
         }
 
         [HttpPost("code")]
@@ -138,8 +139,8 @@ namespace Lightest.Api.Controllers
             _context.CodeUploads.Add(upload);
             await _context.SaveChangesAsync();
 
-            var succesful = await _testingService.BeginTesting(upload);
-            if (succesful)
+            var successful = await _testingService.BeginTesting(upload);
+            if (successful)
             {
                 return Ok(upload.UploadId);
             }
@@ -183,8 +184,8 @@ namespace Lightest.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            var succesful = await _testingService.BeginTesting(upload);
-            if (succesful)
+            var successful = await _testingService.BeginTesting(upload);
+            if (successful)
             {
                 return Ok(upload.UploadId);
             }
