@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lightest.Api.ViewModels;
 using Lightest.Data;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Lightest.Api.Services
 {
@@ -89,7 +92,17 @@ namespace Lightest.Api.Services
         {
             upload.Status = "Queue";
             var save = _context.SaveChangesAsync();
-            var result = await transferService.SendMessage($"code_upload:{upload.UploadId}");
+            var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
+            var request = new TestingRequestViewModel
+            {
+                UploadId = upload.UploadId,
+                MemoryLimit = language.MemoryLimit,
+                TimeLimit = language.TimeLimit,
+                Extension = upload.Language.Extension,
+                TestsCount = upload.Task.Tests.Count,
+                Type = "Code"
+            };
+            var result = await transferService.SendMessage(JsonConvert.SerializeObject(request));
             if (!result)
             {
                 return false;
@@ -107,6 +120,7 @@ namespace Lightest.Api.Services
                 {
                     return false;
                 }
+                i++;
             }
             await save;
             result = await transferService.SendFile($"code.{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
