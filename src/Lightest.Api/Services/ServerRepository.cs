@@ -22,7 +22,7 @@ namespace Lightest.Api.Services
 
         public void RemoveCachedCheckers(int checkerId)
         {
-            foreach(var server in _availableServers)
+            foreach (var server in _availableServers)
             {
                 server.CachedCheckerIds.Remove(checkerId);
             }

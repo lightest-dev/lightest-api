@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.Api.Services;
 using Lightest.Api.ViewModels;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -16,10 +17,12 @@ namespace Lightest.Api.Controllers
     public class CheckersController : ControllerBase
     {
         private readonly RelationalDbContext _context;
+        private readonly IServerRepository _serverRepository;
 
-        public CheckersController(RelationalDbContext context)
+        public CheckersController(RelationalDbContext context, IServerRepository serverRepository)
         {
             _context = context;
+            _serverRepository = serverRepository;
         }
 
         // GET: api/Checkers
@@ -88,6 +91,8 @@ namespace Lightest.Api.Controllers
 
             await _context.SaveChangesAsync();
 
+            _serverRepository.RemoveCachedCheckers(checker.Id);
+
             return Ok();
         }
 
@@ -108,6 +113,8 @@ namespace Lightest.Api.Controllers
 
             _context.Checkers.Remove(checker);
             await _context.SaveChangesAsync();
+
+            _serverRepository.RemoveCachedCheckers(id);
 
             return Ok(checker);
         }
