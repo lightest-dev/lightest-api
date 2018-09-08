@@ -2,13 +2,13 @@
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 
-namespace Lightest.Api.ViewModels
+namespace Lightest.Api.ResponseModels
 {
-    public class CompleteTaskViewModel
+    public class CompleteTask
     {
         public Category Category { get; set; }
 
-        public BasicCheckerViewModel Checker { get; set; }
+        public BasicNameViewModel Checker { get; set; }
 
         public string Description { get; set; }
 
@@ -16,7 +16,7 @@ namespace Lightest.Api.ViewModels
 
         public int Id { get; set; }
 
-        public IEnumerable<LanguageViewModel> Languages { get; set; }
+        public IEnumerable<BasicLanguage> Languages { get; set; }
 
         public string Name { get; set; }
 

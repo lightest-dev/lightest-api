@@ -5,6 +5,8 @@ using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,19 +14,23 @@ namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UploadsController : Controller
     {
         private readonly IAccessService<IUpload> _accessService;
         private readonly RelationalDbContext _context;
         private readonly ITestingService _testingService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UploadsController(ITestingService testingService,
             RelationalDbContext context,
-            IAccessService<IUpload> accessService)
+            IAccessService<IUpload> accessService,
+            UserManager<ApplicationUser> userManager)
         {
             _testingService = testingService;
             _context = context;
             _accessService = accessService;
+            _userManager = userManager;
         }
 
         [HttpGet("{type}/{id}/status")]
@@ -33,7 +39,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
             IUpload upload;
 
             if (type.ToLower() == "code")
@@ -67,7 +73,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
             IUpload upload;
 
             if (type.ToLower() == "code")
@@ -99,7 +105,6 @@ namespace Lightest.Api.Controllers
 
             var result = new { upload.Status, upload.Message, upload.Points };
             return Ok(result);
-
         }
 
         [HttpPost("code")]
@@ -108,7 +113,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> UploadCode([FromBody] CodeUpload upload)
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             var task = await _context.Tasks
                             .Include(t => t.Languages)
@@ -153,7 +158,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> UploadProject([FromBody] ArchiveUpload upload)
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             var task = await _context.Tasks
                 .Include(t => t.Languages)
@@ -192,10 +197,10 @@ namespace Lightest.Api.Controllers
             return BadRequest();
         }
 
-        private ApplicationUser GetCurrentUser()
+        private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = _context.Users.Find(id.Value);
+            var user = await _userManager.FindByIdAsync(id.Value);
             return user;
         }
     }

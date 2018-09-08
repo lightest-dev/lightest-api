@@ -5,17 +5,17 @@ namespace Lightest.Api.Services.AccessServices
 {
     public class TasksAccessService : IAccessService<TaskDefinition>
     {
-        public bool CheckAdminAccess(TaskDefinition category, ApplicationUser user)
+        public bool CheckAdminAccess(TaskDefinition task, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(TaskDefinition task, ApplicationUser user)
+        public bool CheckReadAccess(TaskDefinition task, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(TaskDefinition task, ApplicationUser user)
+        public bool CheckWriteAccess(TaskDefinition task, ApplicationUser requester)
         {
             return true;
         }

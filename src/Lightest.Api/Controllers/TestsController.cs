@@ -4,6 +4,8 @@ using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +13,19 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
+    [Authorize]
     public class TestsController : Controller
     {
         private readonly IAccessService<TaskDefinition> _accessService;
         private readonly RelationalDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TestsController(RelationalDbContext context, IAccessService<TaskDefinition> accessService)
+        public TestsController(RelationalDbContext context, IAccessService<TaskDefinition> accessService,
+            UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _accessService = accessService;
+            _userManager = userManager;
         }
 
         // GET: api/Tests/5
@@ -46,7 +52,7 @@ namespace Lightest.Api.Controllers
             }
 
             //user can only view test if he can edit it
-            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(test.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -73,7 +79,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -111,7 +117,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(dbEntry.Task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(dbEntry.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -145,7 +151,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(test.Task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(test.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -156,9 +162,11 @@ namespace Lightest.Api.Controllers
             return Ok(test);
         }
 
-        private ApplicationUser GetCurrentUser()
+        private async Task<ApplicationUser> GetCurrentUser()
         {
-            return null;
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
+            var user = await _userManager.FindByIdAsync(id.Value);
+            return user;
         }
 
         private bool TestExists(int id)

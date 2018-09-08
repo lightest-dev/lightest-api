@@ -5,17 +5,17 @@ namespace Lightest.Api.Services.AccessServices
 {
     public class UploadsAccessService : IAccessService<IUpload>
     {
-        public bool CheckAdminAccess(IUpload category, ApplicationUser user)
+        public bool CheckAdminAccess(IUpload upload, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(IUpload category, ApplicationUser user)
+        public bool CheckReadAccess(IUpload upload, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(IUpload category, ApplicationUser user)
+        public bool CheckWriteAccess(IUpload upload, ApplicationUser requester)
         {
             return true;
         }

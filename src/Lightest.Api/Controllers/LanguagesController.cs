@@ -5,21 +5,27 @@ using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
+    [Authorize]
     public class LanguagesController : Controller
     {
         private readonly IAccessService<Language> _accessService;
         private readonly RelationalDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public LanguagesController(RelationalDbContext context, IAccessService<Language> accessService)
+        public LanguagesController(RelationalDbContext context, IAccessService<Language> accessService,
+                    UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _accessService = accessService;
+            _userManager = userManager;
         }
 
         // GET: api/Languages
@@ -42,7 +48,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(language, currentUser))
             {
@@ -75,7 +81,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(language, currentUser))
             {
@@ -95,10 +101,10 @@ namespace Lightest.Api.Controllers
             return Ok(language);
         }
 
-        private ApplicationUser GetCurrentUser()
+        private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = _context.Users.Find(id.Value);
+            var user = await _userManager.FindByIdAsync(id.Value);
             return user;
         }
 

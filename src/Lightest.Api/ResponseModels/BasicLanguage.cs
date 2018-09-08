@@ -1,6 +1,6 @@
-﻿namespace Lightest.Api.ViewModels
+﻿namespace Lightest.Api.ResponseModels
 {
-    public class LanguageViewModel
+    public class BasicLanguage
     {
         public int Id { get; set; }
 

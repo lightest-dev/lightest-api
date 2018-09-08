@@ -3,12 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Extensions;
 using Lightest.Api.Services.AccessServices;
-using Lightest.Api.ViewModels;
+using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Lightest.Api.Models;
 
 namespace Lightest.Api.Controllers
 {
@@ -19,18 +21,21 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Group> _accessService;
         private readonly RelationalDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GroupsController(RelationalDbContext context, IAccessService<Group> accessService)
+        public GroupsController(RelationalDbContext context, IAccessService<Group> accessService,
+                   UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _accessService = accessService;
+            _userManager = userManager;
         }
 
         // GET: api/Groups
         [HttpGet]
-        public IEnumerable<Group> GetGroups()
+        public async Task<IEnumerable<Group>> GetGroups()
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
             //todo: check if admin and return all
             return _context.Groups
                 .AsNoTracking()
@@ -40,7 +45,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Groups/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteGroupViewModel))]
+        [ProducesResponseType(200, Type = typeof(CompleteGroup))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -64,20 +69,20 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (!_accessService.CheckReadAccess(group, user))
             {
                 return Forbid();
             }
 
-            var result = new CompleteGroupViewModel
+            var result = new CompleteGroup
             {
                 Id = group.Id,
                 Name = group.Name,
                 Parent = group.Parent,
                 SubGroups = group.SubGroups,
-                Users = group.Users.Select(u => new AccessRightsUserViewModel
+                Users = group.Users.Select(u => new AccessRightsUser
                 {
                     Id = u.User.Id,
                     UserName = u.User.UserName,
@@ -103,7 +108,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, user))
             {
@@ -120,7 +125,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromBody]AccessRightsViewModel user)
+        public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromBody]AccessRights user)
         {
             if (!ModelState.IsValid)
             {
@@ -139,7 +144,7 @@ namespace Lightest.Api.Controllers
                 return NotFound(nameof(group));
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, currentUser))
             {
@@ -158,7 +163,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<AccessRightsViewModel> users)
+        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<AccessRights> users)
         {
             var group = await _context.Groups.FindAsync(groupId);
             if (group == null)
@@ -166,7 +171,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            var currentUser = GetCurrentUser();
+            var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, currentUser))
             {
@@ -212,7 +217,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, user))
             {
@@ -244,7 +249,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, user))
             {
@@ -257,10 +262,10 @@ namespace Lightest.Api.Controllers
             return Ok(group);
         }
 
-        private ApplicationUser GetCurrentUser()
+        private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = _context.Users.Find(id.Value);
+            var user = await _userManager.FindByIdAsync(id.Value);
             return user;
         }
 

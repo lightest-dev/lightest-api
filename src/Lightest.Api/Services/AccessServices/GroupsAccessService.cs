@@ -4,17 +4,17 @@ namespace Lightest.Api.Services.AccessServices
 {
     public class GroupsAccessService : IAccessService<Group>
     {
-        public bool CheckAdminAccess(Group category, ApplicationUser user)
+        public bool CheckAdminAccess(Group group, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(Group category, ApplicationUser user)
+        public bool CheckReadAccess(Group group, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(Group category, ApplicationUser user)
+        public bool CheckWriteAccess(Group group, ApplicationUser requester)
         {
             return true;
         }

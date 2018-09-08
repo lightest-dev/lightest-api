@@ -5,17 +5,17 @@ namespace Lightest.Api.Services.AccessServices
 {
     public class LanguagesAccessService : IAccessService<Language>
     {
-        public bool CheckAdminAccess(Language category, ApplicationUser user)
+        public bool CheckAdminAccess(Language language, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(Language category, ApplicationUser user)
+        public bool CheckReadAccess(Language language, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(Language category, ApplicationUser user)
+        public bool CheckWriteAccess(Language language, ApplicationUser requester)
         {
             return true;
         }

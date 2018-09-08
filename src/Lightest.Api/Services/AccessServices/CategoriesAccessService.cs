@@ -4,17 +4,17 @@ namespace Lightest.Api.Services.AccessServices
 {
     public class CategoriesAccessService : IAccessService<Category>
     {
-        public bool CheckAdminAccess(Category category, ApplicationUser user)
+        public bool CheckAdminAccess(Category category, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(Category category, ApplicationUser user)
+        public bool CheckReadAccess(Category category, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(Category category, ApplicationUser user)
+        public bool CheckWriteAccess(Category category, ApplicationUser requester)
         {
             return true;
         }

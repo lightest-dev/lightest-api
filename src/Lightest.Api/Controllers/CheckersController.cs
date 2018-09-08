@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Services;
-using Lightest.Api.ViewModels;
+using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -27,11 +27,11 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Checkers
         [HttpGet]
-        public IEnumerable<BasicCheckerViewModel> GetCheckers()
+        public IEnumerable<BasicNameViewModel> GetCheckers()
         {
             return _context.Checkers
                 .AsNoTracking()
-                .Select(c => new BasicCheckerViewModel { Id = c.Id, Name = c.Name });
+                .Select(c => new BasicNameViewModel { Id = c.Id, Name = c.Name });
         }
 
         // GET: api/Checkers/5

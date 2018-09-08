@@ -4,10 +4,10 @@ namespace Lightest.Api.Services.AccessServices
 {
     public interface IAccessService<in T>
     {
-        bool CheckAdminAccess(T category, ApplicationUser user);
+        bool CheckAdminAccess(T requested, ApplicationUser requester);
 
-        bool CheckReadAccess(T category, ApplicationUser user);
+        bool CheckReadAccess(T requested, ApplicationUser requester);
 
-        bool CheckWriteAccess(T category, ApplicationUser user);
+        bool CheckWriteAccess(T requested, ApplicationUser requester);
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Lightest.Data.Models;
 
-namespace Lightest.Api.ViewModels
+namespace Lightest.Api.ResponseModels
 {
-    public class CompleteGroupViewModel
+    public class CompleteGroup
     {
         public int Id { get; set; }
 
@@ -13,6 +13,6 @@ namespace Lightest.Api.ViewModels
 
         public ICollection<Group> SubGroups { get; set; }
 
-        public IEnumerable<AccessRightsUserViewModel> Users { get; set; }
+        public IEnumerable<AccessRightsUser> Users { get; set; }
     }
 }

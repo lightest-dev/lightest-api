@@ -1,6 +1,6 @@
-﻿namespace Lightest.Api.ViewModels
+﻿namespace Lightest.Api.ResponseModels
 {
-    public class AccessRightsUserViewModel
+    public class AccessRightsUser
     {
         public bool CanChangeAccess { get; set; }
 

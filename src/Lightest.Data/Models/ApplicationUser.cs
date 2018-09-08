@@ -6,6 +6,10 @@ namespace Lightest.Data.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public string Name { get; set; }
+
+        public string Surname { get; set; }
+
         public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
 
         public virtual ICollection<CategoryUser> AvailableCategories { get; set; }

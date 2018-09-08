@@ -3,9 +3,9 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Newtonsoft.Json;
 
-namespace Lightest.Api.ViewModels
+namespace Lightest.Api.Models
 {
-    public class AccessRightsViewModel : IAccessRights
+    public class AccessRights : IAccessRights
     {
         [Required]
         public bool CanChangeAccess { get; set; }

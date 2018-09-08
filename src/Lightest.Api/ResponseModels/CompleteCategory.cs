@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Lightest.Data.Models;
 
-namespace Lightest.Api.ViewModels
+namespace Lightest.Api.ResponseModels
 {
-    public class CompleteCategoryViewModel
+    public class CompleteCategory
     {
         public int Id { get; set; }
 
@@ -13,8 +13,8 @@ namespace Lightest.Api.ViewModels
 
         public ICollection<Category> SubCategories { get; set; }
 
-        public IEnumerable<BasicTaskViewModel> Tasks { get; set; }
+        public IEnumerable<BasicNameViewModel> Tasks { get; set; }
 
-        public IEnumerable<AccessRightsUserViewModel> Users { get; set; }
+        public IEnumerable<AccessRightsUser> Users { get; set; }
     }
 }

@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Services.AccessServices;
-using Lightest.Api.ViewModels;
+using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,20 +20,23 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<TaskDefinition> _accessService;
         private readonly RelationalDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService)
+        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService,
+                    UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _accessService = accessService;
+            _userManager = userManager;
         }
 
         // GET: api/Tasks
         [HttpGet]
         [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
-        public IActionResult GetTasks()
+        public async Task<IActionResult> GetTasks()
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
             var tasks = _context.Tasks
                 .AsNoTracking()
                 .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
@@ -66,12 +70,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckReadAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
 
-            var result = new CompleteTaskViewModel
+            var result = new CompleteTask
             {
                 Id = task.Id,
                 Name = task.Name,
@@ -80,13 +84,13 @@ namespace Lightest.Api.Controllers
                 Examples = task.Examples,
                 Description = task.Description,
                 Category = task.Category,
-                Checker = new BasicCheckerViewModel
+                Checker = new BasicNameViewModel
                 {
                     Id = task.Checker.Id,
                     Name = task.Checker.Name
                 },
                 Tests = task.Tests,
-                Languages = task.Languages.Select(t => new LanguageViewModel
+                Languages = task.Languages.Select(t => new BasicLanguage
                 {
                     Id = t.LanguageId,
                     Name = t.Language.Name,
@@ -121,7 +125,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckReadAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -149,7 +153,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (user == null)
             {
@@ -188,7 +192,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -232,7 +236,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -265,7 +269,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -308,7 +312,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -342,7 +346,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -353,10 +357,10 @@ namespace Lightest.Api.Controllers
             return Ok(task);
         }
 
-        private ApplicationUser GetCurrentUser()
+        private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = _context.Users.Find(id.Value);
+            var user = await _userManager.FindByIdAsync(id.Value);
             return user;
         }
 
