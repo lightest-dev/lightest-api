@@ -11,11 +11,11 @@ namespace Lightest.IdentityServer
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
         {
             return WebHost.CreateDefaultBuilder(args)
-.UseStartup<Startup>()
-.ConfigureAppConfiguration((context, config) =>
-{
-    config.AddJsonFile("dbsettings.json");
-});
+                .UseStartup<Startup>()
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    config.AddJsonFile("dbsettings.json");
+                });
         }
 
         public static void Main(string[] args)

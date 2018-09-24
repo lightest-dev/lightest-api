@@ -110,15 +110,11 @@ namespace Lightest.IdentityServer
                         IdentityServerConstants.StandardScopes.Profile,
                         "api"
                     },
-                    AllowedGrantTypes = GrantTypes.Hybrid,
+                    AllowedGrantTypes = GrantTypes.Implicit,
                     AllowOfflineAccess = true,
                     AllowAccessTokensViaBrowser = true,
                     RedirectUris = links,
                     RequireConsent = false,
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
                     AccessTokenType = AccessTokenType.Jwt
                 }
             };

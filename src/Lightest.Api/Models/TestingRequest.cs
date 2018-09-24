@@ -8,7 +8,7 @@
 
         public int TimeLimit { get; set; }
 
-        public string Extension { get; set; }
+        public int CheckerId { get; set; }
 
         public string Type { get; set; }
 

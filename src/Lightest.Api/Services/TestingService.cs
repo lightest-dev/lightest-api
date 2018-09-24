@@ -115,7 +115,7 @@ namespace Lightest.Api.Services
                 UploadId = upload.UploadId,
                 MemoryLimit = language.MemoryLimit,
                 TimeLimit = language.TimeLimit,
-                Extension = upload.Language.Extension,
+                CheckerId = upload.Task.CheckerId,
                 TestsCount = upload.Task.Tests.Count,
                 Type = "Code"
             };
