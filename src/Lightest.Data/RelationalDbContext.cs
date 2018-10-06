@@ -27,6 +27,8 @@ namespace Lightest.Data
 
         public DbSet<Test> Tests { get; set; }
 
+        public DbSet<UserTask> UserTasks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             //todo: Configure ignore fields for user

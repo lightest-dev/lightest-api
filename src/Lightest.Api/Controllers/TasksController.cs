@@ -241,13 +241,12 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            task.Languages.Clear();
-
             foreach (var l in languages)
             {
                 l.TaskId = id;
-                task.Languages.Add(l);
             }
+
+            task.Languages = languages;
 
             await _context.SaveChangesAsync();
 

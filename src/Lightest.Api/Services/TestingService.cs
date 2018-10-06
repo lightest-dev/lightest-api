@@ -85,11 +85,26 @@ namespace Lightest.Api.Services
 
         private async Task ReportCodeResult(CheckerResult result)
         {
-            var upload = await _context.CodeUploads.Include(u => u.Task).SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
-            var totalTests = upload.Task.Tests.Count;
+            var upload = await _context.CodeUploads
+                .SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
+            var userTask = await _context.UserTasks
+                .SingleOrDefaultAsync(u => u.UserId == upload.UserId
+                && u.TaskId == upload.TaskId);
+            var totalTests = await _context.Tasks
+                .Where(t => t.Id == upload.TaskId)
+                .Select(t => t.Tests)
+                .CountAsync();
             upload.Points = (double)result.SuccessfulTests / totalTests;
             upload.Status = result.Status;
             upload.Message = result.Message;
+            if (userTask?.HighScore < upload.Points)
+            {
+                userTask.HighScore = upload.Points;
+                if (result.SuccessfulTests == totalTests)
+                {
+                    userTask.Completed = true;
+                }
+            }
             var save = _context.SaveChangesAsync();
             var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
             _uploads.Remove(listUpload);

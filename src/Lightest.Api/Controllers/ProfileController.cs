@@ -81,10 +81,12 @@ namespace Lightest.Api.Controllers
                 Surname = requestedUser.Surname,
                 Email = requestedUser.Email,
                 Login = requestedUser.UserName,
-                Tasks = requestedUser.Tasks.Select(t => new BasicNameViewModel
+                Tasks = requestedUser.Tasks.Select(t => new UserTaskViewModel
                 {
                     Id = t.Task.Id,
-                    Name = t.Task.Name
+                    Name = t.Task.Name,
+                    Completed = t.Completed,
+                    HighScore = t.HighScore
                 }),
                 Groups = requestedUser.Groups.Select(g => new BasicNameViewModel
                 {

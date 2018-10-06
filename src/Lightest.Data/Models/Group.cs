@@ -12,6 +12,8 @@ namespace Lightest.Data.Models
         [Required]
         public string Name { get; set; }
 
+        public bool Public { get; set; }
+
         [JsonIgnore]
         public virtual Group Parent { get; set; }
 
