@@ -18,6 +18,8 @@ namespace Lightest.Data.Models
 
         public int? ParentId { get; set; }
 
+        public bool Public { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Category> SubCategories { get; set; }
 

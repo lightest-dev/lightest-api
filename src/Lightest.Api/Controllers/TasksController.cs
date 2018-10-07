@@ -165,6 +165,16 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
+            if (task.Public)
+            {
+                var category = await _context.Categories
+                    .SingleOrDefaultAsync(c => c.Id == task.CategoryId);
+                if (!category.Public)
+                {
+                    return BadRequest(nameof(task.Public));
+                }
+            }
+
             task.Users = new List<UserTask>
             {
                 new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }

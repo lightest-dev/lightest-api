@@ -34,9 +34,41 @@ namespace Lightest.Api.Controllers
         // GET: api/Categories
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(Category))]
-        public IActionResult GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
-            return Ok(_context.Categories);
+            var user = await GetCurrentUser();
+            var categories = _context.Categories
+                .AsNoTracking()
+                .Include(c => c.Users)
+                .Where(c => (c.Public || c.Users.Select(u => u.UserId).Contains(user.Id))
+                && c.ParentId == null);
+            return Ok(categories);
+        }
+
+        [HttpGet("children/{id}")]
+        [ProducesResponseType(200, Type = typeof(CategoryChildrenViewModel))]
+        public async Task<IActionResult> GetChildren(int id)
+        {
+            var user = await GetCurrentUser();
+            var categories = _context.Categories
+                .AsNoTracking()
+                .Include(c => c.Users)
+                .Where(c => (c.Public || c.Users.Select(u => u.UserId).Contains(user.Id))
+                    && c.ParentId == id);
+            var tasks = _context.Tasks
+                .Include(t => t.Users)
+                .Where(t => t.CategoryId == id && 
+                    (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
+            var result = new CategoryChildrenViewModel
+            {
+                SubCategories = categories,
+                Tasks = tasks.Select(t => new BasicNameViewModel
+                {
+                    Name = t.Name,
+                    Id = t.Id
+                })
+            };
+            return Ok(result);
         }
 
         // GET: api/Categories/5
@@ -114,6 +146,17 @@ namespace Lightest.Api.Controllers
             if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
+            }
+
+            if (category.Public && category.ParentId != null)
+            {
+                var parent = await _context.Categories
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(t => t.Id == category.ParentId);
+                if (parent == null || !parent.Public)
+                {
+                    return BadRequest(nameof(category.ParentId));
+                }
             }
 
             _context.Categories.Add(category);
