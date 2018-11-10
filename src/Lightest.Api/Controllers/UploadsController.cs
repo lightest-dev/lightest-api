@@ -20,17 +20,14 @@ namespace Lightest.Api.Controllers
         private readonly IAccessService<IUpload> _accessService;
         private readonly RelationalDbContext _context;
         private readonly ITestingService _testingService;
-        private readonly UserManager<ApplicationUser> _userManager;
 
         public UploadsController(ITestingService testingService,
             RelationalDbContext context,
-            IAccessService<IUpload> accessService,
-            UserManager<ApplicationUser> userManager)
+            IAccessService<IUpload> accessService)
         {
             _testingService = testingService;
             _context = context;
             _accessService = accessService;
-            _userManager = userManager;
         }
 
         [HttpGet("{type}/{id}/status")]
@@ -200,7 +197,7 @@ namespace Lightest.Api.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _userManager.FindByIdAsync(id.Value);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
             return user;
         }
     }

@@ -21,14 +21,11 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Group> _accessService;
         private readonly RelationalDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GroupsController(RelationalDbContext context, IAccessService<Group> accessService,
-                   UserManager<ApplicationUser> userManager)
+        public GroupsController(RelationalDbContext context, IAccessService<Group> accessService)
         {
             _context = context;
             _accessService = accessService;
-            _userManager = userManager;
         }
 
         // GET: api/Groups
@@ -265,7 +262,7 @@ namespace Lightest.Api.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _userManager.FindByIdAsync(id.Value);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
             return user;
         }
 

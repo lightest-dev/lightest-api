@@ -64,9 +64,6 @@ namespace Lightest.Api
                     options.Authority = auth;
                     options.RequireHttpsMetadata = false;
                 });
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<RelationalDbContext>()
-                .AddDefaultTokenProviders();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });

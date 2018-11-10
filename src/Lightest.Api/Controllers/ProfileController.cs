@@ -19,14 +19,12 @@ namespace Lightest.Api.Controllers
     {
         private readonly RelationalDbContext _context;
 
-        private readonly UserManager<ApplicationUser> _userManager;
 
         private readonly IAccessService<ApplicationUser> _accessService;
 
-        public ProfileController(RelationalDbContext context, UserManager<ApplicationUser> userManager,
+        public ProfileController(RelationalDbContext context,
             IAccessService<ApplicationUser> accessService)
         {
-            _userManager = userManager;
             _context = context;
             _accessService = accessService;
         }
@@ -41,7 +39,7 @@ namespace Lightest.Api.Controllers
             {
                 return Forbid();
             }
-            return Ok(_userManager.Users);
+            return Ok(_context.Users);
         }
 
         [HttpGet("{id}")]
@@ -115,7 +113,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            var requestedUser = await _userManager.FindByIdAsync(id);
+            var requestedUser = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             if (requestedUser == null)
             {
@@ -129,12 +127,7 @@ namespace Lightest.Api.Controllers
 
             requestedUser.Name = personalData.Name;
             requestedUser.Surname = personalData.Surname;
-            var result = await _userManager.UpdateAsync(requestedUser);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
+            var result = await _context.SaveChangesAsync();
 
             return Ok();
         }
@@ -142,7 +135,7 @@ namespace Lightest.Api.Controllers
         private async Task<ApplicationUser> GetCurrentUser()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _userManager.FindByIdAsync(id.Value);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
             return user;
         }
     }
