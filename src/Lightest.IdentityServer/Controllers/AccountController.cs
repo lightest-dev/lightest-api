@@ -152,7 +152,7 @@ namespace Lightest.IdentityServer.Controllers
             var userInfo = new UserInfoViewModel
             {
                 Id = user.Id,
-                IdAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
+                IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
                 IsTeacher = await _userManager.IsInRoleAsync(user, "Teacher")
             };
             return userInfo;

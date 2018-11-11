@@ -6,6 +6,6 @@
 
         public bool IsTeacher { get; set; }
 
-        public bool IdAdmin { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }
