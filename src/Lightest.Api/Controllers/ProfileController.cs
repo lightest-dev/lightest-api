@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
@@ -25,7 +26,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(ApplicationUser))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileViewModel>))]
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetUsers()
         {
@@ -34,7 +35,13 @@ namespace Lightest.Api.Controllers
             {
                 return Forbid();
             }
-            return Ok(_context.Users);
+            return Ok(_context.Users.Select(u => new ProfileViewModel
+            {
+                Id = u.Id,
+                Email = u.Email,
+                Name = u.Name,
+                Surname = u.Surname
+            }));
         }
 
         [HttpGet("{id}")]
