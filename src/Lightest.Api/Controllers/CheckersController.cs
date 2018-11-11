@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.Services;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.Services;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -14,14 +14,12 @@ namespace Lightest.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CheckersController : ControllerBase
+    public class CheckersController : BaseUserController
     {
-        private readonly RelationalDbContext _context;
         private readonly IServerRepository _serverRepository;
 
-        public CheckersController(RelationalDbContext context, IServerRepository serverRepository)
+        public CheckersController(RelationalDbContext context, IServerRepository serverRepository) : base(context)
         {
-            _context = context;
             _serverRepository = serverRepository;
         }
 

@@ -2,29 +2,26 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Extensions;
-using Lightest.Api.Services.AccessServices;
+using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Lightest.Api.Models;
 
 namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    public class CategoriesController : Controller
+    public class CategoriesController : BaseUserController
     {
         private readonly IAccessService<Category> _accessService;
-        private readonly RelationalDbContext _context;
 
-        public CategoriesController(RelationalDbContext context, IAccessService<Category> accessService)
+        public CategoriesController(RelationalDbContext context, IAccessService<Category> accessService) : base(context)
         {
-            _context = context;
             _accessService = accessService;
         }
 
@@ -54,7 +51,7 @@ namespace Lightest.Api.Controllers
                     && c.ParentId == id);
             var tasks = _context.Tasks
                 .Include(t => t.Users)
-                .Where(t => t.CategoryId == id && 
+                .Where(t => t.CategoryId == id &&
                     (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
             var result = new CategoryChildrenViewModel
             {
@@ -275,18 +272,6 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(category);
-        }
-
-        private bool CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.Id == id);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
-            return user;
         }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.Services.AccessServices;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,14 +15,13 @@ namespace Lightest.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    public class TasksController : Controller
+    [ApiController]
+    public class TasksController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;
-        private readonly RelationalDbContext _context;
 
-        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService)
+        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService) : base(context)
         {
-            _context = context;
             _accessService = accessService;
         }
 
@@ -361,18 +359,6 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(task);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
-            return user;
-        }
-
-        private bool TaskExists(int id)
-        {
-            return _context.Tasks.Any(e => e.Id == id);
         }
     }
 }

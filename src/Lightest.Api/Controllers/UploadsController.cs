@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 using Lightest.Api.Services;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
-using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,18 +13,16 @@ namespace Lightest.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class UploadsController : Controller
+    public class UploadsController : BaseUserController
     {
         private readonly IAccessService<IUpload> _accessService;
-        private readonly RelationalDbContext _context;
         private readonly ITestingService _testingService;
 
         public UploadsController(ITestingService testingService,
             RelationalDbContext context,
-            IAccessService<IUpload> accessService)
+            IAccessService<IUpload> accessService) : base(context)
         {
             _testingService = testingService;
-            _context = context;
             _accessService = accessService;
         }
 
@@ -129,7 +125,7 @@ namespace Lightest.Api.Controllers
             }
 
             var language = await _context.Languages.SingleOrDefaultAsync(l => l.Id == upload.LanguageId);
-            if (language == null || !task.Languages.Any(l => l.LanguageId == upload.LanguageId))
+            if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
             {
                 return BadRequest();
             }
@@ -174,7 +170,7 @@ namespace Lightest.Api.Controllers
             }
 
             var language = await _context.Languages.SingleOrDefaultAsync(l => l.Id == upload.LanguageId);
-            if (language == null || !task.Languages.Any(l => l.LanguageId == upload.LanguageId))
+            if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
             {
                 return BadRequest("language");
             }
@@ -192,13 +188,6 @@ namespace Lightest.Api.Controllers
                 return Ok(upload.UploadId);
             }
             return BadRequest();
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
-            return user;
         }
     }
 }

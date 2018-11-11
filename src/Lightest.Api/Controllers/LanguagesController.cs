@@ -1,28 +1,23 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
-using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    public class LanguagesController : Controller
+    [ApiController]
+    public class LanguagesController : BaseUserController
     {
         private readonly IAccessService<Language> _accessService;
-        private readonly RelationalDbContext _context;
 
-        public LanguagesController(RelationalDbContext context, IAccessService<Language> accessService)
+        public LanguagesController(RelationalDbContext context, IAccessService<Language> accessService) : base(context)
         {
-            _context = context;
             _accessService = accessService;
         }
 
@@ -97,18 +92,6 @@ namespace Lightest.Api.Controllers
             }
 
             return Ok(language);
-        }
-
-        private async Task<ApplicationUser> GetCurrentUser()
-        {
-            var id = User.Claims.SingleOrDefault(c => c.Type == "sub");
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id.Value);
-            return user;
-        }
-
-        private bool LanguageExists(int id)
-        {
-            return _context.Languages.Any(e => e.Id == id);
         }
     }
 }

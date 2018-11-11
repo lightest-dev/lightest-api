@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,7 +22,7 @@ namespace Lightest.IdentityServer
             var host = CreateWebHostBuilder(args).Build();
             if (args.Contains("--seed"))
             {
-                Seed.EnsureDataSeeded(host.Services);
+                host.Services.EnsureDataSeeded();
             }
             host.Run();
         }

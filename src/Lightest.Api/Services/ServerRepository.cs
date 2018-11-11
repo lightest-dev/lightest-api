@@ -30,7 +30,7 @@ namespace Lightest.Api.Services
 
         public void ReportFreeServer(IPAddress ip)
         {
-            var server = _availableServers.Find(s => s.ServerAddress == ip);
+            var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
             if (server == null)
             {
                 server = new TestingServer

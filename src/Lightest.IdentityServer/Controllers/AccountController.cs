@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
-using IdentityServer4.Stores;
 using Lightest.Data.Models;
 using Lightest.IdentityServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,27 +18,24 @@ namespace Lightest.IdentityServer.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly IClientStore _clientStore;
-        private readonly IIdentityServerInteractionService _interaction;
         private readonly ILogger _logger;
-        private readonly IPersistedGrantService _persistedGrantService;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IPersistedGrantService _persistedGrantService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             IPersistedGrantService persistedGrantService,
             SignInManager<ApplicationUser> signInManager,
-            ILoggerFactory loggerFactory,
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore)
+            RoleManager<IdentityRole> roleManager,
+            ILoggerFactory loggerFactory)
         {
             _userManager = userManager;
-            _persistedGrantService = persistedGrantService;
             _signInManager = signInManager;
+            _roleManager = roleManager;
+            _persistedGrantService = persistedGrantService;
             _logger = loggerFactory.CreateLogger<AccountController>();
-            _interaction = interaction;
-            _clientStore = clientStore;
         }
 
         [HttpPost]
@@ -53,31 +48,28 @@ namespace Lightest.IdentityServer.Controllers
                 return BadRequest();
             }
 
-            if (ModelState.IsValid)
+            // This doesn't count login failures towards account lockout
+            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
+            if (result.Succeeded)
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return Ok();
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    throw new NotImplementedException();
-                }
-                if (result.IsLockedOut)
-                {
-                    throw new NotImplementedException();
-                }
-                else
-                {
-                    return BadRequest();
-                }
+                var response = await GenerateUserInfo(model.Login);
+                return Ok(response);
+            }
+            if (result.RequiresTwoFactor)
+            {
+                throw new NotImplementedException();
+            }
+            if (result.IsLockedOut)
+            {
+                throw new NotImplementedException();
+            }
+            else
+            {
+                return BadRequest();
             }
 
             // If we got this far, something failed, redisplay form
-            return BadRequest();
         }
 
         [HttpPost]
@@ -85,7 +77,6 @@ namespace Lightest.IdentityServer.Controllers
         [Route("Logout")]
         public async Task<IActionResult> Logout([FromBody]string clientName)
         {
-            var idp = User?.FindFirst(JwtClaimTypes.IdentityProvider)?.Value;
             var subjectId = HttpContext.User.Identity.GetSubjectId();
 
             // delete authentication cookie
@@ -115,7 +106,56 @@ namespace Lightest.IdentityServer.Controllers
                 Email = model.Email
             };
             var result = await _userManager.CreateAsync(user, model.Password);
-            return Ok();
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("Role")]
+        public async Task<IActionResult> AddToRole([FromBody] AddToRoleViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if (model.Role != "Admin" && model.Role != "Teacher")
+            {
+                return BadRequest(nameof(model.Role));
+            }
+
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (user == null)
+            {
+                return BadRequest(nameof(model.UserId));
+            }
+
+            var result = await _userManager.AddToRoleAsync(user, model.Role);
+
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        private async Task<UserInfoViewModel> GenerateUserInfo(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            var userInfo = new UserInfoViewModel
+            {
+                Id = user.Id,
+                IdAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
+                IsTeacher = await _userManager.IsInRoleAsync(user, "Teacher")
+            };
+            return userInfo;
         }
     }
 }
