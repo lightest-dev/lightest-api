@@ -20,7 +20,8 @@ namespace Lightest.IdentityServer.Services
         {
             var sub = context.Subject.GetSubjectId();
             var user = await _userManager.FindByIdAsync(sub);
-            context.IssuedClaims.Add(new Claim("UserName", user.UserName));
+            context.IssuedClaims.Add(new Claim("Admin", (await _userManager.IsInRoleAsync(user, "Admin")).ToString()));
+            context.IssuedClaims.Add(new Claim("Teacher", (await _userManager.IsInRoleAsync(user, "Teacher")).ToString()));
         }
 
         public System.Threading.Tasks.Task IsActiveAsync(IsActiveContext context)

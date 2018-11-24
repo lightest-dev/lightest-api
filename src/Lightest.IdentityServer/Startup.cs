@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Lightest.Data;
@@ -75,7 +76,7 @@ namespace Lightest.IdentityServer
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
-            services.AddIdentityServer()
+            services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
                 .AddAspNetIdentity<ApplicationUser>()

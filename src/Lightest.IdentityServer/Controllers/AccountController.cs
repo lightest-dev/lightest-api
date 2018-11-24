@@ -53,8 +53,7 @@ namespace Lightest.IdentityServer.Controllers
             var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
-                var response = await GenerateUserInfo(model.Login);
-                return Ok(response);
+                return Ok();
             }
             if (result.RequiresTwoFactor)
             {
@@ -144,18 +143,6 @@ namespace Lightest.IdentityServer.Controllers
             }
 
             return BadRequest();
-        }
-
-        private async Task<UserInfoViewModel> GenerateUserInfo(string username)
-        {
-            var user = await _userManager.FindByNameAsync(username);
-            var userInfo = new UserInfoViewModel
-            {
-                Id = user.Id,
-                IsAdmin = await _userManager.IsInRoleAsync(user, "Admin"),
-                IsTeacher = await _userManager.IsInRoleAsync(user, "Teacher")
-            };
-            return userInfo;
         }
     }
 }
