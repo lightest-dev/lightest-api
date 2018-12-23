@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/lightest-dev/lightest-api.svg?branch=master)](https://travis-ci.com/lightest-dev/lightest-api)
+
 # Creating database locally with ef
 Create file `dbsettings.json` with database config. File strucute:
 ```{
