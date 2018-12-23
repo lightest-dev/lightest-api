@@ -12,7 +12,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class CheckersController : BaseUserController
     {
@@ -36,11 +35,6 @@ namespace Lightest.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetChecker([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var checker = await _context.Checkers.FindAsync(id);
 
             if (checker == null)
@@ -55,11 +49,6 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> PostChecker([FromBody] Checker checker)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             _context.Checkers.Add(checker);
             await _context.SaveChangesAsync();
 
@@ -70,11 +59,6 @@ namespace Lightest.Api.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutChecker([FromRoute] int id, [FromBody] Checker checker)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != checker.Id)
             {
                 return BadRequest();
@@ -98,11 +82,6 @@ namespace Lightest.Api.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteChecker([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var checker = await _context.Checkers.FindAsync(id);
             if (checker == null)
             {

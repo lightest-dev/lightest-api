@@ -11,7 +11,6 @@ namespace Lightest.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    [ApiController]
     public class LanguagesController : BaseUserController
     {
         private readonly IAccessService<Language> _accessService;
@@ -36,11 +35,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostLanguage([FromBody] Language language)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(language, currentUser))
@@ -63,11 +57,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(409)]
         public async Task<IActionResult> DeleteLanguage([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var language = await _context.Languages.FindAsync(id);
             if (language == null)
             {

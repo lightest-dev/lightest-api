@@ -16,7 +16,6 @@ namespace Lightest.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    [ApiController]
     public class GroupsController : BaseUserController
     {
         private readonly IAccessService<Group> _accessService;
@@ -46,11 +45,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetGroup([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var group = await _context.Groups
                 .AsNoTracking()
                 .Include(g => g.SubGroups)
@@ -98,12 +92,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await GetCurrentUser();
+             var user = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, user))
             {
@@ -122,11 +111,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromBody]AccessRights user)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (!UserExists(user.UserId))
             {
                 return NotFound(nameof(user));
@@ -195,11 +179,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group group)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != group.Id)
             {
                 return BadRequest();
@@ -233,11 +212,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteGroup([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var group = await _context.Groups.FindAsync(id);
             if (group == null)
             {

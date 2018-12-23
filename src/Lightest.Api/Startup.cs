@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+[assembly: ApiController]
 namespace Lightest.Api
 {
     public class Startup
@@ -40,6 +41,7 @@ namespace Lightest.Api
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lightest API V1");
+                c.RoutePrefix = string.Empty;
             });
         }
 
@@ -47,7 +49,7 @@ namespace Lightest.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<RelationalDbContext>(options =>
             {

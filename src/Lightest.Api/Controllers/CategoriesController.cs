@@ -73,11 +73,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetCategory([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var category = await _context.Categories
                 .AsNoTracking()
                 .Include(c => c.SubCategories)
@@ -130,11 +125,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var currentUser = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(category, currentUser))
@@ -212,11 +202,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutCategory([FromRoute] int id, [FromBody] Category category)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != category.Id)
             {
                 return BadRequest();
@@ -250,11 +235,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteCategory([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
             {

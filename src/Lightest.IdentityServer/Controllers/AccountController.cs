@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using Lightest.Data.Models;
@@ -43,11 +42,6 @@ namespace Lightest.IdentityServer.Controllers
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody]LogInViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
             var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
@@ -95,10 +89,6 @@ namespace Lightest.IdentityServer.Controllers
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var user = new ApplicationUser
             {
                 UserName = model.UserName,
@@ -118,11 +108,6 @@ namespace Lightest.IdentityServer.Controllers
         [Route("Role")]
         public async Task<IActionResult> AddToRole([FromBody] AddToRoleViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             if (model.Role != "Admin" && model.Role != "Teacher")
             {
                 return BadRequest(nameof(model.Role));

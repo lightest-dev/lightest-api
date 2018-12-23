@@ -15,7 +15,6 @@ namespace Lightest.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    [ApiController]
     public class TasksController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;
@@ -46,11 +45,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetTask([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var task = await _context.Tasks
                 .AsNoTracking()
                 .Include(t => t.Tests)
@@ -104,11 +98,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetUsers([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var task = await _context.Tasks
                 .AsNoTracking()
                 .Include(t => t.Users)
@@ -143,11 +132,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostTask([FromBody] TaskDefinition task)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = await GetCurrentUser();
 
             if (user == null)
@@ -299,11 +283,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != task.Id)
             {
                 return BadRequest();
@@ -339,11 +318,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteTask([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var task = await _context.Tasks.FindAsync(id);
             if (task == null)
             {

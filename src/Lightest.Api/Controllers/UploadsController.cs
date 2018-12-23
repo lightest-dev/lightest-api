@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class UploadsController : BaseUserController
     {

@@ -11,7 +11,6 @@ namespace Lightest.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    [ApiController]
     public class TestsController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;
@@ -29,11 +28,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetTest([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var test = await _context.Tests
                 .AsNoTracking()
                 .Include(t => t.Task)
@@ -60,11 +54,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostTest([FromBody] Test test)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var task = await _context.Tasks.FindAsync(test.Id);
 
             if (task == null)
@@ -91,11 +80,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutTest([FromRoute] int id, [FromBody] Test test)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != test.Id)
             {
                 return BadRequest();
@@ -130,11 +114,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteTest([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var test = await _context.Tests
                             .Include(t => t.Task)
                             .SingleOrDefaultAsync(t => t.Id == id);

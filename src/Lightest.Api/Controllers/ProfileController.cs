@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Lightest.Api.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     [Authorize]
     public class ProfileController : BaseUserController
     {
@@ -51,11 +50,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetUser([FromRoute] string id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var currentUser = await GetCurrentUser();
 
             var requestedUser = await _context.Users
@@ -103,11 +97,6 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<IActionResult> PutUser([FromRoute] string id, [FromBody]PersonalDataRequest personalData)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             if (id != personalData.UserId)
             {
                 return BadRequest();
