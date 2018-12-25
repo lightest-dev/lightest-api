@@ -11,7 +11,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Produces("application/json")]
+    [Route("[controller]")]
     [Authorize]
     public class CheckersController : BaseUserController
     {

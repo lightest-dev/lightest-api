@@ -8,7 +8,7 @@ namespace Lightest.Api.Controllers
     /// <summary>
     /// Use to report testing results to API.
     /// </summary>
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ResultsController : ControllerBase
     {
         private readonly ITestingService _testingService;

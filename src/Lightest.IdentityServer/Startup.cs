@@ -56,12 +56,7 @@ namespace Lightest.IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseHsts();
-            }
             app.UseIdentityServer();
-            app.UseHttpsRedirection();
             app.UseMvc();
         }
 

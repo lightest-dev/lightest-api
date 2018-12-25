@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class LanguagesController : BaseUserController
     {

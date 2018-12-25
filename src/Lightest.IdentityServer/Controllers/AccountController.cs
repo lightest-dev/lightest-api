@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace Lightest.IdentityServer.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class AccountController : Controller
     {
@@ -39,7 +39,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("Login")]
+        [Route("login")]
         public async Task<IActionResult> Login([FromBody]LogInViewModel model)
         {
             // This doesn't count login failures towards account lockout
@@ -67,7 +67,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("Logout")]
+        [Route("logout")]
         public async Task<IActionResult> Logout([FromBody]string clientName)
         {
             var subjectId = HttpContext.User.Identity.GetSubjectId();
@@ -86,7 +86,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("Register")]
+        [Route("register")]
         public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
         {
             var user = new ApplicationUser
@@ -105,7 +105,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        [Route("Role")]
+        [Route("role")]
         public async Task<IActionResult> AddToRole([FromBody] AddToRoleViewModel model)
         {
             if (model.Role != "Admin" && model.Role != "Teacher")

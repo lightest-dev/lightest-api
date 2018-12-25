@@ -20,8 +20,7 @@ namespace Lightest.Api
                     //listen to localhost only, reverse proxy is used for outside comunication
                     options.ListenLocalhost(5100, listenOptions =>
                     {
-                        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
-                        listenOptions.UseHttps("localcert.pfx");
+                        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
                     });
                 });
         }
