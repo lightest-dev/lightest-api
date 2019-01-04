@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lightest.TestingService.Models;
 
 namespace Lightest.TestingService.Interfaces
 {
@@ -7,9 +8,9 @@ namespace Lightest.TestingService.Interfaces
     /// </summary>
     public interface ITransferService
     {
-        Task<bool> SendFile(string path);
+        Task<bool> SendFile(string path, FileRequestType fileType);
 
-        Task<bool> SendFile(string filename, byte[] data);
+        Task<bool> SendFile(string filename, FileRequestType fileType, byte[] data);
 
         Task<bool> SendMessage(string message);
     }

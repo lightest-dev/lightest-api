@@ -4,6 +4,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Lightest.TestingService.Interfaces;
+using Lightest.TestingService.Models;
 
 namespace Lightest.TestingService.Services
 {
@@ -16,13 +17,18 @@ namespace Lightest.TestingService.Services
             _endpoint = new IPEndPoint(ip, port);
         }
 
-        public async Task<bool> SendFile(string path)
+        public async Task<bool> SendFile(string path, FileRequestType fileType)
         {
             if (!File.Exists(path))
             {
                 return false;
             }
             var name = Path.GetFileName(path);
+            var fileRequest = new FileRequest
+            {
+                Filename = name,
+                RequestType = fileType
+            };
             var result = await SendMessage($"name:{name}");
             if (!result)
             {
@@ -50,7 +56,7 @@ namespace Lightest.TestingService.Services
             return true;
         }
 
-        public async Task<bool> SendFile(string filename, byte[] data)
+        public async Task<bool> SendFile(string filename, FileRequestType fileType, byte[] data)
         {
             var result = await SendMessage($"name:{filename}");
             if (!result)

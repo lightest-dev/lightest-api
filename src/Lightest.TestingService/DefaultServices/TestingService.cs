@@ -123,9 +123,16 @@ namespace Lightest.TestingService.Services
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
         {
+            //todo: check all messages and their order
             upload.Status = "Queue";
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
+            var cleanRequest = new FileRequest
+            {
+                Filename = "",
+                RequestType = FileRequestType.TestCleanup
+            };
+            var result = await transferService.SendMessage(JsonConvert.SerializeObject(cleanRequest));
             var request = new TestingRequest
             {
                 UploadId = upload.UploadId,
@@ -135,20 +142,21 @@ namespace Lightest.TestingService.Services
                 TestsCount = upload.Task.Tests.Count,
                 Type = "Code"
             };
-            var result = await transferService.SendMessage(JsonConvert.SerializeObject(request));
+            result = await transferService.SendMessage(JsonConvert.SerializeObject(request));
             if (!result)
             {
                 return false;
             }
             var i = 0;
+            
             foreach (var test in upload.Task.Tests)
             {
-                result = await transferService.SendFile($"{i}.in", Encoding.UTF8.GetBytes(test.Input));
+                result = await transferService.SendFile($"{i}.in", FileRequestType.File, Encoding.UTF8.GetBytes(test.Input));
                 if (!result)
                 {
                     return false;
                 }
-                result = await transferService.SendFile($"{i}.out", Encoding.UTF8.GetBytes(test.Output));
+                result = await transferService.SendFile($"{i}.out", FileRequestType.File, Encoding.UTF8.GetBytes(test.Output));
                 if (!result)
                 {
                     return false;
@@ -156,13 +164,18 @@ namespace Lightest.TestingService.Services
                 i++;
             }
             await save;
-            result = await transferService.SendFile($"code.{upload.Language.Extension}", Encoding.UTF8.GetBytes(upload.Code));
+            result = await transferService.SendFile($"code.{upload.Language.Extension}", FileRequestType.Upload, Encoding.UTF8.GetBytes(upload.Code));
             return result;
         }
 
         private async Task<bool> SendChecker(Checker checker, ITransferService transferService)
         {
-            var result = await transferService.SendMessage(JsonConvert.SerializeObject(checker));
+            var checkerRequest = new CheckerRequest
+            {
+                Id = checker.Id.ToString(),
+                Code = checker.Code
+            };
+            var result = await transferService.SendMessage(JsonConvert.SerializeObject(checkerRequest));
             return result;
         }
 
