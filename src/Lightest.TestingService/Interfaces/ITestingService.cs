@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data.Models.TaskModels;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Interfaces
 {
     public interface ITestingService
     {

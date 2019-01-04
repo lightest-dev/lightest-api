@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lightest.Api.Services;
 using Lightest.Data.Models.TaskModels;
+using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lightest.Api.Controllers

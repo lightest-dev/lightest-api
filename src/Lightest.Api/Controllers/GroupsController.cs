@@ -92,7 +92,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostGroup([FromBody] Group group)
         {
-             var user = await GetCurrentUser();
+            var user = await GetCurrentUser();
 
             if (!_accessService.CheckWriteAccess(group, user))
             {

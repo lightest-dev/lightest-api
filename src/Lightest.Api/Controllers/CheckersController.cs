@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.ResponseModels;
-using Lightest.Api.Services;
 using Lightest.Data;
 using Lightest.Data.Models;
+using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

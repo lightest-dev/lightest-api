@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lightest.TestingService\Lightest.TestingService.csproj" />
     <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
+    <ProjectReference Include="..\Lightest.TestingService\Lightest.TestingService.csproj" />
   </ItemGroup>
 
 </Project>

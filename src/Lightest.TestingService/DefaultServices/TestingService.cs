@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lightest.Api.Models;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.TestingService.Interfaces;
+using Lightest.TestingService.Models;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Services
 {
     public class TestingService : ITestingService
     {

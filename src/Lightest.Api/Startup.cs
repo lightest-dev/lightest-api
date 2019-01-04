@@ -1,9 +1,10 @@
 ﻿using IdentityServer4.AccessTokenValidation;
-using Lightest.Api.Services;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.TestingService.Interfaces;
+using Lightest.TestingService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: ApiController]
+
 namespace Lightest.Api
 {
     public class Startup
@@ -71,7 +73,7 @@ namespace Lightest.Api
             });
             services.AddSingleton<IServerRepository, ServerRepository>();
             services.AddSingleton<ITransferServiceFactory, TransferServiceFactory>();
-            services.AddTransient<ITestingService, TestingService>();
+            services.AddTransient<ITestingService, Lightest.TestingService.Services.TestingService>();
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();
             services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();

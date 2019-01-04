@@ -1,7 +1,7 @@
 ﻿using System.Net;
-using Lightest.Api.Models;
+using Lightest.TestingService.Models;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Interfaces
 {
     public interface IServerRepository
     {

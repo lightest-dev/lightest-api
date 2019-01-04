@@ -1,4 +1,4 @@
-﻿namespace Lightest.Api.Models
+﻿namespace Lightest.TestingService.Models
 {
     public enum ServerStatus
     {

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 [assembly: ApiController]
+
 namespace Lightest.IdentityServer
 {
     public class Startup

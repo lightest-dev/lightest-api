@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
-using Lightest.Api.Models;
+using Lightest.TestingService.Interfaces;
+using Lightest.TestingService.Models;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Services
 {
     public class ServerRepository : IServerRepository
     {
@@ -16,7 +17,10 @@ namespace Lightest.Api.Services
         public TestingServer GetFreeServer()
         {
             var server = _availableServers.Find(s => s.Status == ServerStatus.Free);
-            server.Status = ServerStatus.Busy;
+            if (server != null)
+            {
+                server.Status = ServerStatus.Busy;
+            }
             return server;
         }
 

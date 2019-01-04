@@ -3,8 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Lightest.TestingService.Interfaces;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Services
 {
     public class TransferService : ITransferService
     {

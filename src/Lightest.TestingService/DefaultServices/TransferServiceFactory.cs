@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using Lightest.TestingService.Interfaces;
 
-namespace Lightest.Api.Services
+namespace Lightest.TestingService.Services
 {
     public class TransferServiceFactory : ITransferServiceFactory
     {
