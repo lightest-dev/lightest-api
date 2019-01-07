@@ -63,9 +63,10 @@ namespace Lightest.IdentityServer
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("Login");
+
             app.UseIdentityServer();
             app.UseMvc();
-            app.UseCors("General");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -94,11 +95,6 @@ namespace Lightest.IdentityServer
                     b.WithOrigins(origins);
                 });
             });
-            var cors = new DefaultCorsPolicyService(_loggerFactory.CreateLogger<DefaultCorsPolicyService>())
-            {
-                AllowAll = true
-            };
-            services.AddSingleton<ICorsPolicyService>(cors);
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();

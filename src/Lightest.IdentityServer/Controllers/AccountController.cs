@@ -15,7 +15,6 @@ namespace Lightest.IdentityServer.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
-    [EnableCors("Login")]
     [Authorize]
     public class AccountController : Controller
     {
