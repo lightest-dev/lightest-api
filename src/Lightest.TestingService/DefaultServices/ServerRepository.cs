@@ -3,7 +3,7 @@ using System.Net;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
 
-namespace Lightest.TestingService.Services
+namespace Lightest.TestingService.DefaultServices
 {
     public class ServerRepository : IServerRepository
     {
@@ -13,6 +13,8 @@ namespace Lightest.TestingService.Services
         {
             _availableServers = new List<TestingServer>();
         }
+
+        public int ServersCount => _availableServers.Count;
 
         public TestingServer GetFreeServer()
         {

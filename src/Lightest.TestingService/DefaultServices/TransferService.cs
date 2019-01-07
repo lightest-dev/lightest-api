@@ -4,9 +4,9 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.Requests;
 
-namespace Lightest.TestingService.Services
+namespace Lightest.TestingService.DefaultServices
 {
     public class TransferService : ITransferService
     {
@@ -17,19 +17,14 @@ namespace Lightest.TestingService.Services
             _endpoint = new IPEndPoint(ip, port);
         }
 
-        public async Task<bool> SendFile(string path, FileRequestType fileType)
+        public async Task<bool> SendFile(FileRequest fileRequest, string path)
         {
             if (!File.Exists(path))
             {
                 return false;
             }
             var name = Path.GetFileName(path);
-            var fileRequest = new FileRequest
-            {
-                Filename = name,
-                RequestType = fileType
-            };
-            var result = await SendMessage($"name:{name}");
+            var result = await SendMessage(fileRequest.ToString());
             if (!result)
             {
                 return false;
@@ -48,17 +43,16 @@ namespace Lightest.TestingService.Services
                     var length = fileStream.Length;
                     //+1 because type is written
                     writer.Write(length + 1);
-                    //todo: to enum
-                    writer.Write(2);
+                    writer.Write(RequestType.File);
                     await fileStream.CopyToAsync(netStream);
                 }
             }
             return true;
         }
 
-        public async Task<bool> SendFile(string filename, FileRequestType fileType, byte[] data)
+        public async Task<bool> SendFile(FileRequest fileRequest, byte[] data)
         {
-            var result = await SendMessage($"name:{filename}");
+            var result = await SendMessage(fileRequest.ToString());
             if (!result)
             {
                 return false;
@@ -76,8 +70,7 @@ namespace Lightest.TestingService.Services
                     var length = data.Length;
                     //+1 because type is written
                     writer.Write(length + 1);
-                    //todo: to enum
-                    writer.Write(2);
+                    writer.Write(RequestType.File);
                     writer.Write(data);
                 }
             }
@@ -96,10 +89,10 @@ namespace Lightest.TestingService.Services
                 using (var stream = client.GetStream())
                 using (var writer = new BinaryWriter(stream))
                 {
-                    long length = message.Length + 1;
-                    writer.Write(length);
-                    writer.Write(1);
                     var bytes = Encoding.UTF8.GetBytes(message);
+                    long length = bytes.Length + 1;
+                    writer.Write(length);
+                    writer.Write(RequestType.Message);
                     writer.Write(bytes);
                 }
             }

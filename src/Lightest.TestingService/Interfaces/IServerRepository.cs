@@ -10,5 +10,7 @@ namespace Lightest.TestingService.Interfaces
         TestingServer GetFreeServer();
 
         void RemoveCachedCheckers(int checkerId);
+
+        int ServersCount { get; }
     }
 }

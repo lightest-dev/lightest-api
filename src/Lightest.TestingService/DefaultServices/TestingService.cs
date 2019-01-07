@@ -8,10 +8,10 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
+using Lightest.TestingService.Requests;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
-namespace Lightest.TestingService.Services
+namespace Lightest.TestingService.DefaultServices
 {
     public class TestingService : ITestingService
     {
@@ -47,7 +47,6 @@ namespace Lightest.TestingService.Services
 
             if (!result)
             {
-                result = AddToList(upload);
                 _repository.ReportFreeServer(server.ServerAddress);
                 return result;
             }
@@ -69,7 +68,6 @@ namespace Lightest.TestingService.Services
             }
             else
             {
-                result = AddToList(upload);
                 _repository.ReportFreeServer(server.ServerAddress);
             }
             return result;
@@ -77,7 +75,7 @@ namespace Lightest.TestingService.Services
 
         public async Task ReportResult(CheckerResult result)
         {
-            if (result.Type == "Code")
+            if (result.Type.ToLower() == "code")
             {
                 await ReportCodeResult(result);
             }
@@ -118,7 +116,7 @@ namespace Lightest.TestingService.Services
             upload.Status = "Queue";
             _context.Add(upload);
             _context.SaveChanges();
-            return _uploads.Count == 1;
+            return _uploads.Count <= _repository.ServersCount;
         }
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
@@ -127,36 +125,34 @@ namespace Lightest.TestingService.Services
             upload.Status = "Queue";
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
-            var cleanRequest = new FileRequest
-            {
-                Filename = "",
-                RequestType = FileRequestType.TestCleanup
-            };
-            var result = await transferService.SendMessage(JsonConvert.SerializeObject(cleanRequest));
+            var cleanRequest = new TestCleanupRequest();
+            var result = await transferService.SendMessage(cleanRequest.ToString());
             var request = new TestingRequest
             {
                 UploadId = upload.UploadId,
                 MemoryLimit = language.MemoryLimit,
                 TimeLimit = language.TimeLimit,
                 CheckerId = upload.Task.CheckerId,
-                TestsCount = upload.Task.Tests.Count,
-                Type = "Code"
+                TestsCount = upload.Task.Tests.Count
             };
-            result = await transferService.SendMessage(JsonConvert.SerializeObject(request));
+            result = await transferService.SendMessage(request.ToString());
             if (!result)
             {
                 return false;
             }
             var i = 0;
-            
+
+            FileRequest fileRequest;
             foreach (var test in upload.Task.Tests)
             {
-                result = await transferService.SendFile($"{i}.in", FileRequestType.File, Encoding.UTF8.GetBytes(test.Input));
+                fileRequest = new TestRequest($"{i}.in");
+                result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(test.Input));
                 if (!result)
                 {
                     return false;
                 }
-                result = await transferService.SendFile($"{i}.out", FileRequestType.File, Encoding.UTF8.GetBytes(test.Output));
+                fileRequest = new TestRequest($"{i}.out");
+                result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(test.Output));
                 if (!result)
                 {
                     return false;
@@ -164,7 +160,8 @@ namespace Lightest.TestingService.Services
                 i++;
             }
             await save;
-            result = await transferService.SendFile($"code.{upload.Language.Extension}", FileRequestType.Upload, Encoding.UTF8.GetBytes(upload.Code));
+            fileRequest = new SingleFileCodeRequest($"{upload.UploadId}.{upload.Language.Extension}");
+            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(upload.Code));
             return result;
         }
 
@@ -175,7 +172,7 @@ namespace Lightest.TestingService.Services
                 Id = checker.Id.ToString(),
                 Code = checker.Code
             };
-            var result = await transferService.SendMessage(JsonConvert.SerializeObject(checkerRequest));
+            var result = await transferService.SendMessage(checkerRequest.ToString());
             return result;
         }
 

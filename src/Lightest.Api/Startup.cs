@@ -3,8 +3,7 @@ using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Services;
+using Lightest.TestingService.DefaultServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -71,9 +70,7 @@ namespace Lightest.Api
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
-            services.AddSingleton<IServerRepository, ServerRepository>();
-            services.AddSingleton<ITransferServiceFactory, TransferServiceFactory>();
-            services.AddTransient<ITestingService, Lightest.TestingService.Services.TestingService>();
+            services.AddDefaultTestingServices();
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();
             services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();

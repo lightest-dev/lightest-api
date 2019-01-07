@@ -1,6 +1,6 @@
-﻿namespace Lightest.TestingService.Models
+﻿namespace Lightest.TestingService.Requests
 {
-    public class TestingRequest
+    internal class TestingRequest : BaseRequest
     {
         public int UploadId { get; set; }
 
@@ -10,8 +10,8 @@
 
         public int CheckerId { get; set; }
 
-        public string Type { get; set; }
-
         public int TestsCount { get; set; }
+
+        public override string Type => "upload";
     }
 }
