@@ -98,6 +98,10 @@ namespace Lightest.IdentityServer
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
+            services.ConfigureApplicationCookie(o =>
+            {
+                o.Cookie.Domain = Configuration.GetSection("Domain").Value;
+            });
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
