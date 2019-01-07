@@ -2,6 +2,7 @@
 using System.Linq;
 using IdentityServer4;
 using IdentityServer4.Models;
+using IdentityServer4.Services;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.IdentityServer.Services;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 [assembly: ApiController]
 
@@ -19,9 +21,12 @@ namespace Lightest.IdentityServer
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILoggerFactory _loggerFactory;
+
+        public Startup(IConfiguration configuration, ILoggerFactory loggerFactor)
         {
             Configuration = configuration;
+            _loggerFactory = loggerFactor;
         }
 
         public IConfiguration Configuration { get; }
@@ -89,6 +94,11 @@ namespace Lightest.IdentityServer
                     b.WithOrigins(origins);
                 });
             });
+            var cors = new DefaultCorsPolicyService(_loggerFactory.CreateLogger<DefaultCorsPolicyService>())
+            {
+                AllowAll = true
+            };
+            services.AddSingleton<ICorsPolicyService>(cors);
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
