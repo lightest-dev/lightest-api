@@ -34,6 +34,12 @@ namespace Lightest.Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseMvc();
+            app.UseCors(b =>
+            {
+                b.AllowAnyHeader();
+                b.AllowAnyMethod();
+                b.AllowAnyOrigin();
+            });
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -70,6 +76,7 @@ namespace Lightest.Api
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
+            services.AddCors();
             services.AddDefaultTestingServices();
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();

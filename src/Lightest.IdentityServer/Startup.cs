@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using IdentityServer4;
 using IdentityServer4.Models;
 using Lightest.Data;
@@ -59,6 +60,7 @@ namespace Lightest.IdentityServer
             }
             app.UseIdentityServer();
             app.UseMvc();
+            app.UseCors("General");
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -68,6 +70,24 @@ namespace Lightest.IdentityServer
             services.AddDbContext<RelationalDbContext>(options =>
             {
                 options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("General", b =>
+                {
+                    b.AllowAnyHeader();
+                    b.AllowAnyMethod();
+                    b.AllowAnyOrigin();
+                });
+                options.AddPolicy("Login", b =>
+                {
+                    b.AllowAnyMethod();
+                    b.AllowAnyHeader();
+                    b.AllowCredentials();
+                    var origins = Configuration.GetSection("URIs").GetChildren()
+                        .Select(c => c.Value).ToArray();
+                    b.WithOrigins(origins);
+                });
             });
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()

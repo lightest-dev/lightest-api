@@ -6,6 +6,7 @@ using IdentityServer4.Services;
 using Lightest.Data.Models;
 using Lightest.IdentityServer.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace Lightest.IdentityServer.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
+    [EnableCors("Login")]
     [Authorize]
     public class AccountController : Controller
     {
