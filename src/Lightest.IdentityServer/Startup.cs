@@ -101,6 +101,8 @@ namespace Lightest.IdentityServer
             services.ConfigureApplicationCookie(o =>
             {
                 o.Cookie.Domain = Configuration.GetSection("Domain").Value;
+                o.Cookie.HttpOnly = false;
+                o.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None; 
             });
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                 .AddDeveloperSigningCredential()
