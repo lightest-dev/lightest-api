@@ -121,7 +121,6 @@ namespace Lightest.TestingService.DefaultServices
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
         {
-            //todo: check all messages and their order
             upload.Status = "Queue";
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);

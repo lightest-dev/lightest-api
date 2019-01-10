@@ -39,7 +39,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(CompleteTask))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -54,12 +54,14 @@ namespace Lightest.Api.Controllers
                 .Include(t => t.Checker)
                 .SingleOrDefaultAsync(t => t.Id == id);
 
+            var user = await GetCurrentUser();
+
             if (task == null)
             {
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, await GetCurrentUser()))
+            if (!_accessService.CheckReadAccess(task, user))
             {
                 return Forbid();
             }
@@ -87,6 +89,12 @@ namespace Lightest.Api.Controllers
                     TimeLimit = t.TimeLimit
                 })
             };
+
+            if (!_accessService.CheckWriteAccess(task, user))
+            {
+                result.Tests = null;
+                result.Checker = null;
+            }
 
             return Ok(result);
         }

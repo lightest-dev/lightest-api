@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Lightest.Api.ResponseModels;
 using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models.TaskModels;
@@ -23,6 +25,25 @@ namespace Lightest.Api.Controllers
         {
             _testingService = testingService;
             _accessService = accessService;
+        }
+
+        [HttpGet("{taskId}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
+        public async Task<IActionResult> GetLastUploads(int taskId)
+        {
+            var user = await GetCurrentUser();
+            var uploads = _context.CodeUploads
+                .AsNoTracking()
+                .Where(u => u.UserId == user.Id && u.TaskId == taskId)
+                .OrderBy(u => u.UploadId)
+                .Select(u => new UserUploadResult
+                {
+                    Id = u.UploadId,
+                    Message = u.Message,
+                    Status = u.Status,
+                    Points = u.Points
+                });
+            return Ok(uploads);
         }
 
         [HttpGet("{type}/{id}/status")]
@@ -60,7 +81,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{type}/{id}/result")]
-        [ProducesResponseType(200, Type = typeof(IUpload))]
+        [ProducesResponseType(200, Type = typeof(UserUploadResult))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
@@ -95,7 +116,13 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            var result = new { upload.Status, upload.Message, upload.Points };
+            var result = new UserUploadResult
+            {
+                Id = id,
+                Status = upload.Status,
+                Message = upload.Message,
+                Points = upload.Points
+            };
             return Ok(result);
         }
 

@@ -105,39 +105,6 @@ namespace Lightest.Api.Controllers
             return CreatedAtAction("GetGroup", new { id = group.Id }, group);
         }
 
-        [HttpPost("{groupId}/add-user")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUser([FromRoute] int groupId, [FromBody]AccessRights user)
-        {
-            if (!UserExists(user.UserId))
-            {
-                return NotFound(nameof(user));
-            }
-
-            var group = await _context.Groups.Include(g => g.Users).SingleOrDefaultAsync(g => g.Id == groupId);
-
-            if (group == null)
-            {
-                return NotFound(nameof(group));
-            }
-
-            var currentUser = await GetCurrentUser();
-
-            if (!_accessService.CheckWriteAccess(group, currentUser))
-            {
-                return Forbid();
-            }
-
-            var userGroup = new UserGroup { GroupId = group.Id, UserId = user.UserId };
-            user.CopyTo(userGroup);
-
-            group.Users.Add(userGroup);
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
         [HttpPost("{groupId}/add-users")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]

@@ -17,6 +17,7 @@ namespace Lightest.Data.Models.TaskModels
         [Required]
         public int LanguageId { get; set; }
 
+        [JsonIgnore]
         public string Message { get; set; }
 
         [JsonIgnore]
@@ -31,11 +32,13 @@ namespace Lightest.Data.Models.TaskModels
         [Required]
         public int TaskId { get; set; }
 
+        [JsonIgnore]
         public bool TestingFinished { get; set; }
 
         [JsonIgnore]
         public virtual ApplicationUser User { get; set; }
 
+        [JsonIgnore]
         public string UserId { get; set; }
     }
 }

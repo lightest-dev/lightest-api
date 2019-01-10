@@ -34,6 +34,9 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Checkers/5
         [HttpGet("{id}")]
+        [ProducesResponseType(200, Type = typeof(Checker))]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetChecker([FromRoute] int id)
         {
             var checker = await _context.Checkers.FindAsync(id);
@@ -48,6 +51,8 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Checkers
         [HttpPost]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(201, Type = typeof(Checker))]
         public async Task<IActionResult> PostChecker([FromBody] Checker checker)
         {
             _context.Checkers.Add(checker);
@@ -58,6 +63,10 @@ namespace Lightest.Api.Controllers
 
         // PUT: api/Checkers/5
         [HttpPut("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> PutChecker([FromRoute] int id, [FromBody] Checker checker)
         {
             if (id != checker.Id)
@@ -81,6 +90,10 @@ namespace Lightest.Api.Controllers
 
         // DELETE: api/Checkers/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteChecker([FromRoute] int id)
         {
             var checker = await _context.Checkers.FindAsync(id);
@@ -90,6 +103,7 @@ namespace Lightest.Api.Controllers
             }
 
             _context.Checkers.Remove(checker);
+            //catch exception
             await _context.SaveChangesAsync();
 
             _serverRepository.RemoveCachedCheckers(id);

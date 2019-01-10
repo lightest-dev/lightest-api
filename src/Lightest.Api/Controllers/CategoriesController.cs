@@ -39,7 +39,7 @@ namespace Lightest.Api.Controllers
             return Ok(categories);
         }
 
-        [HttpGet("children/{id}")]
+        [HttpGet("{id}/children")]
         [ProducesResponseType(200, Type = typeof(CategoryChildrenViewModel))]
         public async Task<IActionResult> GetChildren(int id)
         {
@@ -152,11 +152,11 @@ namespace Lightest.Api.Controllers
             return CreatedAtAction("GetCategory", new { id = category.Id }, category);
         }
 
-        [HttpPost("{id}/access")]
+        [HttpPost("{id}/add-users")]
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> ChangeAccess([FromRoute] int id, [FromBody]AccessRights model)
+        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody]IEnumerable<AccessRights> users)
         {
             var category = await _context.Categories
                 .Include(c => c.Users)
@@ -174,22 +174,26 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            if (!_context.Users.Any(u => u.Id == model.UserId))
+            foreach (var user in users)
             {
-                return BadRequest();
+                if (!_context.Users.Any(u => u.Id == user.UserId))
+                {
+                    return BadRequest();
+                }
+
+                var categoryUser = category.Users.SingleOrDefault(u => u.UserId == user.UserId);
+                if (categoryUser == null)
+                {
+                    categoryUser = new CategoryUser { CategoryId = category.Id, UserId = user.UserId };
+                    user.CopyTo(categoryUser);
+                    category.Users.Add(categoryUser);
+                }
+                else
+                {
+                    user.CopyTo(categoryUser);
+                }
             }
 
-            var user = category.Users.SingleOrDefault(u => u.UserId == model.UserId);
-            if (user == null)
-            {
-                var categoryUser = new CategoryUser { CategoryId = category.Id, UserId = model.UserId };
-                model.CopyTo(categoryUser);
-                category.Users.Add(categoryUser);
-            }
-            else
-            {
-                model.CopyTo(user);
-            }
             await _context.SaveChangesAsync();
             return Ok();
         }
