@@ -3,11 +3,11 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lightest.AccessService.RoleBasedAccessServices
+namespace Lightest.AccessService.MockAccessServices
 {
     public static class ServiceRegistrator
     {
-        public static IServiceCollection AddRoleBasedAccess(this IServiceCollection services)
+        public static IServiceCollection AddMockAccess(this IServiceCollection services)
         {
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();

@@ -1,10 +1,12 @@
 ﻿using IdentityServer4.AccessTokenValidation;
-using Lightest.AccessService.RoleBasedAccessServices;
+using Lightest.AccessService.MockAccessServices;
+using Lightest.Api.Extensions;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
@@ -64,14 +66,15 @@ namespace Lightest.Api
 
             var auth = Configuration.GetSection("Authority").Value;
 
-            services.AddIdentityCore<ApplicationUser>()
+            services.AddIdentityWithoutAuthenticator<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>();
 
-            services.AddAuthentication(o =>
-            {
-                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                o.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-            })
+            services
+                .AddAuthentication(o =>
+                {
+                    o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                    o.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                })
                 .AddIdentityServerAuthentication(options =>
                 {
                     options.ApiName = "api";
@@ -84,7 +87,7 @@ namespace Lightest.Api
             });
             services.AddCors();
             services.AddDefaultTestingServices();
-            services.AddRoleBasedAccess();
+            services.AddMockAccess();
         }
     }
 }

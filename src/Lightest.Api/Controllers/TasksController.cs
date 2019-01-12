@@ -104,7 +104,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{id}/users")]
-        [ProducesResponseType(200, Type = typeof(AccessRightsUser))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<AccessRightsUser>))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]

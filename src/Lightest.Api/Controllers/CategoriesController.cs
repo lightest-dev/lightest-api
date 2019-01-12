@@ -173,7 +173,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckAdminAccess(category, currentUser))
+            if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
             }

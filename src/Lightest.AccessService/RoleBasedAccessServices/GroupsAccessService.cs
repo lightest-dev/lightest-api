@@ -1,23 +1,30 @@
-﻿using Lightest.AccessService.Interfaces;
+﻿using System.Linq;
+using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
-    public class GroupsAccessService : IAccessService<Group>
+    public class GroupsAccessService : RoleChecker, IAccessService<Group>
     {
+        public GroupsAccessService(UserManager<ApplicationUser> userManager) : base(userManager)
+        {
+        }
+
         public bool CheckAdminAccess(Group group, ApplicationUser requester)
         {
-            return true;
+            return IsAdmin(requester);
         }
 
         public bool CheckReadAccess(Group group, ApplicationUser requester)
         {
-            return true;
+            return group?.Users?.Any(u => u.UserId == requester.Id) == true
+                           || IsTeacherOrAdmin(requester) || group?.Public == true;
         }
 
         public bool CheckWriteAccess(Group group, ApplicationUser requester)
         {
-            return true;
+            return IsTeacherOrAdmin(requester);
         }
     }
 }

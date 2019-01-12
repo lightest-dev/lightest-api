@@ -33,7 +33,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.CheckWriteAccess(null, user))
             {
                 return Forbid();
             }
@@ -53,12 +53,12 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsersInRole(string roleName)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.CheckWriteAccess(null, user))
             {
                 return Forbid();
             }
             var normalizedName = roleName.Normalize().ToUpper();
-            var role  = await _context.Roles.Where(r => r.NormalizedName == normalizedName).SingleOrDefaultAsync();
+            var role = await _context.Roles.Where(r => r.NormalizedName == normalizedName).SingleOrDefaultAsync();
 
             if (role == null)
             {

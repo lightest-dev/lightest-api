@@ -56,7 +56,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetAllUploads(int taskId)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.CheckWriteAccess(null, user))
             {
                 return Forbid();
             }
