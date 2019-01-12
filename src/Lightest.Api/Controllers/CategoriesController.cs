@@ -92,7 +92,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(category, currentUser))
+            if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
             }

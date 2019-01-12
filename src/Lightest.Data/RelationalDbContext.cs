@@ -97,7 +97,7 @@ namespace Lightest.Data
                 .HasOne(c => c.Parent)
                 .WithMany(p => p.SubCategories)
                 .HasForeignKey(c => c.ParentId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Group>()
                 .HasOne(g => g.Parent)
@@ -112,9 +112,9 @@ namespace Lightest.Data
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Entity<TaskDefinition>()
-                .HasOne(t => t.Checker)
-                .WithMany(c => c.Tasks)
+            builder.Entity<Checker>()
+                .HasMany(c => c.Tasks)
+                .WithOne(t => t.Checker)
                 .HasForeignKey(t => t.CheckerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -128,7 +128,7 @@ namespace Lightest.Data
                 .HasOne(up => up.Task)
                 .WithMany(t => t.ArchiveUploads)
                 .HasForeignKey(up => up.TaskId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ArchiveUpload>()
                 .HasOne(up => up.User)
@@ -146,7 +146,7 @@ namespace Lightest.Data
                 .HasOne(up => up.Task)
                 .WithMany(t => t.CodeUploads)
                 .HasForeignKey(up => up.TaskId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<CodeUpload>()
                 .HasOne(up => up.User)

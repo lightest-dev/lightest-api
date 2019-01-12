@@ -69,22 +69,38 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            var result = new CompleteGroup
+            CompleteGroup result;
+
+            if (_accessService.CheckWriteAccess(group, user))
             {
-                Id = group.Id,
-                Name = group.Name,
-                Parent = group.Parent,
-                SubGroups = group.SubGroups,
-                Users = group.Users.Select(u => new AccessRightsUser
+                result = new CompleteGroup
                 {
-                    Id = u.User.Id,
-                    UserName = u.User.UserName,
-                    CanRead = u.CanRead,
-                    CanWrite = u.CanWrite,
-                    CanChangeAccess = u.CanChangeAccess,
-                    IsOwner = u.IsOwner
-                })
-            };
+                    Id = group.Id,
+                    Name = group.Name,
+                    Parent = group.Parent,
+                    SubGroups = group.SubGroups,
+                    Users = group.Users.Select(u => new AccessRightsUser
+                    {
+                        Id = u.User.Id,
+                        UserName = u.User.UserName,
+                        CanRead = u.CanRead,
+                        CanWrite = u.CanWrite,
+                        CanChangeAccess = u.CanChangeAccess,
+                        IsOwner = u.IsOwner
+                    })
+                };
+            }
+            else
+            {
+                result = new CompleteGroup
+                {
+                    Id = group.Id,
+                    Name = group.Name,
+                    Parent = group.Parent,
+                    SubGroups = group.SubGroups,
+                    Users = null
+                };
+            }
 
             return Ok(result);
         }

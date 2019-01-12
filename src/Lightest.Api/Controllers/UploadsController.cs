@@ -74,40 +74,6 @@ namespace Lightest.Api.Controllers
             return Ok(uploads);
         }
 
-        [HttpGet("{type}/{id}/status")]
-        [ProducesResponseType(200, Type = typeof(bool))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> CheckStatus([FromRoute] string type, [FromRoute] int id)
-        {
-            var user = await GetCurrentUser();
-            IUpload upload;
-
-            if (type.ToLower() == "code")
-            {
-                upload = await _context.CodeUploads
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else if (type.ToLower() == "project")
-            {
-                upload = await _context.ArchiveUploads
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else
-            {
-                return BadRequest();
-            }
-
-            if (!_accessService.CheckReadAccess(upload, user))
-            {
-                return Forbid();
-            }
-
-            return Ok(upload.TestingFinished);
-        }
-
         [HttpGet("{type}/{id}/result")]
         [ProducesResponseType(200, Type = typeof(UserUploadResult))]
         [ProducesResponseType(400)]
@@ -139,11 +105,6 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            if (!upload.TestingFinished)
-            {
-                return BadRequest();
-            }
-
             var result = new UserUploadResult
             {
                 Id = id,
@@ -168,7 +129,8 @@ namespace Lightest.Api.Controllers
 
             if (task == null)
             {
-                return BadRequest();
+                ModelState.AddModelError(nameof(upload.TaskId), "Task not found");
+                return BadRequest(ModelState);
             }
 
             upload.Task = task;
@@ -181,10 +143,11 @@ namespace Lightest.Api.Controllers
             var language = await _context.Languages.SingleOrDefaultAsync(l => l.Id == upload.LanguageId);
             if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
             {
-                return BadRequest();
+                ModelState.AddModelError(nameof(upload.LanguageId), "Language not found");
+                return BadRequest(ModelState);
             }
 
-            upload.Status = "New";
+            upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
 
@@ -192,11 +155,7 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             var successful = await _testingService.BeginTesting(upload);
-            if (successful)
-            {
-                return Ok(upload.UploadId);
-            }
-            return BadRequest();
+            return Ok(upload.UploadId);
         }
 
         [HttpPost("project")]
@@ -213,7 +172,8 @@ namespace Lightest.Api.Controllers
 
             if (task == null)
             {
-                return BadRequest("task");
+                ModelState.AddModelError(nameof(upload.TaskId), "Task not found");
+                return BadRequest(ModelState);
             }
 
             upload.Task = task;
@@ -226,10 +186,11 @@ namespace Lightest.Api.Controllers
             var language = await _context.Languages.SingleOrDefaultAsync(l => l.Id == upload.LanguageId);
             if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
             {
-                return BadRequest("language");
+                ModelState.AddModelError(nameof(upload.LanguageId), "Language not found");
+                return BadRequest(ModelState);
             }
 
-            upload.Status = "New";
+            upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
             _context.ArchiveUploads.Add(upload);

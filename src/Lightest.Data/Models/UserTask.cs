@@ -33,8 +33,10 @@ namespace Lightest.Data.Models
         [Required]
         public string UserId { get; set; }
 
+        [JsonIgnore]
         public bool Completed { get; set; }
 
+        [JsonIgnore]
         public double HighScore { get; set; }
     }
 }

@@ -104,7 +104,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{id}/users")]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(200, Type = typeof(AccessRightsUser)]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -121,19 +121,19 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, await GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
 
-            return Ok(task.Users.Select(u => new
+            return Ok(task.Users.Select(u => new AccessRightsUser
             {
-                u.UserId,
-                u.User.UserName,
-                u.CanRead,
-                u.CanWrite,
-                u.CanChangeAccess,
-                u.IsOwner
+                Id = u.UserId,
+                UserName = u.User.UserName,
+                CanRead = u.CanRead,
+                CanWrite = u.CanWrite,
+                CanChangeAccess = u.CanChangeAccess,
+                IsOwner = u.IsOwner
             }));
         }
 
@@ -274,13 +274,12 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            task.Tests.Clear();
-
             foreach (var test in tests)
             {
                 test.TaskId = id;
-                task.Tests.Add(test);
             }
+
+            task.Tests = tests;
 
             await _context.SaveChangesAsync();
 

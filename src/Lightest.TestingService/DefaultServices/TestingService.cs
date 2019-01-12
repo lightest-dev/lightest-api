@@ -63,7 +63,7 @@ namespace Lightest.TestingService.DefaultServices
 
             if (result)
             {
-                upload.Status = "Testing";
+                upload.Status = UploadStatus.Testing;
                 await _context.SaveChangesAsync();
             }
             else
@@ -113,7 +113,7 @@ namespace Lightest.TestingService.DefaultServices
         private bool AddToList(IUpload upload)
         {
             _uploads.Add(upload);
-            upload.Status = "Queue";
+            upload.Status = UploadStatus.Queue;
             _context.Add(upload);
             _context.SaveChanges();
             return _uploads.Count <= _repository.ServersCount;
@@ -121,7 +121,7 @@ namespace Lightest.TestingService.DefaultServices
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
         {
-            upload.Status = "Queue";
+            upload.Status = UploadStatus.Queue;
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
             var cleanRequest = new TestCleanupRequest();
