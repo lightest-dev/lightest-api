@@ -1,6 +1,7 @@
-﻿using Lightest.Data.Models;
+﻿using Lightest.AccessService.Interfaces;
+using Lightest.Data.Models;
 
-namespace Lightest.Api.Services.AccessServices
+namespace Lightest.AccessService.RoleBasedAccessServices
 {
     public class CategoriesAccessService : IAccessService<Category>
     {

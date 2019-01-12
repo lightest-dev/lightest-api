@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.AccessService.Interfaces;
 using Lightest.Api.ResponseModels;
-using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,10 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<TaskDefinition> _accessService;
 
-        public TasksController(RelationalDbContext context, IAccessService<TaskDefinition> accessService) : base(context)
+        public TasksController(
+            RelationalDbContext context,
+            IAccessService<TaskDefinition> accessService,
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _accessService = accessService;
         }

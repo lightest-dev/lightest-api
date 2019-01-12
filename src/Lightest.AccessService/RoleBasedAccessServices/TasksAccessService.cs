@@ -1,7 +1,8 @@
-﻿using Lightest.Data.Models;
+﻿using Lightest.AccessService.Interfaces;
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 
-namespace Lightest.Api.Services.AccessServices
+namespace Lightest.AccessService.RoleBasedAccessServices
 {
     public class TasksAccessService : IAccessService<TaskDefinition>
     {

@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Lightest.Api.Services.AccessServices;
+using Lightest.AccessService.Interfaces;
 using Lightest.Data;
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +17,10 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<TaskDefinition> _accessService;
 
-        public TestsController(RelationalDbContext context, IAccessService<TaskDefinition> accessService) : base(context)
+        public TestsController(
+            RelationalDbContext context,
+            IAccessService<TaskDefinition> accessService,
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _accessService = accessService;
         }

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.AccessService.Interfaces;
 using Lightest.Api.Extensions;
 using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
-using Lightest.Api.Services.AccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,10 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Category> _accessService;
 
-        public CategoriesController(RelationalDbContext context, IAccessService<Category> accessService) : base(context)
+        public CategoriesController(
+            RelationalDbContext context,
+            IAccessService<Category> accessService,
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _accessService = accessService;
         }

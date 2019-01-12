@@ -1,6 +1,6 @@
 ﻿using Lightest.Data.Models;
 
-namespace Lightest.Api.Services.AccessServices
+namespace Lightest.AccessService.Interfaces
 {
     public interface IAccessService<in T>
     {

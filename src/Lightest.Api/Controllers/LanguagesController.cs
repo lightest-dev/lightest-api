@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lightest.Api.Services.AccessServices;
+using Lightest.AccessService.Interfaces;
 using Lightest.Data;
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lightest.Api.Controllers
@@ -15,7 +17,10 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Language> _accessService;
 
-        public LanguagesController(RelationalDbContext context, IAccessService<Language> accessService) : base(context)
+        public LanguagesController(
+            RelationalDbContext context,
+            IAccessService<Language> accessService,
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _accessService = accessService;
         }

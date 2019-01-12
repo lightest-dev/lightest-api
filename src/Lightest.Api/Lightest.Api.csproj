@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Folder Include="RequestModels\" />
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lightest.AccessService\Lightest.AccessService.csproj" />
     <ProjectReference Include="..\Lightest.TestingService\Lightest.TestingService.csproj" />
     <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
     <ProjectReference Include="..\Lightest.TestingService\Lightest.TestingService.csproj" />

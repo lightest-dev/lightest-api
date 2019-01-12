@@ -1,8 +1,7 @@
 ﻿using IdentityServer4.AccessTokenValidation;
-using Lightest.Api.Services.AccessServices;
+using Lightest.AccessService.RoleBasedAccessServices;
 using Lightest.Data;
 using Lightest.Data.Models;
-using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.DefaultServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -65,7 +64,14 @@ namespace Lightest.Api
 
             var auth = Configuration.GetSection("Authority").Value;
 
-            services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
+            services.AddIdentityCore<ApplicationUser>()
+                .AddEntityFrameworkStores<RelationalDbContext>();
+
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            })
                 .AddIdentityServerAuthentication(options =>
                 {
                     options.ApiName = "api";
@@ -78,12 +84,7 @@ namespace Lightest.Api
             });
             services.AddCors();
             services.AddDefaultTestingServices();
-            services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
-            services.AddTransient<IAccessService<Group>, GroupsAccessService>();
-            services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();
-            services.AddTransient<IAccessService<Language>, LanguagesAccessService>();
-            services.AddTransient<IAccessService<IUpload>, UploadsAccessService>();
-            services.AddTransient<IAccessService<ApplicationUser>, ProfileAccessService>();
+            services.AddRoleBasedAccess();
         }
     }
 }

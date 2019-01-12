@@ -6,6 +6,7 @@ using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,10 @@ namespace Lightest.Api.Controllers
     {
         private readonly IServerRepository _serverRepository;
 
-        public CheckersController(RelationalDbContext context, IServerRepository serverRepository) : base(context)
+        public CheckersController(
+            RelationalDbContext context,
+            IServerRepository serverRepository,
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _serverRepository = serverRepository;
         }
