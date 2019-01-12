@@ -40,6 +40,30 @@ namespace Lightest.Api.Controllers
                 .AsNoTracking()
                 .Where(u => u.UserId == user.Id && u.TaskId == taskId)
                 .OrderBy(u => u.UploadId)
+                .Take(10)
+                .Select(u => new UserUploadResult
+                {
+                    Id = u.UploadId,
+                    Message = u.Message,
+                    Status = u.Status,
+                    Points = u.Points
+                });
+            return Ok(uploads);
+        }
+
+        [HttpGet("{taskId}/all")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
+        public async Task<IActionResult> GetAllUploads(int taskId)
+        {
+            var user = await GetCurrentUser();
+            if (!_accessService.CheckAdminAccess(null, user))
+            {
+                return Forbid();
+            }
+            var uploads = _context.CodeUploads
+                .AsNoTracking()
+                .Where(u => u.TaskId == taskId)
+                .OrderBy(u => u.UploadId)
                 .Select(u => new UserUploadResult
                 {
                     Id = u.UploadId,

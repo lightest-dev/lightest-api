@@ -46,6 +46,31 @@ namespace Lightest.Api.Controllers
             }));
         }
 
+        [HttpGet("role/{roleName}")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<string>))]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> GetUsersInRole(string roleName)
+        {
+            var user = await GetCurrentUser();
+            if (!_accessService.CheckAdminAccess(null, user))
+            {
+                return Forbid();
+            }
+            var normalizedName = roleName.Normalize().ToUpper();
+            var role  = await _context.Roles.Where(r => r.NormalizedName == normalizedName).SingleOrDefaultAsync();
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+
+            var userIds = _context.UserRoles.Where(r => r.RoleId == role.Id)
+                .Select(r => r.UserId);
+
+            return Ok(userIds);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(200, Type = typeof(CompleteUser))]
         [ProducesResponseType(400)]
