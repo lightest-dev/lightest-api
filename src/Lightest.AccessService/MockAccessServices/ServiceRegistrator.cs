@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Lightest.AccessService.MockAccessServices
 {
-    public static class ServiceRegistrator
+    public static class MockServiceRegistrator
     {
         public static IServiceCollection AddMockAccess(this IServiceCollection services)
         {
