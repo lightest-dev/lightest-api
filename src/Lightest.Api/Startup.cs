@@ -86,6 +86,7 @@ namespace Lightest.Api
             {
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
+            services.AddHttpContextAccessor();
             services.AddCors();
             services.AddDefaultTestingServices();
             if (Configuration.GetSection("AccessMode").Value.ToLower() == "mock")

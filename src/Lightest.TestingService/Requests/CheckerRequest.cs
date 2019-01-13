@@ -1,6 +1,6 @@
 ﻿namespace Lightest.TestingService.Requests
 {
-    internal class CheckerRequest : BaseRequest
+    public class CheckerRequest : BaseRequest
     {
         public string Id { get; set; }
 

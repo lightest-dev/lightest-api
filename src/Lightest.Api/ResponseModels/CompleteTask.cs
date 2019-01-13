@@ -8,7 +8,7 @@ namespace Lightest.Api.ResponseModels
     {
         public Category Category { get; set; }
 
-        public BasicNameViewModel Checker { get; set; }
+        public BaseChecker Checker { get; set; }
 
         public string Description { get; set; }
 

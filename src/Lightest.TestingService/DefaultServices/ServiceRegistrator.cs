@@ -9,7 +9,7 @@ namespace Lightest.TestingService.DefaultServices
         {
             services.AddSingleton<IServerRepository, ServerRepository>();
             services.AddSingleton<ITransferServiceFactory, TransferServiceFactory>();
-            services.AddTransient<ITestingService, TestingService>();
+            services.AddSingleton<ITestingService, TestingService>();
             return services;
         }
     }

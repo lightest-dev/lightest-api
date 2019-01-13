@@ -1,6 +1,6 @@
 ﻿namespace Lightest.TestingService.Requests
 {
-    internal class TestingRequest : BaseRequest
+    public class TestingRequest : BaseRequest
     {
         public int UploadId { get; set; }
 

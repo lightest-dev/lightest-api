@@ -1,6 +1,6 @@
 ﻿namespace Lightest.TestingService.Requests
 {
-    internal class SingleFileCodeRequest : FileRequest
+    public class SingleFileCodeRequest : FileRequest
     {
         public SingleFileCodeRequest(string filename) : base(filename)
         {

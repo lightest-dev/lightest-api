@@ -18,8 +18,9 @@ namespace Lightest.Data.Models
         [Column(TypeName = "text")]
         public string Code { get; set; }
 
-        [JsonIgnore]
         public bool Compiled { get; set; }
+
+        public string Message { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<TaskDefinition> Tasks { get; set; }

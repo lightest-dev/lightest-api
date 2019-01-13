@@ -16,6 +16,7 @@ namespace Lightest.TestingService.DefaultServices
     public class TestingService : ITestingService
     {
         private readonly RelationalDbContext _context;
+        private readonly object _lock;
         private readonly IServerRepository _repository;
         private readonly List<IUpload> _uploads;
         private readonly ITransferServiceFactory _transferServiceFactory;
@@ -26,6 +27,7 @@ namespace Lightest.TestingService.DefaultServices
             _repository = repository;
             _transferServiceFactory = transferServiceFactory;
             _uploads = new List<IUpload>();
+            _lock = new object();
         }
 
         public async Task<bool> BeginTesting(IUpload upload)
@@ -47,7 +49,7 @@ namespace Lightest.TestingService.DefaultServices
 
             if (!result)
             {
-                _repository.ReportFreeServer(server.ServerAddress);
+                _repository.AddBrokenServer(server.ServerAddress);
                 return result;
             }
 
@@ -68,7 +70,7 @@ namespace Lightest.TestingService.DefaultServices
             }
             else
             {
-                _repository.ReportFreeServer(server.ServerAddress);
+                _repository.AddBrokenServer(server.ServerAddress);
             }
             return result;
         }
@@ -105,18 +107,27 @@ namespace Lightest.TestingService.DefaultServices
                 }
             }
             var save = _context.SaveChangesAsync();
-            var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
-            _uploads.Remove(listUpload);
+            lock (_lock)
+            {
+                var listUpload = _uploads.Find(u => u.UploadId == result.UploadId);
+                _uploads.Remove(listUpload);
+            }
             await save;
         }
 
         private bool AddToList(IUpload upload)
         {
-            _uploads.Add(upload);
+            lock (_lock)
+            {
+                _uploads.Add(upload);
+            }
             upload.Status = UploadStatus.Queue;
             _context.Add(upload);
             _context.SaveChanges();
-            return _uploads.Count <= _repository.ServersCount;
+            lock (_lock)
+            {
+                return _uploads.Count <= _repository.ServersCount;
+            }
         }
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
@@ -187,6 +198,16 @@ namespace Lightest.TestingService.DefaultServices
                 }
             }
             return result;
+        }
+
+        public void ReportFreeServer(NewServer server)
+        {
+            _repository.AddFreeServer(server.Ip);
+        }
+
+        public void RemoveCachedChecker(int checkerId)
+        {
+            _repository.RemoveCachedCheckers(checkerId);
         }
     }
 }

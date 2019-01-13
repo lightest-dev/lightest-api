@@ -5,7 +5,9 @@ namespace Lightest.TestingService.Interfaces
 {
     public interface IServerRepository
     {
-        void ReportFreeServer(IPAddress ip);
+        void AddFreeServer(IPAddress ip);
+
+        void AddBrokenServer(IPAddress ip);
 
         TestingServer GetFreeServer();
 

@@ -79,10 +79,11 @@ namespace Lightest.Api.Controllers
                 Examples = task.Examples,
                 Description = task.Description,
                 Category = task.Category,
-                Checker = new BasicNameViewModel
+                Checker = new BaseChecker
                 {
                     Id = task.Checker.Id,
-                    Name = task.Checker.Name
+                    Name = task.Checker.Name,
+                    Compiled = task.Checker.Compiled
                 },
                 Tests = task.Tests,
                 Languages = task.Languages.Select(t => new BasicLanguage

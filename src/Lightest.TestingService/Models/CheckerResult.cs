@@ -1,4 +1,4 @@
-﻿namespace Lightest.Data.Models.TaskModels
+﻿namespace Lightest.TestingService.Models
 {
     public class CheckerResult
     {

@@ -34,7 +34,7 @@ namespace Lightest.TestingService.DefaultServices
             }
         }
 
-        public void ReportFreeServer(IPAddress ip)
+        public void AddFreeServer(IPAddress ip)
         {
             var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
             if (server == null)
@@ -46,6 +46,15 @@ namespace Lightest.TestingService.DefaultServices
                 _availableServers.Add(server);
             }
             server.Status = ServerStatus.Free;
+        }
+
+        public void AddBrokenServer(IPAddress ip)
+        {
+            var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
+            if (server != null)
+            {
+                server.Status = ServerStatus.NotResponding;
+            }
         }
     }
 }

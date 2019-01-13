@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
+using Lightest.Api.RequestModels;
 using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -18,23 +19,23 @@ namespace Lightest.Api.Controllers
     [Authorize]
     public class CheckersController : BaseUserController
     {
-        private readonly IServerRepository _serverRepository;
+        private readonly ITestingService _testingService;
 
         private readonly IAccessService<Checker> _accessService;
 
         public CheckersController(
             RelationalDbContext context,
-            IServerRepository serverRepository,
-            UserManager<ApplicationUser> userManager,
+            ITestingService testingService,
+        UserManager<ApplicationUser> userManager,
             IAccessService<Checker> accessService) : base(context, userManager)
         {
-            _serverRepository = serverRepository;
+            _testingService = testingService;
             _accessService = accessService;
         }
 
         // GET: api/Checkers
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<BasicNameViewModel>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BaseChecker>))]
         public async Task<IActionResult> GetCheckers()
         {
             if (!_accessService.CheckReadAccess(null, await GetCurrentUser()))
@@ -43,7 +44,7 @@ namespace Lightest.Api.Controllers
             }
             return Ok(_context.Checkers
                 .AsNoTracking()
-                .Select(c => new BasicNameViewModel { Id = c.Id, Name = c.Name }));
+                .Select(c => new BaseChecker { Id = c.Id, Name = c.Name, Compiled = c.Compiled }));
         }
 
         // GET: api/Checkers/5
@@ -72,16 +73,22 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         [ProducesResponseType(403)]
         [ProducesResponseType(201, Type = typeof(Checker))]
-        public async Task<IActionResult> PostChecker([FromBody] Checker checker)
+        public async Task<IActionResult> PostChecker([FromBody] CheckerAdd checker)
         {
-            if (!_accessService.CheckWriteAccess(checker, await GetCurrentUser()))
+            var entry = new Checker
+            {
+                Name = checker.Name,
+                Code = checker.Code
+            };
+
+            if (!_accessService.CheckWriteAccess(entry, await GetCurrentUser()))
             {
                 return Forbid();
             }
-            _context.Checkers.Add(checker);
+            _context.Checkers.Add(entry);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetChecker", new { id = checker.Id }, checker);
+            return CreatedAtAction("GetChecker", new { id = entry.Id }, entry);
         }
 
         // PUT: api/Checkers/5
@@ -90,28 +97,28 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutChecker([FromRoute] int id, [FromBody] Checker checker)
+        public async Task<IActionResult> PutChecker([FromRoute] int id, [FromBody] CheckerUpdate checker)
         {
             if (id != checker.Id)
             {
                 return BadRequest();
             }
 
-            if (!CheckerExists(id))
-            {
-                return NotFound();
-            }
+            var entry = _context.Checkers.Find(checker.Id);
 
-            if (!_accessService.CheckWriteAccess(checker, await GetCurrentUser()))
+            if (!_accessService.CheckWriteAccess(entry, await GetCurrentUser()))
             {
                 return Forbid();
             }
 
-            _context.Entry(checker).State = EntityState.Modified;
+            entry.Name = checker.Name;
+            entry.Compiled = false;
+            entry.Message = null;
+            entry.Code = checker.Code;
 
             await _context.SaveChangesAsync();
 
-            _serverRepository.RemoveCachedCheckers(checker.Id);
+            _testingService.RemoveCachedChecker(checker.Id);
 
             return Ok();
         }
@@ -140,14 +147,9 @@ namespace Lightest.Api.Controllers
             //catch exception
             await _context.SaveChangesAsync();
 
-            _serverRepository.RemoveCachedCheckers(id);
+            _testingService.RemoveCachedChecker(id);
 
             return Ok(checker);
-        }
-
-        private bool CheckerExists(int id)
-        {
-            return _context.Checkers.Any(e => e.Id == id);
         }
     }
 }
