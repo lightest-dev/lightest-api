@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace Lightest.Data.Models.TaskModels
@@ -9,13 +10,13 @@ namespace Lightest.Data.Models.TaskModels
         public Language Language { get; set; }
 
         [Required]
-        public int LanguageId { get; set; }
+        public Guid LanguageId { get; set; }
 
         [JsonIgnore]
         public TaskDefinition Task { get; set; }
 
         [Required]
-        public int TaskId { get; set; }
+        public Guid TaskId { get; set; }
 
         [Required]
         public int TimeLimit { get; set; }

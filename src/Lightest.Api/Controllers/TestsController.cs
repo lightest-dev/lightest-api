@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -31,7 +32,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetTest([FromRoute] int id)
+        public async Task<IActionResult> GetTest([FromRoute] Guid id)
         {
             var test = await _context.Tests
                 .AsNoTracking()
@@ -83,7 +84,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTest([FromRoute] int id, [FromBody] Test test)
+        public async Task<IActionResult> PutTest([FromRoute] Guid id, [FromBody] Test test)
         {
             if (id != test.Id)
             {
@@ -117,7 +118,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTest([FromRoute] int id)
+        public async Task<IActionResult> DeleteTest([FromRoute] Guid id)
         {
             var test = await _context.Tests
                             .Include(t => t.Task)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
@@ -47,7 +48,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetGroup([FromRoute] int id)
+        public async Task<IActionResult> GetGroup([FromRoute] Guid id)
         {
             var group = await _context.Groups
                 .AsNoTracking()
@@ -164,7 +165,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutGroup([FromRoute] int id, [FromBody] Group group)
+        public async Task<IActionResult> PutGroup([FromRoute] Guid id, [FromBody] Group group)
         {
             if (id != group.Id)
             {

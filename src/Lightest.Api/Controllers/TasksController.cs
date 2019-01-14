@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
@@ -47,7 +48,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetTask([FromRoute] int id)
+        public async Task<IActionResult> GetTask([FromRoute] Guid id)
         {
             var task = await _context.Tasks
                 .AsNoTracking()
@@ -109,7 +110,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetUsers([FromRoute] int id)
+        public async Task<IActionResult> GetUsers([FromRoute] Guid id)
         {
             var task = await _context.Tasks
                 .AsNoTracking()
@@ -183,7 +184,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody] UserTask[] users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] UserTask[] users)
         {
             var task = await _context.Tasks
                .Include(t => t.Users)
@@ -227,7 +228,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> SetLanguages([FromRoute] int id, [FromBody] TaskLanguage[] languages)
+        public async Task<IActionResult> SetLanguages([FromRoute] Guid id, [FromBody] TaskLanguage[] languages)
         {
             var task = await _context.Tasks
                 .Include(t => t.Languages)
@@ -259,7 +260,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> SetTests([FromRoute] int id, [FromBody] Test[] tests)
+        public async Task<IActionResult> SetTests([FromRoute] Guid id, [FromBody] Test[] tests)
         {
             var task = await _context.Tasks
                 .Include(t => t.Tests)
@@ -293,7 +294,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutTask([FromRoute] int id, [FromBody] TaskDefinition task)
+        public async Task<IActionResult> PutTask([FromRoute] Guid id, [FromBody] TaskDefinition task)
         {
             if (id != task.Id)
             {

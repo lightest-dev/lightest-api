@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
@@ -26,7 +27,7 @@ namespace Lightest.TestingService.DefaultServices
             return server;
         }
 
-        public void RemoveCachedCheckers(int checkerId)
+        public void RemoveCachedCheckers(Guid checkerId)
         {
             foreach (var server in _availableServers)
             {

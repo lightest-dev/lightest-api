@@ -1,8 +1,10 @@
-﻿namespace Lightest.TestingService.Models
+﻿using System;
+
+namespace Lightest.TestingService.Models
 {
     public class CheckerResult
     {
-        public int UploadId { get; set; }
+        public Guid UploadId { get; set; }
 
         public string Type { get; set; }
 

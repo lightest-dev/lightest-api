@@ -1,8 +1,10 @@
-﻿namespace Lightest.Api.ResponseModels
+﻿using System;
+
+namespace Lightest.Api.ResponseModels
 {
     public class BasicNameViewModel
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Name { get; set; }
     }

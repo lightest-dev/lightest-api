@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Lightest.Data.Models.TaskModels;
 using Newtonsoft.Json;
@@ -8,7 +9,7 @@ namespace Lightest.Data.Models
     public class Category
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -16,7 +17,7 @@ namespace Lightest.Data.Models
         [JsonIgnore]
         public virtual Category Parent { get; set; }
 
-        public int? ParentId { get; set; }
+        public Guid? ParentId { get; set; }
 
         public bool Public { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
@@ -33,7 +34,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet("{taskId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
-        public async Task<IActionResult> GetLastUploads(int taskId)
+        public async Task<IActionResult> GetLastUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
             var uploads = _context.CodeUploads
@@ -53,7 +54,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet("{taskId}/all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
-        public async Task<IActionResult> GetAllUploads(int taskId)
+        public async Task<IActionResult> GetAllUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
             if (!_accessService.CheckWriteAccess(null, user))
@@ -78,7 +79,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(UserUploadResult))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] int id)
+        public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] Guid id)
         {
             var user = await GetCurrentUser();
             IUpload upload;

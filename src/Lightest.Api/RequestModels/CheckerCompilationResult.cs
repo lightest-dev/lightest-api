@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Api.RequestModels
 {
     public class CheckerCompilationResult
     {
         [Required]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Message { get; set; }

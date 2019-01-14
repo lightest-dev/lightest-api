@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Lightest.Data.Models.TaskModels;
 using Newtonsoft.Json;
 
@@ -22,7 +23,7 @@ namespace Lightest.Data.Models
         public Group Group { get; set; }
 
         [Required]
-        public int GroupId { get; set; }
+        public Guid GroupId { get; set; }
 
         [JsonIgnore]
         public ApplicationUser User { get; set; }

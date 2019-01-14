@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Lightest.TestingService.Models;
 
 namespace Lightest.TestingService.Interfaces
@@ -11,7 +12,7 @@ namespace Lightest.TestingService.Interfaces
 
         TestingServer GetFreeServer();
 
-        void RemoveCachedCheckers(int checkerId);
+        void RemoveCachedCheckers(Guid checkerId);
 
         int ServersCount { get; }
     }

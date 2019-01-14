@@ -4,7 +4,7 @@ using Lightest.Data.Models.TaskModels;
 
 namespace Lightest.Api.ResponseModels
 {
-    public class CompleteTask
+    public class CompleteTask : BasicNameViewModel
     {
         public Category Category { get; set; }
 
@@ -14,11 +14,7 @@ namespace Lightest.Api.ResponseModels
 
         public string Examples { get; set; }
 
-        public int Id { get; set; }
-
         public IEnumerable<BasicLanguage> Languages { get; set; }
-
-        public string Name { get; set; }
 
         public int Points { get; set; }
 

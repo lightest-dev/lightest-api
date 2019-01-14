@@ -1,12 +1,8 @@
 ﻿namespace Lightest.Api.ResponseModels
 {
-    public class BasicLanguage
+    public class BasicLanguage : BasicNameViewModel
     {
-        public int Id { get; set; }
-
         public int MemoryLimit { get; set; }
-
-        public string Name { get; set; }
 
         public int TimeLimit { get; set; }
     }

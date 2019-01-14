@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace Lightest.Data.Models.TaskModels
@@ -6,7 +7,7 @@ namespace Lightest.Data.Models.TaskModels
     public class CodeUpload : IUpload
     {
         [Key]
-        public int UploadId { get; set; }
+        public Guid UploadId { get; set; }
 
         [Required]
         public string Code { get; set; }
@@ -15,7 +16,7 @@ namespace Lightest.Data.Models.TaskModels
         public virtual Language Language { get; set; }
 
         [Required]
-        public int LanguageId { get; set; }
+        public Guid LanguageId { get; set; }
 
         [JsonIgnore]
         public string Message { get; set; }
@@ -30,7 +31,7 @@ namespace Lightest.Data.Models.TaskModels
         public virtual TaskDefinition Task { get; set; }
 
         [Required]
-        public int TaskId { get; set; }
+        public Guid TaskId { get; set; }
 
         [JsonIgnore]
         public bool TestingFinished { get; set; }

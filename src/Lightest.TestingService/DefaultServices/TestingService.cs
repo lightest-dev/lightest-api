@@ -205,7 +205,7 @@ namespace Lightest.TestingService.DefaultServices
             _repository.AddFreeServer(server.Ip);
         }
 
-        public void RemoveCachedChecker(int checkerId)
+        public void RemoveCachedChecker(Guid checkerId)
         {
             _repository.RemoveCachedCheckers(checkerId);
         }

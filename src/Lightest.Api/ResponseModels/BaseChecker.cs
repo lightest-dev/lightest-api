@@ -2,6 +2,6 @@
 {
     public class BaseChecker : BasicNameViewModel
     {
-        public bool Compiled { get; set; }
+        public bool? Compiled { get; set; }
     }
 }

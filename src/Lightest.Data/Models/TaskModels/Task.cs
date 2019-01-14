@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
@@ -7,19 +8,19 @@ namespace Lightest.Data.Models.TaskModels
     public class TaskDefinition
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [JsonIgnore]
         public virtual Category Category { get; set; }
 
         [Required]
-        public int CategoryId { get; set; }
+        public Guid CategoryId { get; set; }
 
         [JsonIgnore]
         public virtual Checker Checker { get; set; }
 
         [Required]
-        public int CheckerId { get; set; }
+        public Guid CheckerId { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<CodeUpload> CodeUploads { get; set; }

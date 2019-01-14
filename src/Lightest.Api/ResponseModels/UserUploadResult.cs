@@ -1,8 +1,10 @@
-﻿namespace Lightest.Api.ResponseModels
+﻿using System;
+
+namespace Lightest.Api.ResponseModels
 {
     public class UserUploadResult
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         public string Status { get; set; }
 

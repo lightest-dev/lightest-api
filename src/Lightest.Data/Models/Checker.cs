@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Lightest.Data.Models.TaskModels;
@@ -9,7 +10,7 @@ namespace Lightest.Data.Models
     public class Checker
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -18,7 +19,7 @@ namespace Lightest.Data.Models
         [Column(TypeName = "text")]
         public string Code { get; set; }
 
-        public bool Compiled { get; set; }
+        public bool? Compiled { get; set; }
 
         public string Message { get; set; }
 

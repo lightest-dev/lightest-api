@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 namespace Lightest.TestingService.Models
@@ -7,12 +8,12 @@ namespace Lightest.TestingService.Models
     {
         public TestingServer()
         {
-            CachedCheckerIds = new List<int>();
+            CachedCheckerIds = new List<Guid>();
         }
 
         public IPAddress ServerAddress { get; set; }
 
-        public List<int> CachedCheckerIds { get; }
+        public List<Guid> CachedCheckerIds { get; }
 
         public ServerStatus Status { get; set; }
     }

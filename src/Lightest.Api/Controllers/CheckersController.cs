@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
@@ -97,7 +98,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutChecker([FromRoute] int id, [FromBody] CheckerUpdate checker)
+        public async Task<IActionResult> PutChecker([FromRoute] Guid id, [FromBody] CheckerUpdate checker)
         {
             if (id != checker.Id)
             {
@@ -129,7 +130,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteChecker([FromRoute] int id)
+        public async Task<IActionResult> DeleteChecker([FromRoute] Guid id)
         {
             var checker = await _context.Checkers.FindAsync(id);
 

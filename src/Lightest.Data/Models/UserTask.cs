@@ -25,7 +25,7 @@ namespace Lightest.Data.Models
         public TaskDefinition Task { get; set; }
 
         [Required]
-        public int TaskId { get; set; }
+        public Guid TaskId { get; set; }
 
         [JsonIgnore]
         public ApplicationUser User { get; set; }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
@@ -45,7 +46,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet("{id}/children")]
         [ProducesResponseType(200, Type = typeof(CategoryChildrenViewModel))]
-        public async Task<IActionResult> GetChildren(int id)
+        public async Task<IActionResult> GetChildren(Guid id)
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
@@ -75,7 +76,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetCategory([FromRoute] int id)
+        public async Task<IActionResult> GetCategory([FromRoute] Guid id)
         {
             var category = await _context.Categories
                 .AsNoTracking()
@@ -160,7 +161,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int id, [FromBody]IEnumerable<AccessRights> users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody]IEnumerable<AccessRights> users)
         {
             var category = await _context.Categories
                 .Include(c => c.Users)
@@ -208,7 +209,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutCategory([FromRoute] int id, [FromBody] Category category)
+        public async Task<IActionResult> PutCategory([FromRoute] Guid id, [FromBody] Category category)
         {
             if (id != category.Id)
             {

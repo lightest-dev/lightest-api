@@ -1,8 +1,10 @@
-﻿namespace Lightest.Data.Models.TaskModels
+﻿using System;
+
+namespace Lightest.Data.Models.TaskModels
 {
     public interface IUpload
     {
-        int UploadId { get; set; }
+        Guid UploadId { get; set; }
 
         string Message { get; set; }
 
@@ -18,6 +20,6 @@
 
         TaskDefinition Task { get; set; }
 
-        int TaskId { get; set; }
+        Guid TaskId { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
@@ -7,7 +8,7 @@ namespace Lightest.Data.Models
     public class Group
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -17,7 +18,7 @@ namespace Lightest.Data.Models
         [JsonIgnore]
         public virtual Group Parent { get; set; }
 
-        public int? ParentId { get; set; }
+        public Guid? ParentId { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<Group> SubGroups { get; set; }
