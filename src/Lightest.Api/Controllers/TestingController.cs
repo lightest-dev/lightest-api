@@ -5,6 +5,7 @@ using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace Lightest.Api.Controllers
 {
@@ -19,16 +20,20 @@ namespace Lightest.Api.Controllers
 
         private readonly RelationalDbContext _context;
 
-        private IHttpContextAccessor _accessor;
+        private readonly IHttpContextAccessor _accessor;
+
+        private readonly ILogger _logger;
 
         public TestingController(
             ITestingService testingService,
             RelationalDbContext context,
-            IHttpContextAccessor accessor)
+            IHttpContextAccessor accessor,
+            ILogger<TestingController> logger)
         {
             _testingService = testingService;
             _context = context;
             _accessor = accessor;
+            _logger = logger;
         }
 
         [HttpPost("result")]
@@ -51,6 +56,15 @@ namespace Lightest.Api.Controllers
         {
             server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
             _testingService.ReportFreeServer(server);
+            return Task.CompletedTask;
+        }
+
+        [HttpPost("error")]
+        public Task ReportError([FromBody] TestingError error)
+        {
+            error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+            _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
+            _testingService.ReportFreeServer(error);
             return Task.CompletedTask;
         }
     }
