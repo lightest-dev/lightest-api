@@ -1,0 +1,101 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "ConnectionStrings",
+    "Domain",
+    "URIs",
+    "IdentityServer"
+  ],
+  "properties": {
+    "ConnectionStrings": {
+      "$id": "#/properties/ConnectionStrings",
+      "type": "object",
+      "title": "The Connectionstrings Schema",
+      "required": [
+        "Relational"
+      ],
+      "properties": {
+        "Relational": {
+          "$id": "#/properties/ConnectionStrings/properties/Relational",
+          "type": "string",
+          "title": "The Relational Schema",
+          "default": "",
+          "examples": [
+            "connection string"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "Domain": {
+      "$id": "#/properties/Domain",
+      "type": "string",
+      "title": "The Domain Schema",
+      "default": "",
+      "examples": [
+        ".example.com"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "URIs": {
+      "$id": "#/properties/URIs",
+      "type": "array",
+      "title": "The Uris Schema",
+      "items": {
+        "$id": "#/properties/URIs/items",
+        "type": "string",
+        "title": "The Items Schema",
+        "default": "",
+        "examples": [
+          "http://localhost:4200"
+        ],
+        "pattern": "^(.*)$"
+      }
+    },
+    "IdentityServer": {
+      "$id": "#/properties/IdentityServer",
+      "type": "object",
+      "title": "The Identityserver Schema",
+      "required": [
+        "PublicOrigin",
+        "UserInteraction"
+      ],
+      "properties": {
+        "PublicOrigin": {
+          "$id": "#/properties/IdentityServer/properties/PublicOrigin",
+          "type": "string",
+          "title": "The Publicorigin Schema",
+          "default": "",
+          "examples": [
+            "https://login.example.com"
+          ],
+          "pattern": "^(.*)$"
+        },
+        "UserInteraction": {
+          "$id": "#/properties/IdentityServer/properties/UserInteraction",
+          "type": "object",
+          "title": "The Userinteraction Schema",
+          "required": [
+            "LoginUrl"
+          ],
+          "properties": {
+            "LoginUrl": {
+              "$id": "#/properties/IdentityServer/properties/UserInteraction/properties/LoginUrl",
+              "type": "string",
+              "title": "The Loginurl Schema",
+              "default": "",
+              "examples": [
+                "https://example.com/login"
+              ],
+              "pattern": "^(.*)$"
+            }
+          }
+        }
+      }
+    }
+  }
+}

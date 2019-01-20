@@ -1,0 +1,207 @@
+{
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "http://example.com/root.json",
+  "type": "object",
+  "title": "The Root Schema",
+  "required": [
+    "ConnectionStrings",
+    "Authority",
+    "AccessMode",
+    "Clients",
+    "identity_resources",
+    "api_resources"
+  ],
+  "properties": {
+    "ConnectionStrings": {
+      "$id": "#/properties/ConnectionStrings",
+      "type": "object",
+      "title": "The Connectionstrings Schema",
+      "required": [
+        "Relational"
+      ],
+      "properties": {
+        "Relational": {
+          "$id": "#/properties/ConnectionStrings/properties/Relational",
+          "type": "string",
+          "title": "The Relational Schema",
+          "default": "",
+          "examples": [
+            "connection string"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    },
+    "Authority": {
+      "$id": "#/properties/Authority",
+      "type": "string",
+      "title": "The Authority Schema",
+      "default": "",
+      "examples": [
+        "https://login.example.com"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "AccessMode": {
+      "$id": "#/properties/AccessMode",
+      "type": "string",
+      "title": "The Accessmode Schema",
+      "default": "",
+      "examples": [
+        "Role"
+      ],
+      "pattern": "^(.*)$"
+    },
+    "Clients": {
+      "$id": "#/properties/Clients",
+      "type": "array",
+      "title": "The Clients Schema",
+      "items": {
+        "$id": "#/properties/Clients/items",
+        "type": "object",
+        "title": "The Items Schema",
+        "required": [
+          "ClientId",
+          "ClientName",
+          "ClientSecrets",
+          "AllowedGrantTypes",
+          "AllowedScopes",
+          "AllowOfflineAccess",
+          "RequireHttps",
+          "RequireConsent",
+          "AllowAccessTokensViaBrowser"
+        ],
+        "properties": {
+          "ClientId": {
+            "$id": "#/properties/Clients/items/properties/ClientId",
+            "type": "string",
+            "title": "The Clientid Schema",
+            "default": "",
+            "examples": [
+              "client"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "ClientName": {
+            "$id": "#/properties/Clients/items/properties/ClientName",
+            "type": "string",
+            "title": "The Clientname Schema",
+            "default": "",
+            "examples": [
+              "client"
+            ],
+            "pattern": "^(.*)$"
+          },
+          "ClientSecrets": {
+            "$id": "#/properties/Clients/items/properties/ClientSecrets",
+            "type": "array",
+            "title": "The Clientsecrets Schema",
+            "items": {
+              "$id": "#/properties/Clients/items/properties/ClientSecrets/items",
+              "type": "string",
+              "title": "The Items Schema",
+              "default": "",
+              "examples": [
+                "secret"
+              ],
+              "pattern": "^(.*)$"
+            }
+          },
+          "AllowedGrantTypes": {
+            "$id": "#/properties/Clients/items/properties/AllowedGrantTypes",
+            "type": "array",
+            "title": "The Allowedgranttypes Schema",
+            "items": {
+              "$id": "#/properties/Clients/items/properties/AllowedGrantTypes/items",
+              "type": "string",
+              "title": "The Items Schema",
+              "default": "",
+              "examples": [
+                "hybrid"
+              ],
+              "pattern": "^(.*)$"
+            }
+          },
+          "AllowedScopes": {
+            "$id": "#/properties/Clients/items/properties/AllowedScopes",
+            "type": "array",
+            "title": "The Allowedscopes Schema",
+            "items": {
+              "$id": "#/properties/Clients/items/properties/AllowedScopes/items",
+              "type": "string",
+              "title": "The Items Schema",
+              "default": "",
+              "examples": [
+                "openid",
+                "WebApi"
+              ],
+              "pattern": "^(.*)$"
+            }
+          },
+          "AllowOfflineAccess": {
+            "$id": "#/properties/Clients/items/properties/AllowOfflineAccess",
+            "type": "boolean",
+            "title": "The Allowofflineaccess Schema",
+            "default": false,
+            "examples": [
+              true
+            ]
+          },
+          "RequireHttps": {
+            "$id": "#/properties/Clients/items/properties/RequireHttps",
+            "type": "boolean",
+            "title": "The Requirehttps Schema",
+            "default": false,
+            "examples": [
+              false
+            ]
+          },
+          "RequireConsent": {
+            "$id": "#/properties/Clients/items/properties/RequireConsent",
+            "type": "boolean",
+            "title": "The Requireconsent Schema",
+            "default": false,
+            "examples": [
+              false
+            ]
+          },
+          "AllowAccessTokensViaBrowser": {
+            "$id": "#/properties/Clients/items/properties/AllowAccessTokensViaBrowser",
+            "type": "boolean",
+            "title": "The Allowaccesstokensviabrowser Schema",
+            "default": false,
+            "examples": [
+              true
+            ]
+          }
+        }
+      }
+    },
+    "identity_resources": {
+      "$id": "#/properties/identity_resources",
+      "type": "object",
+      "title": "The Identity_resources Schema"
+    },
+    "api_resources": {
+      "$id": "#/properties/api_resources",
+      "type": "object",
+      "title": "The Api_resources Schema",
+      "required": [
+        "WebApi"
+      ],
+      "properties": {
+        "WebApi": {
+          "$id": "#/properties/api_resources/properties/WebApi",
+          "type": "string",
+          "title": "The Webapi Schema",
+          "default": "",
+          "examples": [
+            "Lightest API"
+          ],
+          "pattern": "^(.*)$"
+        }
+      }
+    }
+  }
+}

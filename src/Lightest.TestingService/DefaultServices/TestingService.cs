@@ -135,8 +135,6 @@ namespace Lightest.TestingService.DefaultServices
             upload.Status = UploadStatus.Queue;
             var save = _context.SaveChangesAsync();
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
-            var cleanRequest = new TestCleanupRequest();
-            var result = await transferService.SendMessage(cleanRequest.ToString());
             var request = new TestingRequest
             {
                 UploadId = upload.UploadId,
@@ -145,7 +143,7 @@ namespace Lightest.TestingService.DefaultServices
                 CheckerId = upload.Task.CheckerId,
                 TestsCount = upload.Task.Tests.Count
             };
-            result = await transferService.SendMessage(request.ToString());
+            var result = await transferService.SendMessage(request.ToString());
             if (!result)
             {
                 return false;
