@@ -23,12 +23,6 @@ namespace Lightest.TestingService.DefaultServices
             {
                 return false;
             }
-            var name = Path.GetFileName(path);
-            var result = await SendMessage(fileRequest.ToString());
-            if (!result)
-            {
-                return false;
-            }
             using (var client = new TcpClient())
             {
                 await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
@@ -40,10 +34,14 @@ namespace Lightest.TestingService.DefaultServices
                 using (var writer = new BinaryWriter(netStream))
                 using (var fileStream = File.OpenRead(path))
                 {
-                    var length = fileStream.Length;
-                    //+1 because type is written
-                    writer.Write(length + 1);
+                    var message = fileRequest.ToString();
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    // 1 for type, 4 for message length
+                    var length = fileStream.Length + bytes.Length + 1 + 4;
+                    writer.Write(length);
                     writer.Write(RequestType.File);
+                    writer.Write(bytes.Length);
+                    writer.Write(bytes);
                     await fileStream.CopyToAsync(netStream);
                 }
             }
@@ -52,11 +50,6 @@ namespace Lightest.TestingService.DefaultServices
 
         public async Task<bool> SendFile(FileRequest fileRequest, byte[] data)
         {
-            var result = await SendMessage(fileRequest.ToString());
-            if (!result)
-            {
-                return false;
-            }
             using (var client = new TcpClient())
             {
                 await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
@@ -67,10 +60,14 @@ namespace Lightest.TestingService.DefaultServices
                 using (var netStream = client.GetStream())
                 using (var writer = new BinaryWriter(netStream))
                 {
-                    var length = data.Length;
-                    //+1 because type is written
-                    writer.Write(length + 1);
+                    var message = fileRequest.ToString();
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    // 1 for type, 4 for message length
+                    long length = data.Length + bytes.Length + 1 + 4;
+                    writer.Write(length);
                     writer.Write(RequestType.File);
+                    writer.Write(bytes.Length);
+                    writer.Write(bytes);
                     writer.Write(data);
                 }
             }
