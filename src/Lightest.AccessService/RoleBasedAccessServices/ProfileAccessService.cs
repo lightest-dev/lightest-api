@@ -22,7 +22,7 @@ namespace Lightest.AccessService.RoleBasedAccessServices
 
         public bool CheckWriteAccess(ApplicationUser requested, ApplicationUser requester)
         {
-            return IsTeacherOrAdmin(requester);
+            return requested?.Id == requester.Id || IsTeacherOrAdmin(requester);
         }
     }
 }
