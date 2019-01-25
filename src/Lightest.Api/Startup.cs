@@ -29,18 +29,14 @@ namespace Lightest.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors("General");
             app.UseAuthentication();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             app.UseMvc();
-            app.UseCors(b =>
-            {
-                b.AllowAnyHeader();
-                b.AllowAnyMethod();
-                b.AllowAnyOrigin();
-            });
+            
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -86,7 +82,17 @@ namespace Lightest.Api
                 c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
             });
             services.AddHttpContextAccessor();
-            services.AddCors();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("General", b =>
+                {
+                    b.AllowAnyHeader();
+                    b.AllowAnyMethod();
+                    b.AllowAnyOrigin();
+                });
+            });
+
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
         }
