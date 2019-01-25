@@ -66,9 +66,8 @@ namespace Lightest.IdentityServer.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         [Route("logout")]
-        public async Task<IActionResult> Logout([FromBody]string clientName)
+        public async Task<IActionResult> Logout([FromBody]LogOutViewModel model)
         {
             var subjectId = HttpContext.User.Identity.GetSubjectId();
 
@@ -80,7 +79,7 @@ namespace Lightest.IdentityServer.Controllers
 
             // get context information (client name, post logout redirect URI and iframe for federated signout)
 
-            await _persistedGrantService.RemoveAllGrantsAsync(subjectId, clientName);
+            await _persistedGrantService.RemoveAllGrantsAsync(subjectId, model.ClientName);
             return Ok();
         }
 

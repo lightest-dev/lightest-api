@@ -1,6 +1,5 @@
 ﻿using IdentityServer4.AccessTokenValidation;
-using Lightest.AccessService.MockAccessServices;
-using Lightest.AccessService.RoleBasedAccessServices;
+using Lightest.AccessService;
 using Lightest.Api.Extensions;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -89,14 +88,7 @@ namespace Lightest.Api
             services.AddHttpContextAccessor();
             services.AddCors();
             services.AddDefaultTestingServices();
-            if (Configuration.GetSection("AccessMode").Value.ToLower() == "mock")
-            {
-                services.AddMockAccess();
-            }
-            else
-            {
-                services.AddRoleBasedAccess();
-            }
+            services.AddAccessServices(Configuration.GetSection("AccessMode"));
         }
     }
 }
