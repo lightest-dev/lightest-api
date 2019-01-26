@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Requests;
+using Microsoft.Extensions.Logging;
 
 namespace Lightest.TestingService.DefaultServices
 {
@@ -12,8 +14,11 @@ namespace Lightest.TestingService.DefaultServices
     {
         private readonly IPEndPoint _endpoint;
 
-        public TransferService(IPAddress ip, int port)
+        private readonly ILogger _logger;
+
+        public TransferService(ILogger logger, IPAddress ip, int port)
         {
+            _logger = logger;
             _endpoint = new IPEndPoint(ip, port);
         }
 
@@ -23,77 +28,105 @@ namespace Lightest.TestingService.DefaultServices
             {
                 return false;
             }
-            using (var client = new TcpClient())
+
+            try
             {
-                await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                if (!client.Connected)
+                using (var client = new TcpClient())
                 {
-                    return false;
+                    await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
+                    if (!client.Connected)
+                    {
+                        return false;
+                    }
+
+                    using (var netStream = client.GetStream())
+                    using (var writer = new BinaryWriter(netStream))
+                    using (var fileStream = File.OpenRead(path))
+                    {
+                        var message = fileRequest.ToString();
+                        var bytes = Encoding.UTF8.GetBytes(message);
+                        // 1 for type, 4 for message length
+                        var length = fileStream.Length + bytes.Length + 1 + 4;
+                        writer.Write(length);
+                        writer.Write(RequestType.File);
+                        writer.Write(bytes.Length);
+                        writer.Write(bytes);
+                        await fileStream.CopyToAsync(netStream);
+                    }
                 }
-                using (var netStream = client.GetStream())
-                using (var writer = new BinaryWriter(netStream))
-                using (var fileStream = File.OpenRead(path))
-                {
-                    var message = fileRequest.ToString();
-                    var bytes = Encoding.UTF8.GetBytes(message);
-                    // 1 for type, 4 for message length
-                    var length = fileStream.Length + bytes.Length + 1 + 4;
-                    writer.Write(length);
-                    writer.Write(RequestType.File);
-                    writer.Write(bytes.Length);
-                    writer.Write(bytes);
-                    await fileStream.CopyToAsync(netStream);
-                }
+
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return false;
+            }
         }
 
         public async Task<bool> SendFile(FileRequest fileRequest, byte[] data)
         {
-            using (var client = new TcpClient())
+            try
             {
-                await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                if (!client.Connected)
+                using (var client = new TcpClient())
                 {
-                    return false;
+                    await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
+                    if (!client.Connected)
+                    {
+                        return false;
+                    }
+                    using (var netStream = client.GetStream())
+                    using (var writer = new BinaryWriter(netStream))
+                    {
+                        var message = fileRequest.ToString();
+                        var bytes = Encoding.UTF8.GetBytes(message);
+                        // 1 for type, 4 for message length
+                        long length = data.Length + bytes.Length + 1 + 4;
+                        writer.Write(length);
+                        writer.Write(RequestType.File);
+                        writer.Write(bytes.Length);
+                        writer.Write(bytes);
+                        writer.Write(data);
+                    }
                 }
-                using (var netStream = client.GetStream())
-                using (var writer = new BinaryWriter(netStream))
-                {
-                    var message = fileRequest.ToString();
-                    var bytes = Encoding.UTF8.GetBytes(message);
-                    // 1 for type, 4 for message length
-                    long length = data.Length + bytes.Length + 1 + 4;
-                    writer.Write(length);
-                    writer.Write(RequestType.File);
-                    writer.Write(bytes.Length);
-                    writer.Write(bytes);
-                    writer.Write(data);
-                }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return false;
+            }
+            
         }
 
         public async Task<bool> SendMessage(string message)
         {
-            using (var client = new TcpClient())
+            try
             {
-                await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                if (!client.Connected)
+                using (var client = new TcpClient())
                 {
-                    return false;
+                    await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
+                    if (!client.Connected)
+                    {
+                        return false;
+                    }
+                    using (var stream = client.GetStream())
+                    using (var writer = new BinaryWriter(stream))
+                    {
+                        var bytes = Encoding.UTF8.GetBytes(message);
+                        long length = bytes.Length + 1;
+                        writer.Write(length);
+                        writer.Write(RequestType.Message);
+                        writer.Write(bytes);
+                    }
                 }
-                using (var stream = client.GetStream())
-                using (var writer = new BinaryWriter(stream))
-                {
-                    var bytes = Encoding.UTF8.GetBytes(message);
-                    long length = bytes.Length + 1;
-                    writer.Write(length);
-                    writer.Write(RequestType.Message);
-                    writer.Write(bytes);
-                }
+                return true;
             }
-            return true;
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return false;
+            }
         }
     }
 }

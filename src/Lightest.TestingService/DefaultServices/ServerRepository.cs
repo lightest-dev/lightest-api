@@ -40,10 +40,7 @@ namespace Lightest.TestingService.DefaultServices
             var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
             if (server == null)
             {
-                server = new TestingServer
-                {
-                    ServerAddress = ip
-                };
+                server = new TestingServer(ip);
                 _availableServers.Add(server);
             }
             server.Status = ServerStatus.Free;

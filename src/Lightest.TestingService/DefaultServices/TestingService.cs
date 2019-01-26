@@ -98,14 +98,12 @@ namespace Lightest.TestingService.DefaultServices
                     userTask.Completed = true;
                 }
             }
-            var save = _context.SaveChangesAsync();
-            await save;
+            await _context.SaveChangesAsync();
         }
 
         private void AddToList(IUpload upload)
         {
             upload.Status = UploadStatus.Queue;
-            _context.Add(upload);
             _context.SaveChanges();
         }
 

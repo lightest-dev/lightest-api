@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.TestingService", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightest.AccessService", "src\Lightest.AccessService\Lightest.AccessService.csproj", "{C36715C4-BD4E-47DC-835A-9D0344DABA6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightest.TransferTest", "test\Lightest.TransferTest\Lightest.TransferTest.csproj", "{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Manual", "Manual", "{E845647B-D404-491F-B6A8-678A9AC80391}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,10 @@ Global
 		{C36715C4-BD4E-47DC-835A-9D0344DABA6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C36715C4-BD4E-47DC-835A-9D0344DABA6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C36715C4-BD4E-47DC-835A-9D0344DABA6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,6 +69,8 @@ Global
 		{5382A1B3-082F-4AA2-9BF8-CDDD18CAF66E} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
 		{5E89AF76-654A-4057-A51A-5976863C31C1} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
 		{C36715C4-BD4E-47DC-835A-9D0344DABA6A} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
+		{E845647B-D404-491F-B6A8-678A9AC80391} = {9654540D-389B-40CC-94F9-CE5BEB98B66B}
+		{3EA31ABF-777E-428B-92F4-FBEFABB7E6EF} = {E845647B-D404-491F-B6A8-678A9AC80391}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A7756E5-070E-44DC-ABA2-27F8AD7143DC}
