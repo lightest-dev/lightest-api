@@ -37,35 +37,37 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("result")]
-        public Task AddResult([FromBody] CheckerResult result)
+        public async Task<IActionResult> AddResult([FromBody] CheckerResult result)
         {
-            return _testingService.ReportResult(result);
+            await _testingService.ReportResult(result);
+            return Ok();
         }
 
         [HttpPost("checker-result")]
-        public async Task AddResult([FromBody] CheckerCompilationResult result)
+        public async Task<IActionResult> AddResult([FromBody] CheckerCompilationResult result)
         {
             var checker = await _context.Checkers.FindAsync(result.Id);
             checker.Compiled = result.Compiled;
             checker.Message = result.Message;
             await _context.SaveChangesAsync();
+            return Ok();
         }
 
         [HttpPost("free")]
-        public Task ReportFreeServer([FromBody] NewServer server)
+        public async Task<IActionResult> ReportFreeServer([FromBody] NewServer server)
         {
             server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
-            _testingService.ReportFreeServer(server);
-            return Task.CompletedTask;
+            await _testingService.ReportFreeServer(server);
+            return Ok();
         }
 
         [HttpPost("error")]
-        public Task ReportError([FromBody] TestingError error)
+        public async Task<IActionResult> ReportError([FromBody] TestingError error)
         {
             error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
             _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
-            _testingService.ReportFreeServer(error);
-            return Task.CompletedTask;
+            await _testingService.ReportFreeServer(error);
+            return Ok();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Lightest.TestingService.Interfaces
 
         Task ReportResult(CheckerResult result);
 
-        void ReportFreeServer(NewServer server);
+        Task ReportFreeServer(NewServer server);
 
         void RemoveCachedChecker(Guid checkerId);
     }
