@@ -126,6 +126,8 @@ namespace Lightest.Api.Controllers
 
             var task = await _context.Tasks
                             .Include(t => t.Languages)
+                            .Include(t => t.Tests)
+                            .Include(t => t.Checker)
                             .SingleOrDefaultAsync(t => t.Id == upload.TaskId);
 
             if (task == null)
@@ -148,6 +150,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            upload.Language = language;
             upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
@@ -169,6 +172,8 @@ namespace Lightest.Api.Controllers
 
             var task = await _context.Tasks
                 .Include(t => t.Languages)
+                .Include(t => t.Tests)
+                .Include(t => t.Checker)
                 .SingleOrDefaultAsync(t => t.Id == upload.TaskId);
 
             if (task == null)
@@ -191,6 +196,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            upload.Language = language;
             upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
