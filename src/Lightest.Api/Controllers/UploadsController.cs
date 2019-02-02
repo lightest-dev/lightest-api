@@ -158,7 +158,7 @@ namespace Lightest.Api.Controllers
             _context.CodeUploads.Add(upload);
             await _context.SaveChangesAsync();
 
-            _testingService.BeginTesting(upload);
+            await _testingService.BeginTesting(upload);
             return Ok(upload.UploadId);
         }
 

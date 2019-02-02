@@ -177,7 +177,7 @@ namespace Lightest.TestingService.DefaultServices
 
         public Task ReportFreeServer(NewServer server)
         {
-            _repository.AddFreeServer(server.Ip);
+            _repository.AddFreeServer(server.ServerIp);
             var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
             
             if (upload != null)

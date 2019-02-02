@@ -40,7 +40,7 @@ namespace Lightest.TestingService.DefaultServices
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(20000);
+                        await Task.Delay(3000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)
@@ -86,7 +86,7 @@ namespace Lightest.TestingService.DefaultServices
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(20000);
+                        await Task.Delay(3000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)
@@ -130,7 +130,7 @@ namespace Lightest.TestingService.DefaultServices
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(20000);
+                        await Task.Delay(3000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)

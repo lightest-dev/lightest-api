@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Net;
+using System.Threading.Tasks;
 using Lightest.Api.RequestModels;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
@@ -58,7 +59,11 @@ namespace Lightest.Api.Controllers
         {
             if (server.Ip == null)
             {
-                server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+                server.ServerIp = _accessor.HttpContext.Connection.RemoteIpAddress;
+            }
+            else
+            {
+                server.ServerIp = IPAddress.Parse(server.Ip);
             }
             await _testingService.ReportFreeServer(server);
             return Ok();
@@ -69,9 +74,13 @@ namespace Lightest.Api.Controllers
         {
             if (error.Ip == null)
             {
-                error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+                error.ServerIp = _accessor.HttpContext.Connection.RemoteIpAddress;
             }
-            _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
+            else
+            {
+                error.ServerIp = IPAddress.Parse(error.Ip);
+            }
+            _logger.LogError("{Ip}:{ErrorMessage}", error.ServerIp, error.ErrorMessage);
             await _testingService.ReportFreeServer(error);
             return Ok();
         }

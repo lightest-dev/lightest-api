@@ -5,7 +5,9 @@ namespace Lightest.TestingService.Models
 {
     public class NewServer
     {
-        public IPAddress Ip { get; set; }
+        public IPAddress ServerIp { get; set; }
+        
+        public string Ip { get; set; }
 
         [Required]
         public string ServerVersion { get; set; }
