@@ -19,7 +19,8 @@ namespace Lightest.TestingService.DefaultServices
 
         public TestingServer GetFreeServer()
         {
-            var server = _availableServers.Find(s => s.Status == ServerStatus.Free);
+            var server = _availableServers.Find(s => s.Status == ServerStatus.Free 
+                                                     || s.Status == ServerStatus.NotResponding);
             if (server != null)
             {
                 server.Status = ServerStatus.Busy;

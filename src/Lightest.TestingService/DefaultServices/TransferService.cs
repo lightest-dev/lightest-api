@@ -33,13 +33,14 @@ namespace Lightest.TestingService.DefaultServices
             {
                 using (var client = new TcpClient())
                 {
+                    _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port}");
                     try
                     {
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(10000);
+                        await Task.Delay(20000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)
@@ -78,13 +79,14 @@ namespace Lightest.TestingService.DefaultServices
             {
                 using (var client = new TcpClient())
                 {
+                    _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port}");
                     try
                     {
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(10000);
+                        await Task.Delay(20000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)
@@ -121,13 +123,14 @@ namespace Lightest.TestingService.DefaultServices
             {
                 using (var client = new TcpClient())
                 {
+                    _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port}");
                     try
                     {
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     catch (SocketException)
                     {
-                        await Task.Delay(10000);
+                        await Task.Delay(20000);
                         await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
                     }
                     if (!client.Connected)
