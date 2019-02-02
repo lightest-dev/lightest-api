@@ -56,7 +56,10 @@ namespace Lightest.Api.Controllers
         [HttpPost("free")]
         public async Task<IActionResult> ReportFreeServer([FromBody] NewServer server)
         {
-            server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+            if (server.Ip == null)
+            {
+                server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+            }
             await _testingService.ReportFreeServer(server);
             return Ok();
         }
@@ -64,7 +67,10 @@ namespace Lightest.Api.Controllers
         [HttpPost("error")]
         public async Task<IActionResult> ReportError([FromBody] TestingError error)
         {
-            error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+            if (error.Ip == null)
+            {
+                error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress;
+            }
             _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
             await _testingService.ReportFreeServer(error);
             return Ok();

@@ -8,7 +8,6 @@ namespace Lightest.Api.RequestModels
         [Required]
         public Guid Id { get; set; }
 
-        [Required]
         public string Message { get; set; }
 
         [Required]
