@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Net;
-using Lightest.TestingService.Models;
+using Lightest.Data.Models;
 
 namespace Lightest.TestingService.Interfaces
 {
     public interface IServerRepository
     {
-        void AddFreeServer(IPAddress ip);
+        void AddFreeServer(TestingServer server);
 
-        void AddBrokenServer(IPAddress ip);
+        void AddBrokenServer(TestingServer server);
 
         TestingServer GetFreeServer();
 
         void RemoveCachedCheckers(Guid checkerId);
+
+        void AddCachedChecker(TestingServer server, Guid checkerId);
+
+        void AddNewServer(TestingServer server);
 
         int ServersCount { get; }
     }

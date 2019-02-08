@@ -36,7 +36,7 @@ namespace Lightest.Api
                 app.UseDeveloperExceptionPage();
             }
             app.UseMvc();
-            
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

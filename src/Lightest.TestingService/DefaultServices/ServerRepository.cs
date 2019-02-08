@@ -1,59 +1,68 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
+using System.Linq;
+using Lightest.Data;
+using Lightest.Data.Models;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Models;
 
 namespace Lightest.TestingService.DefaultServices
 {
     public class ServerRepository : IServerRepository
     {
-        private readonly List<TestingServer> _availableServers;
+        private readonly RelationalDbContext _context;
 
-        public ServerRepository()
+        public ServerRepository(RelationalDbContext context)
         {
-            _availableServers = new List<TestingServer>();
+            _context = context;
         }
 
-        public int ServersCount => _availableServers.Count;
+        public int ServersCount => _context.Servers.Count();
 
         public TestingServer GetFreeServer()
         {
-            var server = _availableServers.Find(s => s.Status == ServerStatus.Free 
-                                                     || s.Status == ServerStatus.NotResponding);
-            if (server != null)
-            {
-                server.Status = ServerStatus.Busy;
-            }
+            var server = _context.Servers.FirstOrDefault(s => s.Status == ServerStatus.Free);
             return server;
         }
 
         public void RemoveCachedCheckers(Guid checkerId)
         {
-            foreach (var server in _availableServers)
+            foreach (var server in _context.Servers)
             {
-                server.CachedCheckerIds.Remove(checkerId);
+                server.CachedCheckers.Remove(checkerId);
+            }
+            _context.SaveChanges();
+        }
+
+        public void AddFreeServer(TestingServer server)
+        {
+            var entry = _context.Servers.Find(server.Ip);
+            if (entry != null)
+            {
+                entry.Status = ServerStatus.Free;
+                _context.SaveChanges();
             }
         }
 
-        public void AddFreeServer(IPAddress ip)
+        public void AddNewServer(TestingServer server)
         {
-            var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
-            if (server == null)
-            {
-                server = new TestingServer(ip);
-                _availableServers.Add(server);
-            }
-            server.Status = ServerStatus.Free;
+            _context.Servers.Add(server);
+            _context.SaveChanges();
         }
 
-        public void AddBrokenServer(IPAddress ip)
+        public void AddBrokenServer(TestingServer server)
         {
-            var server = _availableServers.Find(s => Equals(s.ServerAddress, ip));
-            if (server != null)
+            var entry = _context.Servers.Find(server.Ip);
+            if (entry != null)
             {
-                server.Status = ServerStatus.NotResponding;
+                entry.Status = ServerStatus.NotResponding;
+                _context.SaveChanges();
             }
+        }
+
+        public void AddCachedChecker(TestingServer server, Guid checkerId)
+        {
+            server.CachedCheckers.Add(checkerId);
+            _context.Entry(server).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _context.SaveChanges();
         }
     }
 }

@@ -15,5 +15,7 @@ namespace Lightest.TestingService.Models
         public int SuccessfulTests { get; set; }
 
         public int FailedTest { get; set; }
+
+        public string Ip { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,13 +36,13 @@ namespace Lightest.TestingService.DefaultServices
                 return false;
             }
 
-            var transferService = _transferServiceFactory.Create(server.ServerAddress, 10000);
+            var transferService = _transferServiceFactory.Create(server.IPAddress, server.Port);
 
             var result = await CacheChecker(server, upload.Task.Checker, transferService);
 
             if (!result)
             {
-                _repository.AddBrokenServer(server.ServerAddress);
+                _repository.AddBrokenServer(server);
                 return false;
             }
 
@@ -62,18 +63,34 @@ namespace Lightest.TestingService.DefaultServices
             }
             else
             {
-                _repository.AddBrokenServer(server.ServerAddress);
+                _repository.AddBrokenServer(server);
             }
             return result;
         }
 
         public async Task ReportResult(CheckerResult result)
         {
+            var server = new TestingServer
+            {
+                Ip = result.Ip
+            };
+            _repository.AddFreeServer(server);
+
+            var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+
+            var tasks = new List<Task>(2);
+
+            if (upload != null)
+            {
+                tasks.Add(BeginTesting(upload));
+            }
+
             if (result.Type.ToLower() == "code")
             {
-                await ReportCodeResult(result);
+                tasks.Add(ReportCodeResult(result));
             }
-            else throw new NotImplementedException();
+
+            await Task.WhenAll(tasks);
         }
 
         private async Task ReportCodeResult(CheckerResult result)
@@ -164,27 +181,27 @@ namespace Lightest.TestingService.DefaultServices
         private async Task<bool> CacheChecker(TestingServer server, Checker checker, ITransferService transferService)
         {
             var result = true;
-            if (!server.CachedCheckerIds.Contains(checker.Id))
+            if (!server.CachedCheckers.Contains(checker.Id))
             {
                 result = await SendChecker(checker, transferService);
                 if (result)
                 {
-                    server.CachedCheckerIds.Add(checker.Id);
+                    _repository.AddCachedChecker(server, checker.Id);
                 }
             }
             return result;
         }
 
-        public Task ReportFreeServer(NewServer server)
+        public Task ReportNewServer(NewServer serverData)
         {
-            _repository.AddFreeServer(server.ServerIp);
-            var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
-            
-            if (upload != null)
+            var server = new TestingServer
             {
-                return BeginTesting(upload);
-            }
-
+                Ip = serverData.Ip,
+                Version = serverData.ServerVersion,
+                Port = 10000,
+                Status = ServerStatus.Free
+            };
+            _repository.AddNewServer(server);
             return Task.CompletedTask;
         }
 

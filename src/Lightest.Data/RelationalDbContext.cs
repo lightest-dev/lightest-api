@@ -11,6 +11,8 @@ namespace Lightest.Data
         {
         }
 
+        public DbSet<TestingServer> Servers { get; set; }
+
         public DbSet<ArchiveUpload> ArchiveUploads { get; set; }
 
         public DbSet<Category> Categories { get; set; }
@@ -31,7 +33,6 @@ namespace Lightest.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            //todo: Configure ignore fields for user
             base.OnModelCreating(builder);
 
             builder.Entity<ApplicationUser>()

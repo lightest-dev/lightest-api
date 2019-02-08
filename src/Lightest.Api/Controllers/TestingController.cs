@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lightest.Api.RequestModels;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
@@ -40,6 +39,10 @@ namespace Lightest.Api.Controllers
         [HttpPost("result")]
         public async Task<IActionResult> AddResult([FromBody] CheckerResult result)
         {
+            if (result.Ip == null)
+            {
+                result.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            }
             await _testingService.ReportResult(result);
             return Ok();
         }
@@ -54,18 +57,14 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        [HttpPost("free")]
-        public async Task<IActionResult> ReportFreeServer([FromBody] NewServer server)
+        [HttpPost("new")]
+        public async Task<IActionResult> ReportNewServer([FromBody] NewServer server)
         {
             if (server.Ip == null)
             {
-                server.ServerIp = _accessor.HttpContext.Connection.RemoteIpAddress;
+                server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             }
-            else
-            {
-                server.ServerIp = IPAddress.Parse(server.Ip);
-            }
-            await _testingService.ReportFreeServer(server);
+            await _testingService.ReportNewServer(server);
             return Ok();
         }
 
@@ -74,14 +73,11 @@ namespace Lightest.Api.Controllers
         {
             if (error.Ip == null)
             {
-                error.ServerIp = _accessor.HttpContext.Connection.RemoteIpAddress;
+                error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             }
-            else
-            {
-                error.ServerIp = IPAddress.Parse(error.Ip);
-            }
-            _logger.LogError("{Ip}:{ErrorMessage}", error.ServerIp, error.ErrorMessage);
-            await _testingService.ReportFreeServer(error);
+            _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
+            // todo: fix method
+            await _testingService.ReportNewServer(error);
             return Ok();
         }
     }

@@ -15,20 +15,21 @@ namespace Lightest.TransferTest
         {
             var db = new MockDatabase();
             MockDatabase.Fill(db.Context);
+#pragma warning disable CS0618 // Type or member is obsolete
             var logFactory = new LoggerFactory()
-#pragma warning disable 618
                 .AddConsole(LogLevel.Debug);
-#pragma warning restore 618
+#pragma warning restore CS0618 // Type or member is obsolete
             await CompleteTest(db, logFactory);
             // await MessageTest(db);
             // await FileTest(db);
         }
 
-        static async Task CompleteTest(MockDatabase db, ILoggerFactory logFactory)
+        private static async Task CompleteTest(MockDatabase db, ILoggerFactory logFactory)
         {
             var factory = new TransferServiceFactory(logFactory);
-            var repo = new ServerRepository();
-            repo.AddFreeServer(IPAddress.Loopback);
+            var repo = new ServerRepository(db.Context);
+            // todo: fix creation
+            // repo.AddFreeServer(IPAddress.Loopback);
             var testingService = new TestingService.DefaultServices.TestingService(repo, db.Context, factory);
             var upload = db.Context.CodeUploads
                 .Include(u => u.Task)
@@ -42,7 +43,7 @@ namespace Lightest.TransferTest
             await testingService.BeginTesting(upload);
         }
 
-        static async Task MessageTest(MockDatabase db, ILoggerFactory logFactory)
+        private static async Task MessageTest(MockDatabase db, ILoggerFactory logFactory)
         {
             var upload = db.Context.CodeUploads
                 .Include(u => u.Task)
@@ -50,8 +51,8 @@ namespace Lightest.TransferTest
                 .Include(u => u.Task)
                 .ThenInclude(t => t.Tests)
                 .FirstOrDefault();
-            
-            var transferService = new TransferService(logFactory.CreateLogger(typeof(TransferService)), 
+
+            var transferService = new TransferService(logFactory.CreateLogger(typeof(TransferService)),
                 IPAddress.Loopback, 10000);
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
             var request = new TestingRequest
@@ -64,12 +65,12 @@ namespace Lightest.TransferTest
             };
             var result = await transferService.SendMessage(request.ToString());
         }
-        
-        static async Task FileTest(MockDatabase db, ILoggerFactory logFactory)
+
+        private static async Task FileTest(MockDatabase db, ILoggerFactory logFactory)
         {
             var upload = db.Context.CodeUploads.FirstOrDefault();
             var request = new SingleFileCodeRequest(upload.UploadId + ".cpp");
-            var transferService = new TransferService(logFactory.CreateLogger(typeof(TransferService)), 
+            var transferService = new TransferService(logFactory.CreateLogger(typeof(TransferService)),
                 IPAddress.Loopback, 10000);
             await transferService.SendFile(request, Encoding.UTF8.GetBytes(upload.Code));
         }

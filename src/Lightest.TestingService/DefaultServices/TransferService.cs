@@ -114,7 +114,6 @@ namespace Lightest.TestingService.DefaultServices
                 _logger.LogError(ex.ToString());
                 return false;
             }
-            
         }
 
         public async Task<bool> SendMessage(string message)

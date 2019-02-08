@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -9,7 +9,7 @@ namespace Lightest.TransferTest
 {
     public class MockDatabase
     {
-        private readonly DbContextOptions<RelationalDbContext> 
+        private readonly DbContextOptions<RelationalDbContext>
             _options = new DbContextOptionsBuilder<RelationalDbContext>()
             .UseInMemoryDatabase("Add_writes_to_database")
             .Options;
