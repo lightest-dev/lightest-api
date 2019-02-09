@@ -40,7 +40,7 @@ namespace Lightest.Api.Controllers
             var uploads = _context.CodeUploads
                 .AsNoTracking()
                 .Where(u => u.UserId == user.Id && u.TaskId == taskId)
-                .OrderBy(u => u.UploadId)
+                .OrderBy(u => u.UploadDate)
                 .Take(10)
                 .Select(u => new UserUploadResult
                 {
@@ -64,7 +64,7 @@ namespace Lightest.Api.Controllers
             var uploads = _context.CodeUploads
                 .AsNoTracking()
                 .Where(u => u.TaskId == taskId)
-                .OrderBy(u => u.UploadId)
+                .OrderBy(u => u.UploadDate)
                 .Select(u => new UserUploadResult
                 {
                     Id = u.UploadId,

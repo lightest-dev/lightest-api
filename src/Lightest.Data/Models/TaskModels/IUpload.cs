@@ -21,5 +21,7 @@ namespace Lightest.Data.Models.TaskModels
         TaskDefinition Task { get; set; }
 
         Guid TaskId { get; set; }
+
+        DateTime UploadDate { get; set; }
     }
 }

@@ -41,5 +41,8 @@ namespace Lightest.Data.Models.TaskModels
 
         [JsonIgnore]
         public string UserId { get; set; }
+
+        [JsonIgnore]
+        public DateTime UploadDate { get; set; }
     }
 }

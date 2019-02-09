@@ -100,11 +100,15 @@ namespace Lightest.TestingService.DefaultServices
             var userTask = await _context.UserTasks
                 .SingleOrDefaultAsync(u => u.UserId == upload.UserId
                 && u.TaskId == upload.TaskId);
-            var totalTests = await _context.Tasks
-                .Where(t => t.Id == upload.TaskId)
-                .Select(t => t.Tests)
+            var totalTests = await _context.Tests
+                .Where(t => t.TaskId == upload.TaskId)
                 .CountAsync();
-            upload.Points = (double)result.SuccessfulTests / totalTests;
+            var maxPoints = _context.Tasks
+                .Where(t => t.Id == upload.TaskId)
+                .Select(t => t.Points)
+                .First();
+            var successfulPercent = (double)result.SuccessfulTests / totalTests;
+            upload.Points = successfulPercent * maxPoints;
             upload.Status = result.Status;
             upload.Message = result.Message;
             if (userTask?.HighScore < upload.Points)
