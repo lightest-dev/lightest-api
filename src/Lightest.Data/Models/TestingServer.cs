@@ -8,6 +8,11 @@ namespace Lightest.Data.Models
 {
     public class TestingServer
     {
+        public TestingServer()
+        {
+            CachedCheckers = new List<Guid>();
+        }
+
         [Key]
         public string Ip { get; set; }
 

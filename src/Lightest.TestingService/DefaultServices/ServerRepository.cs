@@ -44,7 +44,18 @@ namespace Lightest.TestingService.DefaultServices
 
         public void AddNewServer(TestingServer server)
         {
-            _context.Servers.Add(server);
+            var entry = _context.Servers.Find(server.Ip);
+            if (entry == null)
+            {
+                _context.Servers.Add(server);
+            }
+            else
+            {
+                entry.Port = server.Port;
+                entry.Version = server.Version;
+                entry.Status = server.Status;
+                entry.CachedCheckers.Clear();
+            }
             _context.SaveChanges();
         }
 

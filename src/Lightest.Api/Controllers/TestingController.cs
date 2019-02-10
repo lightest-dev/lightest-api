@@ -76,8 +76,7 @@ namespace Lightest.Api.Controllers
                 error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             }
             _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
-            // todo: fix method
-            await _testingService.ReportNewServer(error);
+            await _testingService.ReportBrokenServer(error);
             return Ok();
         }
     }

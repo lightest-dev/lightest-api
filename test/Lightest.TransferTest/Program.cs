@@ -2,6 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,14 @@ namespace Lightest.TransferTest
         {
             var factory = new TransferServiceFactory(logFactory);
             var repo = new ServerRepository(db.Context);
-            // todo: fix creation
-            // repo.AddFreeServer(IPAddress.Loopback);
+            var server = new TestingServer
+            {
+                Ip = "127.0.0.1",
+                Port = 10000,
+                Status = ServerStatus.Free
+            };
+            server.CachedCheckers.Add(System.Guid.NewGuid());
+            repo.AddNewServer(server);
             var testingService = new TestingService.DefaultServices.TestingService(repo, db.Context, factory);
             var upload = db.Context.CodeUploads
                 .Include(u => u.Task)

@@ -213,5 +213,15 @@ namespace Lightest.TestingService.DefaultServices
         {
             _repository.RemoveCachedCheckers(checkerId);
         }
+
+        public Task ReportBrokenServer(NewServer serverData)
+        {
+            var server = new TestingServer
+            {
+                Ip = serverData.Ip
+            };
+            _repository.AddBrokenServer(server);
+            return Task.CompletedTask;
+        }
     }
 }
