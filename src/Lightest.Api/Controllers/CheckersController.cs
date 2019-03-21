@@ -53,7 +53,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(Checker))]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetChecker([FromRoute] int id)
+        public async Task<IActionResult> GetChecker([FromRoute] Guid id)
         {
             var checker = await _context.Checkers.FindAsync(id);
 

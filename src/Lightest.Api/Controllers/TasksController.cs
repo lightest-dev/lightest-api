@@ -329,7 +329,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteTask([FromRoute] int id)
+        public async Task<IActionResult> DeleteTask([FromRoute] Guid id)
         {
             var task = await _context.Tasks.FindAsync(id);
             if (task == null)

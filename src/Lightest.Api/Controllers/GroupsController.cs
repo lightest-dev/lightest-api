@@ -130,7 +130,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] int groupId, [FromBody]IEnumerable<AccessRights> users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid groupId, [FromBody]IEnumerable<AccessRights> users)
         {
             var group = await _context.Groups.FindAsync(groupId);
             if (group == null)
@@ -198,7 +198,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteGroup([FromRoute] int id)
+        public async Task<IActionResult> DeleteGroup([FromRoute] Guid id)
         {
             var group = await _context.Groups.FindAsync(id);
             if (group == null)

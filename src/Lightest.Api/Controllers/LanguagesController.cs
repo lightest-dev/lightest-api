@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data;
@@ -60,7 +61,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(409)]
-        public async Task<IActionResult> DeleteLanguage([FromRoute] int id)
+        public async Task<IActionResult> DeleteLanguage([FromRoute] Guid id)
         {
             var language = await _context.Languages.FindAsync(id);
             if (language == null)

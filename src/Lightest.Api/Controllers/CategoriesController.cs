@@ -242,7 +242,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteCategory([FromRoute] int id)
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await _context.Categories.FindAsync(id);
             if (category == null)

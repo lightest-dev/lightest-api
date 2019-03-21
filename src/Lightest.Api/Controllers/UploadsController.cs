@@ -117,7 +117,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("code")]
-        [ProducesResponseType(200, Type = typeof(int))]
+        [ProducesResponseType(200, Type = typeof(Guid))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> UploadCode([FromBody] CodeUpload upload)
@@ -163,7 +163,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("project")]
-        [ProducesResponseType(200, Type = typeof(int))]
+        [ProducesResponseType(200, Type = typeof(Guid))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> UploadProject([FromBody] ArchiveUpload upload)
