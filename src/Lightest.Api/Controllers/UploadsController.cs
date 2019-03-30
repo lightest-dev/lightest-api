@@ -33,7 +33,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{taskId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadModel>))]
         public async Task<IActionResult> GetLastUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
@@ -42,18 +42,19 @@ namespace Lightest.Api.Controllers
                 .Where(u => u.UserId == user.Id && u.TaskId == taskId)
                 .OrderBy(u => u.UploadDate)
                 .Take(10)
-                .Select(u => new UserUploadResult
+                .Select(u => new LastUploadModel
                 {
                     Id = u.UploadId,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points
+                    Points = u.Points,
+                    Code = u.Code
                 });
             return Ok(uploads);
         }
 
         [HttpGet("{taskId}/all")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UserUploadResult>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadModel>))]
         public async Task<IActionResult> GetAllUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
@@ -65,12 +66,13 @@ namespace Lightest.Api.Controllers
                 .AsNoTracking()
                 .Where(u => u.TaskId == taskId)
                 .OrderBy(u => u.UploadDate)
-                .Select(u => new UserUploadResult
+                .Select(u => new LastUploadModel
                 {
                     Id = u.UploadId,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points
+                    Points = u.Points,
+                    Code = u.Code
                 });
             return Ok(uploads);
         }
