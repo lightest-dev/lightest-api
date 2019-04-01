@@ -156,6 +156,7 @@ namespace Lightest.Api.Controllers
             upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
+            upload.UploadDate = DateTime.Now;
 
             _context.CodeUploads.Add(upload);
             await _context.SaveChangesAsync();
@@ -202,6 +203,7 @@ namespace Lightest.Api.Controllers
             upload.Status = UploadStatus.New;
             upload.Points = 0;
             upload.UserId = user.Id;
+            upload.UploadDate = DateTime.Now;
             _context.ArchiveUploads.Add(upload);
 
             await _context.SaveChangesAsync();
