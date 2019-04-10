@@ -37,10 +37,15 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
-                .AsNoTracking()
-                .Include(c => c.Users)
-                .Where(c => (c.Public || c.Users.Select(u => u.UserId).Contains(user.Id))
-                && c.ParentId == null);
+                .AsNoTracking();
+
+            if(!_accessService.CheckAdminAccess(null, user))
+            {
+                categories = categories.Include(c => c.Users)
+                    .Where(c => (c.Public || c.Users.Select(u => u.UserId)
+                    .Contains(user.Id)) && c.ParentId == null);
+            }
+
             return Ok(categories);
         }
 

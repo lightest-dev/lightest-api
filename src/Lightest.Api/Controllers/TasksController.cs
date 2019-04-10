@@ -36,9 +36,15 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetTasks()
         {
             var user = await GetCurrentUser();
-            var tasks = _context.Tasks
-                .AsNoTracking()
-                .Where(t => t.Users.Select(u => u.UserId).Contains(user.Id));
+
+            var tasks = _context.Tasks.AsNoTracking();
+
+            if (!_accessService.CheckAdminAccess(null, user))
+            {
+                tasks = tasks.Where(t => t.Users
+                    .Select(u => u.UserId).Contains(user.Id));
+            }
+
             return Ok(tasks);
         }
 

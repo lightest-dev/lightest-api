@@ -35,11 +35,16 @@ namespace Lightest.Api.Controllers
         public async Task<IEnumerable<Group>> GetGroups()
         {
             var user = await GetCurrentUser();
-            //todo: check if admin and return all
-            return _context.Groups
-                .AsNoTracking()
-                .Include(g => g.Users)
+            
+            var groups = _context.Groups.AsNoTracking();
+
+            if (!_accessService.CheckAdminAccess(null, user))
+            {
+                groups = groups.Include(g => g.Users)
                 .Where(g => g.Users.Select(u => u.UserId).Contains(user.Id));
+            }
+
+            return groups;
         }
 
         // GET: api/Groups/5
