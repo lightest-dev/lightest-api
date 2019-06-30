@@ -25,10 +25,9 @@ namespace Lightest.TestingService.DefaultServices
 
         public void RemoveCachedCheckers(Guid checkerId)
         {
-            foreach (var server in _context.Servers)
-            {
-                server.CachedCheckers.Remove(checkerId);
-            }
+            var serversToDelete = _context.CachedCheckers
+                .Where(c => c.CheckerId == checkerId);
+            _context.CachedCheckers.RemoveRange(serversToDelete);
             _context.SaveChanges();
         }
 
@@ -54,7 +53,9 @@ namespace Lightest.TestingService.DefaultServices
                 entry.Port = server.Port;
                 entry.Version = server.Version;
                 entry.Status = server.Status;
-                entry.CachedCheckers.Clear();
+                var checkersToDelete = _context.CachedCheckers
+                    .Where(c => c.ServerIp == server.Ip);
+                _context.CachedCheckers.RemoveRange(checkersToDelete);
             }
             _context.SaveChanges();
         }
@@ -69,10 +70,14 @@ namespace Lightest.TestingService.DefaultServices
             }
         }
 
-        public void AddCachedChecker(TestingServer server, Guid checkerId)
+        public void AddCachedChecker(TestingServer server, Checker checker)
         {
-            server.CachedCheckers.Add(checkerId);
-            _context.Entry(server).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            var cachedChecker = new ServerChecker
+            {
+                Server = server,
+                Checker = checker
+            };
+            _context.CachedCheckers.Add(cachedChecker);
             _context.SaveChanges();
         }
     }

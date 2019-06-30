@@ -25,5 +25,8 @@ namespace Lightest.Data.Models
 
         [JsonIgnore]
         public virtual ICollection<TaskDefinition> Tasks { get; set; }
+
+        [JsonIgnore]
+        public virtual ICollection<ServerChecker> Servers { get; set; }
     }
 }

@@ -31,6 +31,8 @@ namespace Lightest.Data
 
         public DbSet<UserTask> UserTasks { get; set; }
 
+        public DbSet<ServerChecker> CachedCheckers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -119,6 +121,12 @@ namespace Lightest.Data
                 .HasForeignKey(t => t.CheckerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Checker>()
+                .HasMany(c => c.Servers)
+                .WithOne(s => s.Checker)
+                .HasForeignKey(s => s.CheckerId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Entity<Test>()
                 .HasOne(t => t.Task)
                 .WithMany(t => t.Tests)
@@ -160,6 +168,12 @@ namespace Lightest.Data
                 .WithMany(l => l.CodeUploads)
                 .HasForeignKey(up => up.LanguageId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<TestingServer>()
+                .HasMany(s => s.Checkers)
+                .WithOne(c => c.Server)
+                .HasForeignKey(c => c.ServerIp)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

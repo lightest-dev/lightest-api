@@ -35,7 +35,6 @@ namespace Lightest.TransferTest
                 Port = 10000,
                 Status = ServerStatus.Free
             };
-            server.CachedCheckers.Add(System.Guid.NewGuid());
             repo.AddNewServer(server);
             var testingService = new TestingService.DefaultServices.TestingService(repo, db.Context, factory);
             var upload = db.Context.CodeUploads

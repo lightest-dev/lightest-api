@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Net;
+using Newtonsoft.Json;
 
 namespace Lightest.Data.Models
 {
     public class TestingServer
     {
-        public TestingServer()
-        {
-            CachedCheckers = new List<Guid>();
-        }
-
         [Key]
         public string Ip { get; set; }
 
@@ -34,6 +30,7 @@ namespace Lightest.Data.Models
             }
         }
 
-        public List<Guid> CachedCheckers { get; set; }
+        [JsonIgnore]
+        public virtual ICollection<ServerChecker> Checkers { get; set; }
     }
 }

@@ -185,12 +185,12 @@ namespace Lightest.TestingService.DefaultServices
         private async Task<bool> CacheChecker(TestingServer server, Checker checker, ITransferService transferService)
         {
             var result = true;
-            if (!server.CachedCheckers.Contains(checker.Id))
+            if (!_context.CachedCheckers.Any(c => c.CheckerId == checker.Id && c.ServerIp == server.Ip))
             {
                 result = await SendChecker(checker, transferService);
                 if (result)
                 {
-                    _repository.AddCachedChecker(server, checker.Id);
+                    _repository.AddCachedChecker(server, checker);
                 }
             }
             return result;
