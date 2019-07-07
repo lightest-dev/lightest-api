@@ -30,10 +30,6 @@ namespace Lightest.IdentityServer
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args).Build();
-            if (args.Contains("--seed"))
-            {
-                host.Services.EnsureDataSeeded();
-            }
             host.Run();
         }
     }

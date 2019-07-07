@@ -1,5 +1,6 @@
 ﻿using System;
 using Lightest.Data;
+using Lightest.Data.Seeding.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -19,20 +20,9 @@ namespace Lightest.Api
         {
             var context = scope.ServiceProvider.GetRequiredService<RelationalDbContext>();
             context.Database.Migrate();
-            /*var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            var testUser = userManager.FindByNameAsync("test").Result;
-            if (testUser == null)
-            {
-                testUser = new ApplicationUser
-                {
-                    UserName = "test"
-                };
-                var result = userManager.CreateAsync(testUser, "Password12$").Result;
-                if (!result.Succeeded)
-                {
-                    throw new Exception(result.Errors.First().Description);
-                }
-            }*/
+            var seeder = scope.ServiceProvider.GetRequiredService<ISeeder>();
+            seeder.Seed();
+            seeder.AddTestData();
             context.SaveChanges();
         }
     }
