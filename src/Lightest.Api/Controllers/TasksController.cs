@@ -250,12 +250,13 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            foreach (var l in languages)
-            {
-                l.TaskId = id;
-            }
 
-            task.Languages = languages;
+            task.Languages.Clear();
+            foreach (var language in languages)
+            {
+                language.TaskId = id;
+                task.Languages.Add(language);
+            }
 
             await _context.SaveChangesAsync();
 
@@ -282,12 +283,13 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
+            task.Tests.Clear();
+
             foreach (var test in tests)
             {
                 test.TaskId = id;
+                task.Tests.Add(test);
             }
-
-            task.Tests = tests;
 
             await _context.SaveChangesAsync();
 
