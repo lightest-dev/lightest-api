@@ -19,7 +19,6 @@
     },
     "Lightest.Api": {
       "commandName": "Project",
-      "commandLineArgs": "--seed",
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

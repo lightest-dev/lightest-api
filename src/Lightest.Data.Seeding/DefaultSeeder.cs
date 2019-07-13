@@ -11,6 +11,13 @@ namespace Lightest.Data.Seeding
 {
     public class DefaultSeeder : ISeeder
     {
+        public DefaultSeeder(RelationalDbContext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+            UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            RoleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+        }
+
         protected RelationalDbContext Context { get; set; }
 
         protected UserManager<ApplicationUser> UserManager { get; set; }
@@ -19,7 +26,7 @@ namespace Lightest.Data.Seeding
 
         public async Task Seed()
         {
-            AddLanguages();
+            await AddLanguages();
 
             await AddRequiredRoles();
             await AddUsers();
@@ -27,7 +34,7 @@ namespace Lightest.Data.Seeding
             await Context.SaveChangesAsync();
         }
 
-        protected void AddLanguages()
+        protected async Task AddLanguages()
         {
             Context.Languages.Add(new Language
             {
@@ -53,6 +60,7 @@ namespace Lightest.Data.Seeding
                 Extension = "Pascal",
                 Name = "pas"
             });
+            await Context.SaveChangesAsync();
         }
 
         protected async Task AddUsers()
@@ -84,14 +92,13 @@ namespace Lightest.Data.Seeding
 
         public async Task AddTestData()
         {
-            AddSampleCheckers();
-            AddSampleCategories();
-            AddSampleTasks();
+            await AddSampleCheckers();
+            await AddSampleCategories();
+            await AddSampleTasks();
             await AssignTasks();
-            await Context.SaveChangesAsync();
         }
 
-        protected void AddSampleCategories()
+        protected async Task AddSampleCategories()
         {
             var publicCategory = new Category
             {
@@ -106,13 +113,15 @@ namespace Lightest.Data.Seeding
             };
             Context.Categories.Add(publicCategory);
             Context.Categories.Add(privateCategory);
+            await Context.SaveChangesAsync();
         }
 
-        protected void AddSampleCheckers()
+        protected async Task AddSampleCheckers()
         {
             var checker = new Checker
             {
                 Id = Guid.NewGuid(),
+                Name = "Sample two number checker",
                 Code = @"#include ""testlib.h""
 
 int main(int argc, char *argv[])
@@ -131,9 +140,10 @@ int main(int argc, char *argv[])
 }"
             };
             Context.Checkers.Add(checker);
+            await Context.SaveChangesAsync();
         }
 
-        protected void AddSampleTasks()
+        protected async Task AddSampleTasks()
         {
             var checker = Context.Checkers.First();
             var privateCategory = Context.Categories.First(c => !c.Public);
@@ -215,6 +225,11 @@ int main(int argc, char *argv[])
                     TimeLimit = 500
                 });
             }
+
+            Context.Tasks.Add(publicTask);
+            Context.Tasks.Add(privateTask);
+
+            await Context.SaveChangesAsync();
         }
 
         protected async Task AssignTasks()
@@ -232,6 +247,8 @@ int main(int argc, char *argv[])
                     CanRead = true
                 }
             };
+
+            await Context.SaveChangesAsync();
         }
     }
 }

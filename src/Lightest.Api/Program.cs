@@ -32,7 +32,7 @@ namespace Lightest.Api
             var host = CreateWebHostBuilder(args).Build();
             if (args.Contains("--seed"))
             {
-                host.Services.EnsureDataSeeded();
+                host.Services.EnsureDataSeeded().GetAwaiter().GetResult();
             }
             host.Run();
         }

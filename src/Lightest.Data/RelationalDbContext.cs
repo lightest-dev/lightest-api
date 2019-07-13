@@ -174,6 +174,10 @@ namespace Lightest.Data
                 .WithOne(c => c.Server)
                 .HasForeignKey(c => c.ServerIp)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ServerChecker>()
+                .HasKey(sc => new { sc.CheckerId, sc.ServerIp});
+                
         }
     }
 }

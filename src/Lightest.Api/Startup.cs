@@ -3,6 +3,8 @@ using Lightest.AccessService;
 using Lightest.Api.Extensions;
 using Lightest.Data;
 using Lightest.Data.Models;
+using Lightest.Data.Seeding;
+using Lightest.Data.Seeding.Interfaces;
 using Lightest.TestingService.DefaultServices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -95,6 +97,7 @@ namespace Lightest.Api
 
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
+            services.AddTransient<ISeeder, DefaultSeeder>();
         }
     }
 }
