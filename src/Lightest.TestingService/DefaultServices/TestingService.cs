@@ -209,11 +209,6 @@ namespace Lightest.TestingService.DefaultServices
             return Task.CompletedTask;
         }
 
-        public void RemoveCachedChecker(Guid checkerId)
-        {
-            _repository.RemoveCachedCheckers(checkerId);
-        }
-
         public Task ReportBrokenServer(NewServer serverData)
         {
             var server = new TestingServer

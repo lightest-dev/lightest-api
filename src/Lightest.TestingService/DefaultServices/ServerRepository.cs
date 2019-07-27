@@ -23,14 +23,6 @@ namespace Lightest.TestingService.DefaultServices
             return server;
         }
 
-        public void RemoveCachedCheckers(Guid checkerId)
-        {
-            var serversToDelete = _context.CachedCheckers
-                .Where(c => c.CheckerId == checkerId);
-            _context.CachedCheckers.RemoveRange(serversToDelete);
-            _context.SaveChanges();
-        }
-
         public void AddFreeServer(TestingServer server)
         {
             var entry = _context.Servers.Find(server.Ip);
@@ -72,6 +64,12 @@ namespace Lightest.TestingService.DefaultServices
 
         public void AddCachedChecker(TestingServer server, Checker checker)
         {
+            var serverExists = _context.Servers.Any(s => s.Ip == server.Ip);
+            if (!serverExists)
+            {
+                throw new ArgumentException(nameof(server));
+            }
+
             var cachedChecker = new ServerChecker
             {
                 Server = server,

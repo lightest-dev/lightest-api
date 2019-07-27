@@ -117,9 +117,10 @@ namespace Lightest.Api.Controllers
             entry.Message = null;
             entry.Code = checker.Code;
 
-            await _context.SaveChangesAsync();
+            var checkersToDelete = _context.CachedCheckers.Where(c => c.CheckerId == checker.Id);
+            _context.CachedCheckers.RemoveRange(checkersToDelete);
 
-            _testingService.RemoveCachedChecker(checker.Id);
+            await _context.SaveChangesAsync();
 
             return Ok();
         }
@@ -147,8 +148,6 @@ namespace Lightest.Api.Controllers
             _context.Checkers.Remove(checker);
             //catch exception
             await _context.SaveChangesAsync();
-
-            _testingService.RemoveCachedChecker(id);
 
             return Ok(checker);
         }

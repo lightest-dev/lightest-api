@@ -11,8 +11,6 @@ namespace Lightest.TestingService.Interfaces
 
         TestingServer GetFreeServer();
 
-        void RemoveCachedCheckers(Guid checkerId);
-
         void AddCachedChecker(TestingServer server, Checker checker);
 
         void AddNewServer(TestingServer server);

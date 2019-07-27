@@ -12,6 +12,7 @@ namespace Lightest.TestingService.DefaultServices
 {
     public class TransferService : ITransferService
     {
+        //todo: refactor to use custom TcpClient for testing
         private readonly IPEndPoint _endpoint;
 
         private readonly ILogger _logger;

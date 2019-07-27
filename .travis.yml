@@ -6,4 +6,5 @@ dotnet: 2.2
 before_script:
   - dotnet restore
 script:  
-  - dotnet build Lightest.API.sln
+  - dotnet build
+  - dotnet test
