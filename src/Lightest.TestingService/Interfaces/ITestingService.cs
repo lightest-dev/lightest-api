@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.Models;
 

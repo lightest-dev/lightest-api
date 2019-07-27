@@ -1,5 +1,4 @@
-﻿using System;
-using Lightest.Data.Models;
+﻿using Lightest.Data.Models;
 
 namespace Lightest.TestingService.Interfaces
 {

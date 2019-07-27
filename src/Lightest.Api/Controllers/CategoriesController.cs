@@ -39,7 +39,7 @@ namespace Lightest.Api.Controllers
             var categories = _context.Categories
                 .AsNoTracking();
 
-            if(!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.CheckAdminAccess(null, user))
             {
                 categories = categories.Include(c => c.Users)
                     .Where(c => (c.Public || c.Users.Select(u => u.UserId)

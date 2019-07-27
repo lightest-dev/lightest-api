@@ -176,8 +176,7 @@ namespace Lightest.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<ServerChecker>()
-                .HasKey(sc => new { sc.CheckerId, sc.ServerIp});
-                
+                .HasKey(sc => new { sc.CheckerId, sc.ServerIp });
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
@@ -18,7 +16,6 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         private IServerRepository _repo;
         private TestingServer _testServer;
         private Checker _testChecker;
-
 
         [SetUp]
         public void CleanServers()

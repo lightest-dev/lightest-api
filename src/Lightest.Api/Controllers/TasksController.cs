@@ -250,7 +250,6 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-
             task.Languages.Clear();
             foreach (var language in languages)
             {

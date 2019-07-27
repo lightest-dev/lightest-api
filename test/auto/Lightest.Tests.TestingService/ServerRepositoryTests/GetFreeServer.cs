@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Lightest.Data;
+﻿using Lightest.Data;
 using Lightest.TestingService.DefaultServices;
+using Lightest.TestingService.Interfaces;
 using Lightest.Tests.DefaultMocks;
 using NUnit.Framework;
-using Lightest.TestingService.Interfaces;
 
 namespace Lightest.Tests.TestingService.ServerRepositoryTests
 {

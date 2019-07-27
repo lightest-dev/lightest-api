@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
@@ -17,7 +14,6 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         private readonly RelationalDbContext _context = MockDatabase.Context;
         private IServerRepository _repo;
         private TestingServer _testServer;
-
 
         [SetUp]
         public void CleanServers()
@@ -43,7 +39,6 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             var entry = _context.Servers.First();
 
             Assert.AreEqual(entry.Status, ServerStatus.Busy);
-
         }
 
         [Test]

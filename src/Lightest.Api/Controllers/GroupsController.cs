@@ -35,7 +35,7 @@ namespace Lightest.Api.Controllers
         public async Task<IEnumerable<Group>> GetGroups()
         {
             var user = await GetCurrentUser();
-            
+
             var groups = _context.Groups.AsNoTracking();
 
             if (!_accessService.CheckAdminAccess(null, user))
