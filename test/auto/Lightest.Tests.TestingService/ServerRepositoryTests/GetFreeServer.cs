@@ -1,33 +1,26 @@
-﻿using Lightest.Data;
-using Lightest.TestingService.DefaultServices;
+﻿using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Interfaces;
-using Lightest.Tests.DefaultMocks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.ServerRepositoryTests
 {
-    [TestFixture]
-    public class GetFreeServer
+    public class GetFreeServer : BaseTest
     {
-        private readonly RelationalDbContext _context = MockDatabase.Context;
-        private IServerRepository _repo;
+        private readonly IServerRepository _repo;
 
-        [SetUp]
-        public void CleanServers()
+        public GetFreeServer()
         {
-            _context.Servers.RemoveRange(_context.Servers);
-            _context.SaveChanges();
             _repo = new ServerRepository(_context);
         }
 
-        [Test]
+        [Fact]
         public void TestEmpty()
         {
             var server = _repo.GetFreeServer();
-            Assert.IsNull(server);
+            Assert.Null(server);
         }
 
-        [Test]
+        [Fact]
         public void TestNoFree()
         {
             _context.Servers.Add(new Data.Models.TestingServer
@@ -41,10 +34,10 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             _context.SaveChanges();
 
             var server = _repo.GetFreeServer();
-            Assert.IsNull(server);
+            Assert.Null(server);
         }
 
-        [Test]
+        [Fact]
         public void TestFree()
         {
             _context.Servers.Add(new Data.Models.TestingServer
@@ -62,8 +55,8 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             _context.SaveChanges();
 
             var server = _repo.GetFreeServer();
-            Assert.IsNotNull(server);
-            Assert.AreEqual(server.Status, Data.Models.ServerStatus.Free);
+            Assert.NotNull(server);
+            Assert.Equal(Data.Models.ServerStatus.Free, server.Status);
         }
     }
 }

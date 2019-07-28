@@ -1,26 +1,19 @@
 ﻿using System.Net;
-using Lightest.Data;
 using Lightest.TestingService.Interfaces;
-using Lightest.Tests.DefaultMocks;
 using Moq;
-using NUnit.Framework;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
-    [TestFixture]
-    public abstract class BaseTests
+    public abstract class BaseTests : BaseTest
     {
-        protected readonly RelationalDbContext _context = MockDatabase.Context;
-
         protected ITestingService _testingService =>
             new Lightest.TestingService.DefaultServices.TestingService(_serverRepoMock.Object, _context, _factoryMock.Object);
 
-        protected Mock<IServerRepository> _serverRepoMock;
-        protected Mock<ITransferServiceFactory> _factoryMock;
-        protected Mock<ITransferService> _transferMock;
+        protected readonly Mock<IServerRepository> _serverRepoMock;
+        protected readonly Mock<ITransferServiceFactory> _factoryMock;
+        protected readonly Mock<ITransferService> _transferMock;
 
-        [SetUp]
-        public void BaseSetUp()
+        public BaseTests()
         {
             _serverRepoMock = new Mock<IServerRepository>();
             _transferMock = new Mock<ITransferService>();

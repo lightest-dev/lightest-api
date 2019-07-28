@@ -1,25 +1,18 @@
 ﻿using System.Linq;
-using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Interfaces;
-using Lightest.Tests.DefaultMocks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.ServerRepositoryTests
 {
-    [TestFixture]
-    public class AddFreeServer
+    public class AddFreeServer : BaseTest
     {
-        private readonly RelationalDbContext _context = MockDatabase.Context;
-        private IServerRepository _repo;
-        private TestingServer _testServer;
+        private readonly IServerRepository _repo;
+        private readonly TestingServer _testServer;
 
-        [SetUp]
-        public void CleanServers()
+        public AddFreeServer()
         {
-            _context.Servers.RemoveRange(_context.Servers);
-            _context.SaveChanges();
             _repo = new ServerRepository(_context);
             _testServer = new TestingServer
             {
@@ -28,14 +21,14 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             };
         }
 
-        [Test]
+        [Fact]
         public void TestEmpty()
         {
             _repo.AddFreeServer(_testServer);
-            Assert.Zero(_context.Servers.Count());
+            Assert.Equal(0, _context.Servers.Count());
         }
 
-        [Test]
+        [Fact]
         public void TestExisting()
         {
             _context.Servers.Add(_testServer);
@@ -48,9 +41,9 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
 
             var entry = _context.Servers.First();
 
-            Assert.AreEqual(1, _context.Servers.Count());
-            Assert.AreEqual("1", entry.Ip);
-            Assert.AreEqual(ServerStatus.Free, entry.Status);
+            Assert.Equal(1, _context.Servers.Count());
+            Assert.Equal("1", entry.Ip);
+            Assert.Equal(ServerStatus.Free, entry.Status);
         }
     }
 }

@@ -1,15 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Lightest.TestingService.Requests;
 using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
-    [TestFixture]
     public class BeginTestingTests : BaseTests
     {
-        [SetUp]
-        public void SetUp()
+        public BeginTestingTests()
         {
             _transferMock.Setup(t => t.SendMessage(It.IsNotNull<string>()))
                 .Returns(Task.FromResult(true));
@@ -18,12 +16,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 .Returns(Task.FromResult(true));
         }
 
-        [Test]
+        [Fact]
         public async Task CachedCheckerTest()
         {
         }
 
-        [Test]
+        [Fact]
         public async Task NonCachedCheckerTest()
         {
         }

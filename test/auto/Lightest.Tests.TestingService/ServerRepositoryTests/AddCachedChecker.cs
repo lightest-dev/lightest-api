@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Linq;
-using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Interfaces;
-using Lightest.Tests.DefaultMocks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.ServerRepositoryTests
 {
-    [TestFixture]
-    public class AddCachedChecker
+    public class AddCachedChecker : BaseTest
     {
-        private readonly RelationalDbContext _context = MockDatabase.Context;
-        private IServerRepository _repo;
-        private TestingServer _testServer;
-        private Checker _testChecker;
+        private readonly IServerRepository _repo;
+        private readonly TestingServer _testServer;
+        private readonly Checker _testChecker;
 
-        [SetUp]
-        public void CleanServers()
+        public AddCachedChecker()
         {
-            _context.Servers.RemoveRange(_context.Servers);
-            _context.SaveChanges();
             _repo = new ServerRepository(_context);
             _testServer = new TestingServer
             {
@@ -38,20 +31,20 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             };
         }
 
-        [Test]
+        [Fact]
         public void TestExisting()
         {
             _context.Servers.Add(_testServer);
             _context.SaveChanges();
 
             _repo.AddCachedChecker(_testServer, _testChecker);
-            Assert.AreEqual(1, _context.CachedCheckers.Count());
+            Assert.Equal(1, _context.CachedCheckers.Count());
 
             var checker = _context.CachedCheckers.First();
-            Assert.AreEqual(_testChecker.Id, checker.CheckerId);
+            Assert.Equal(_testChecker.Id, checker.CheckerId);
         }
 
-        [Test]
+        [Fact]
         public void TestNonExisting()
         {
             Assert.Throws<ArgumentException>(() =>

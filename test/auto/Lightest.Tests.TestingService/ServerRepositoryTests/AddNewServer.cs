@@ -1,25 +1,18 @@
 ﻿using System.Linq;
-using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Interfaces;
-using Lightest.Tests.DefaultMocks;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.ServerRepositoryTests
 {
-    [TestFixture]
-    public class AddNewServer
+    public class AddNewServer : BaseTest
     {
-        private readonly RelationalDbContext _context = MockDatabase.Context;
-        private IServerRepository _repo;
-        private TestingServer _testServer;
+        private readonly IServerRepository _repo;
+        private readonly TestingServer _testServer;
 
-        [SetUp]
-        public void CleanServers()
+        public AddNewServer()
         {
-            _context.Servers.RemoveRange(_context.Servers);
-            _context.SaveChanges();
             _repo = new ServerRepository(_context);
             _testServer = new TestingServer
             {
@@ -30,18 +23,18 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
             };
         }
 
-        [Test]
+        [Fact]
         public void TestNew()
         {
             _repo.AddNewServer(_testServer);
-            Assert.AreEqual(1, _context.Servers.Count());
+            Assert.Equal(1, _context.Servers.Count());
 
             var entry = _context.Servers.First();
 
-            Assert.AreEqual(entry.Status, ServerStatus.Busy);
+            Assert.Equal(ServerStatus.Busy, entry.Status);
         }
 
-        [Test]
+        [Fact]
         public void TestExisting()
         {
             _context.Servers.Add(_testServer);
@@ -57,11 +50,11 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
 
             var entry = _context.Servers.First();
 
-            Assert.AreEqual(1, _context.Servers.Count());
-            Assert.AreEqual("1", entry.Ip);
-            Assert.AreEqual(ServerStatus.Free, entry.Status);
-            Assert.AreEqual(3, entry.Port);
-            Assert.AreEqual("newVersion", entry.Version);
+            Assert.Equal(1, _context.Servers.Count());
+            Assert.Equal("1", entry.Ip);
+            Assert.Equal(ServerStatus.Free, entry.Status);
+            Assert.Equal(3, entry.Port);
+            Assert.Equal("newVersion", entry.Version);
         }
     }
 }

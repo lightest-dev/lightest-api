@@ -2,20 +2,16 @@
 using Lightest.Data.Models;
 using Lightest.TestingService.Models;
 using Moq;
-using NUnit.Framework;
+using Xunit;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
     public class ReportingTests : BaseTests
     {
-        private NewServer _testServer;
+        private readonly NewServer _testServer;
 
-        [SetUp]
-        public void SetUp()
+        public ReportingTests()
         {
-            _context.Servers.RemoveRange(_context.Servers);
-            _context.SaveChanges();
-
             _testServer = new NewServer
             {
                 Ip = "1",
@@ -23,21 +19,21 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             };
         }
 
-        [Test]
+        [Fact]
         public async Task ReportBrokenServerTest()
         {
             await _testingService.ReportBrokenServer(_testServer);
 
-            _serverRepoMock.Verify(s => s.AddBrokenServer(It.IsNotNull<TestingServer>()), Times.Once);
+            _serverRepoMock.Verify(s => s.AddBrokenServer(It.Is<TestingServer>(ts => ts.Ip == _testServer.Ip)), Times.Once);
             _serverRepoMock.VerifyNoOtherCalls();
         }
 
-        [Test]
+        [Fact]
         public async Task ReportNewServerTest()
         {
             await _testingService.ReportNewServer(_testServer);
 
-            _serverRepoMock.Verify(s => s.AddNewServer(It.IsNotNull<TestingServer>()), Times.Once);
+            _serverRepoMock.Verify(s => s.AddNewServer(It.Is<TestingServer>(ts => ts.Ip == _testServer.Ip)), Times.Once);
             _serverRepoMock.VerifyNoOtherCalls();
         }
     }
