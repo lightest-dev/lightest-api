@@ -28,7 +28,7 @@ namespace Lightest.TestingService.DefaultServices
 
         public async Task<bool> BeginTesting(IUpload upload)
         {
-            AddToList(upload);
+            await AddToList(upload);
 
             var server = _repository.GetFreeServer();
             if (server == null)
@@ -122,10 +122,18 @@ namespace Lightest.TestingService.DefaultServices
             await _context.SaveChangesAsync();
         }
 
-        private void AddToList(IUpload upload)
+        private async Task AddToList(IUpload upload)
         {
             upload.Status = UploadStatus.Queue;
-            _context.SaveChanges();
+            switch (upload)
+            {
+                case CodeUpload code:
+                    await StartTrackingCodeUpload(code);
+                    break;
+
+                default:
+                    throw new NotImplementedException();
+            }
         }
 
         private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
@@ -194,6 +202,16 @@ namespace Lightest.TestingService.DefaultServices
                 }
             }
             return result;
+        }
+
+        //todo: rename
+        private async Task StartTrackingCodeUpload(CodeUpload upload)
+        {
+            if (!_context.CodeUploads.Any(u => u.UploadId == upload.UploadId))
+            {
+                _context.CodeUploads.Add(upload);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public Task ReportNewServer(NewServer serverData)
