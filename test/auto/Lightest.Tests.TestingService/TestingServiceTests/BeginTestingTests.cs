@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -23,6 +24,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly TaskDefinition _task;
 
         private readonly CodeUpload _upload;
+
+        private readonly Test _test;
 
         public BeginTestingTests()
         {
@@ -60,6 +63,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Languages = new List<TaskLanguage>()
             };
 
+            _test = new Test
+            {
+                Input = "input",
+                Output = "output"
+            };
+
             _task.Languages.Add(new TaskLanguage
             {
                 Language = _language,
@@ -69,6 +78,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 MemoryLimit = 512,
                 TimeLimit = 1000
             });
+
+            _task.Tests.Add(_test);
 
             _upload = new CodeUpload
             {
@@ -102,6 +113,10 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             Assert.False(result);
 
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
+
+            _transferMock.VerifyNoOtherCalls();
+            _serverRepoMock.VerifyNoOtherCalls();
+            _factoryMock.VerifyNoOtherCalls();
         }
 
         [Fact]
@@ -124,7 +139,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         [Fact]
         public async Task UploadSendingFailedTest()
         {
-            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), It.IsNotNull<byte[]>()))
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
                 .Returns(Task.FromResult(false));
 
             var result = await _testingService.BeginTesting(_upload);
@@ -132,9 +148,97 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             Assert.False(result);
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
             _transferMock.Verify(t => t.SendMessage(It.IsNotNull<string>()), Times.Exactly(2));
+
             _transferMock.Verify(t => t.SendFile(
-                It.IsNotNull<FileRequest>(), It.IsNotNull<byte[]>()), Times.Once);
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))),
+                Times.Once);
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))),
+                Times.AtMostOnce);
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))),
+                Times.AtMostOnce);
+
             _serverRepoMock.Verify(sr => sr.AddBrokenServer(It.Is<TestingServer>(s => s.Ip == _testServer.Ip)), Times.Once);
+            _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
+                It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
+
+            Assert.Equal(1, _context.CodeUploads.Count());
+            var upload = _context.CodeUploads.First();
+            Assert.Equal(UploadStatus.Queue, upload.Status);
+
+            _transferMock.VerifyNoOtherCalls();
+            _serverRepoMock.VerifyNoOtherCalls();
+            _factoryMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task TestInputSendingFailedTest()
+        {
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))))
+                .Returns(Task.FromResult(false));
+
+            var result = await _testingService.BeginTesting(_upload);
+
+            Assert.False(result);
+            _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
+            _transferMock.Verify(t => t.SendMessage(It.IsNotNull<string>()), Times.Exactly(2));
+
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))),
+                Times.Never);
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))), 
+                Times.AtMostOnce);
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))),
+                Times.AtMostOnce);
+
+            _serverRepoMock.Verify(sr => sr.AddBrokenServer(It.Is<TestingServer>(s => s.Ip == _testServer.Ip)), Times.Once);
+            _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
+                It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
+
+            Assert.Equal(1, _context.CodeUploads.Count());
+            var upload = _context.CodeUploads.First();
+            Assert.Equal(UploadStatus.Queue, upload.Status);
+
+            _transferMock.VerifyNoOtherCalls();
+            _serverRepoMock.VerifyNoOtherCalls();
+            _factoryMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task TestOutputSendingFailedTest()
+        {
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))))
+                .Returns(Task.FromResult(false));
+
+            var result = await _testingService.BeginTesting(_upload);
+
+            Assert.False(result);
+            _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
+            _transferMock.Verify(t => t.SendMessage(It.IsNotNull<string>()), Times.Exactly(2));
+
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))),
+                Times.AtMostOnce);
+            _transferMock.Verify(t => t.SendFile(
+                It.IsNotNull<FileRequest>(),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))),
+                Times.Once);
+
+            _serverRepoMock.Verify(sr => sr.AddBrokenServer(It.Is<TestingServer>(s => s.Ip == _testServer.Ip)), Times.Once);
+            _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
+                It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
 
             Assert.Equal(1, _context.CodeUploads.Count());
             var upload = _context.CodeUploads.First();
@@ -162,8 +266,6 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             Assert.Equal(1, _context.CodeUploads.Count());
             var upload = _context.CodeUploads.First();
             Assert.Equal(UploadStatus.Testing, upload.Status);
-
-            _transferMock.Verify(t => t.SendFile(It.IsNotNull<FileRequest>(), It.IsNotNull<byte[]>()), Times.Once);
         }
 
         [Fact]
@@ -180,8 +282,6 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             Assert.Equal(1, _context.CodeUploads.Count());
             var upload = _context.CodeUploads.First();
             Assert.Equal(UploadStatus.Testing, upload.Status);
-
-            _transferMock.Verify(t => t.SendFile(It.IsNotNull<FileRequest>(), It.IsNotNull<byte[]>()), Times.Once);
         }
     }
 }
