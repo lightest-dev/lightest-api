@@ -14,14 +14,14 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestEmpty()
+        public void Empty()
         {
             var server = _repo.GetFreeServer();
             Assert.Null(server);
         }
 
         [Fact]
-        public void TestNoFree()
+        public void NoFree()
         {
             _context.Servers.Add(new Data.Models.TestingServer
             {
@@ -38,7 +38,7 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestFree()
+        public void Free()
         {
             _context.Servers.Add(new Data.Models.TestingServer
             {

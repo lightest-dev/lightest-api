@@ -6,11 +6,11 @@ using Xunit;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
-    public class ReportingTests : BaseTests
+    public class Reporting : BaseTests
     {
         private readonly NewServer _testServer;
 
-        public ReportingTests()
+        public Reporting()
         {
             _testServer = new NewServer
             {
@@ -20,7 +20,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task ReportBrokenServerTest()
+        public async Task ReportBrokenServer()
         {
             await _testingService.ReportBrokenServer(_testServer);
 
@@ -29,7 +29,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task ReportNewServerTest()
+        public async Task ReportNewServer()
         {
             await _testingService.ReportNewServer(_testServer);
 

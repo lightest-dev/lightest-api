@@ -24,14 +24,14 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestNew()
+        public void New()
         {
             _repo.AddBrokenServer(_testServer);
             Assert.Equal(0, _context.Servers.Count());
         }
 
         [Fact]
-        public void TestExisting()
+        public void Existing()
         {
             _context.Servers.Add(_testServer);
             _context.SaveChanges();

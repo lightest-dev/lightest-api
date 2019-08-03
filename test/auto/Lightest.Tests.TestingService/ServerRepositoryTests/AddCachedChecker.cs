@@ -32,7 +32,7 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestExisting()
+        public void Existing()
         {
             _context.Servers.Add(_testServer);
             _context.SaveChanges();
@@ -45,7 +45,7 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestNonExisting()
+        public void NonExistent()
         {
             Assert.Throws<ArgumentException>(() =>
             {

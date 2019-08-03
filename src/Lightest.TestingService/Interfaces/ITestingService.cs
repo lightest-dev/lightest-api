@@ -13,5 +13,7 @@ namespace Lightest.TestingService.Interfaces
         Task ReportNewServer(NewServer server);
 
         Task ReportBrokenServer(NewServer server);
+
+        Task StartNextTesting();
     }
 }

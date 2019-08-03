@@ -68,7 +68,7 @@ namespace Lightest.TestingService.DefaultServices
             return result;
         }
 
-        public async Task ReportResult(CheckerResult result)
+        public Task ReportResult(CheckerResult result)
         {
             var server = new TestingServer
             {
@@ -76,21 +76,25 @@ namespace Lightest.TestingService.DefaultServices
             };
             _repository.AddFreeServer(server);
 
-            var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
-
-            var tasks = new List<Task>(2);
-
-            if (upload != null)
-            {
-                tasks.Add(BeginTesting(upload));
-            }
-
             if (result.Type.ToLower() == "code")
             {
-                tasks.Add(ReportCodeResult(result));
+                return ReportCodeResult(result);
             }
 
-            await Task.WhenAll(tasks);
+            throw new NotImplementedException($"Uploads with type {result.Type} are currently not supported");
+        }
+
+        public Task StartNextTesting()
+        {
+            var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+
+            //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
+            if (upload != null)
+            {
+                return BeginTesting(upload);
+            }
+
+            return Task.CompletedTask;
         }
 
         private async Task ReportCodeResult(CheckerResult result)

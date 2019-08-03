@@ -24,7 +24,7 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestNew()
+        public void New()
         {
             _repo.AddNewServer(_testServer);
             Assert.Equal(1, _context.Servers.Count());
@@ -35,7 +35,7 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void TestExisting()
+        public void Existing()
         {
             _context.Servers.Add(_testServer);
             _context.SaveChanges();

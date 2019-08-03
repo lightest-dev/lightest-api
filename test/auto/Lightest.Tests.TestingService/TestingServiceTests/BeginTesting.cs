@@ -11,9 +11,7 @@ using Xunit;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
-    //todo: Check test input sending failure
-    //todo: Check test output sending failure
-    public class BeginTestingTests : BaseTests
+    public class BeginTesting : BaseTests
     {
         private readonly TestingServer _testServer;
 
@@ -27,7 +25,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
         private readonly Test _test;
 
-        public BeginTestingTests()
+        public BeginTesting()
         {
             _testServer = new TestingServer
             {
@@ -103,7 +101,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task NoFreeServerTest()
+        public async Task NoFreeServer()
         {
             _serverRepoMock.Setup(r => r.GetFreeServer())
                 .Returns(default(TestingServer));
@@ -120,7 +118,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task CachingFailedTest()
+        public async Task CachingFailed()
         {
             _transferMock.Setup(t => t.SendMessage(It.IsNotNull<string>()))
                 .Returns(Task.FromResult(false));
@@ -137,7 +135,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task UploadSendingFailedTest()
+        public async Task UploadSendingFailed()
         {
             _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
@@ -176,7 +174,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task TestInputSendingFailedTest()
+        public async Task TestInputSendingFailed()
         {
             _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))))
@@ -215,7 +213,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task TestOutputSendingFailedTest()
+        public async Task TestOutputSendingFailed()
         {
             _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))))
@@ -246,7 +244,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task CachedCheckerTest()
+        public async Task CachedChecker()
         {
             _context.CachedCheckers.Add(new ServerChecker
             {
@@ -269,7 +267,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         }
 
         [Fact]
-        public async Task NonCachedCheckerTest()
+        public async Task NonCachedChecker()
         {
             var result = await _testingService.BeginTesting(_upload);
             Assert.True(result);
