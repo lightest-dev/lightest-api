@@ -34,9 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Data.Seeding", "sr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auto", "Auto", "{34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests.TestingService", "test\auto\Lightest.Tests.TestingService\Lightest.Tests.TestingService.csproj", "{BDDD8F57-8090-49D6-BB0F-55578B600016}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests.Api", "test\auto\Lightest.Tests.Api\Lightest.Tests.Api.csproj", "{AAC64A31-B63D-4F8D-8735-077EF5E70947}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests", "test\auto\Lightest.Tests\Lightest.Tests.csproj", "{BDDD8F57-8090-49D6-BB0F-55578B600016}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,10 +74,6 @@ Global
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AAC64A31-B63D-4F8D-8735-077EF5E70947}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AAC64A31-B63D-4F8D-8735-077EF5E70947}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AAC64A31-B63D-4F8D-8735-077EF5E70947}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AAC64A31-B63D-4F8D-8735-077EF5E70947}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,7 +89,6 @@ Global
 		{C393868C-512E-464E-A202-B23B82B65EAE} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
 		{34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A} = {9654540D-389B-40CC-94F9-CE5BEB98B66B}
 		{BDDD8F57-8090-49D6-BB0F-55578B600016} = {34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A}
-		{AAC64A31-B63D-4F8D-8735-077EF5E70947} = {34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A7756E5-070E-44DC-ABA2-27F8AD7143DC}
