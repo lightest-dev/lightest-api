@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -21,6 +19,13 @@ namespace Lightest.Tests.Api
 
         public BaseTest()
         {
+            _user = new ApplicationUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                Name = "name",
+                Email = "e@mail.com",
+                UserName = "name"
+            };
             _userManager = GenerateUserManager();
             _context = GenerateContext();
         }
@@ -29,7 +34,7 @@ namespace Lightest.Tests.Api
         {
             var store = new Mock<IUserStore<ApplicationUser>>();
             var manager = new Mock<UserManager<ApplicationUser>>(store.Object, null, null, null, null, null, null, null, null);
-            _userManager.Setup(m => m.FindByIdAsync(It.Is<string>(s => _user.Id == s)))
+            manager.Setup(m => m.FindByIdAsync(It.Is<string>(s => _user.Id == s)))
                 .ReturnsAsync(_user);
 
             return manager;

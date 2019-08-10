@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
 		.travis.yml = .travis.yml
+		build.sh = build.sh
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -35,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auto", "Auto", "{34FE60CB-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests.TestingService", "test\auto\Lightest.Tests.TestingService\Lightest.Tests.TestingService.csproj", "{BDDD8F57-8090-49D6-BB0F-55578B600016}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightest.Tests.Api", "test\auto\Lightest.Tests.Api\Lightest.Tests.Api.csproj", "{AAC64A31-B63D-4F8D-8735-077EF5E70947}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests.Api", "test\auto\Lightest.Tests.Api\Lightest.Tests.Api.csproj", "{AAC64A31-B63D-4F8D-8735-077EF5E70947}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

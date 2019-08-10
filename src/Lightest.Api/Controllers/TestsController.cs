@@ -60,7 +60,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostTest([FromBody] Test test)
         {
-            var task = await _context.Tasks.FindAsync(test.Id);
+            var task = await _context.Tasks.FindAsync(test.TaskId);
 
             if (task == null)
             {
