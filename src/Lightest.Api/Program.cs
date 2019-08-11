@@ -13,7 +13,7 @@ namespace Lightest.Api
                 .UseStartup<Startup>()
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddJsonFile("dbsettings.json");
+                    config.AddJsonFile("settings.private.json");
                 })
                 .ConfigureKestrel((options) =>
                 {

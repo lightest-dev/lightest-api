@@ -12,7 +12,7 @@ namespace Lightest.IdentityServer
                 .UseStartup<Startup>()
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    config.AddJsonFile("dbsettings.json");
+                    config.AddJsonFile("settings.private.json");
                 })
                 .ConfigureKestrel((options) =>
                 {

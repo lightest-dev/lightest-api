@@ -6,7 +6,7 @@ cover.xml
 tools/
 
 # private settings
-dbsettings.json
+settings.private.json
 
 # keys
 localcert.pfx
