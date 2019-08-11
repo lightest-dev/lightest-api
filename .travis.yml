@@ -5,5 +5,7 @@ mono: none
 dotnet: 2.2
 before_script:
   - dotnet restore
+  - export COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
+  - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
 script:  
   - bash build.sh
