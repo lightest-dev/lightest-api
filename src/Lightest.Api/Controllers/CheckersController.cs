@@ -7,7 +7,6 @@ using Lightest.Api.RequestModels;
 using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
-using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,17 +19,13 @@ namespace Lightest.Api.Controllers
     [Authorize]
     public class CheckersController : BaseUserController
     {
-        private readonly ITestingService _testingService;
-
         private readonly IAccessService<Checker> _accessService;
 
         public CheckersController(
             RelationalDbContext context,
-            ITestingService testingService,
         UserManager<ApplicationUser> userManager,
             IAccessService<Checker> accessService) : base(context, userManager)
         {
-            _testingService = testingService;
             _accessService = accessService;
         }
 
@@ -106,6 +101,11 @@ namespace Lightest.Api.Controllers
             }
 
             var entry = _context.Checkers.Find(checker.Id);
+
+            if (entry == null)
+            {
+                return NotFound();
+            }
 
             if (!_accessService.CheckWriteAccess(entry, await GetCurrentUser()))
             {
