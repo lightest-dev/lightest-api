@@ -32,6 +32,8 @@
     <ProjectReference Include="..\..\..\src\Lightest.AccessService\Lightest.AccessService.csproj" />
     <ProjectReference Include="..\..\..\src\Lightest.Api\Lightest.Api.csproj" />
     <ProjectReference Include="..\..\..\src\Lightest.Data\Lightest.Data.csproj" />
+    <ProjectReference Include="..\..\..\src\Lightest.IdentityServer\Lightest.IdentityServer.csproj" />
+    <ProjectReference Include="..\..\..\src\Lightest.TestingService\Lightest.TestingService.csproj" />
   </ItemGroup>
 
 </Project>
