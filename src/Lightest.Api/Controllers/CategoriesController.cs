@@ -32,7 +32,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(Category))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         public async Task<IActionResult> GetCategories()
         {
             var user = await GetCurrentUser();
@@ -54,15 +54,32 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetChildren(Guid id)
         {
             var user = await GetCurrentUser();
+
+            var parent = await _context.Categories
+                .AsNoTracking()
+                .SingleOrDefaultAsync(c => c.Id == id);
+
+            if (parent == null)
+            {
+                return NotFound();
+            }
+
+            if (!_accessService.CheckReadAccess(parent, user))
+            {
+                return Forbid();
+            }
+
             var categories = _context.Categories
                 .AsNoTracking()
                 .Include(c => c.Users)
                 .Where(c => (c.Public || c.Users.Select(u => u.UserId).Contains(user.Id))
                     && c.ParentId == id);
+
             var tasks = _context.Tasks
                 .Include(t => t.Users)
                 .Where(t => t.CategoryId == id &&
                     (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
+
             var result = new CategoryChildrenViewModel
             {
                 SubCategories = categories,
@@ -98,6 +115,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
+            // full info is disclosed here, so write access is required
             if (!_accessService.CheckWriteAccess(category, currentUser))
             {
                 return Forbid();
@@ -192,6 +210,8 @@ namespace Lightest.Api.Controllers
                 }
 
                 var categoryUser = category.Users.SingleOrDefault(u => u.UserId == user.UserId);
+                //todo: check if user has access to parent category (if parent category is set)
+                // if user cannot read parent, he should not have access to child
                 if (categoryUser == null)
                 {
                     categoryUser = new CategoryUser { CategoryId = category.Id, UserId = user.UserId };
