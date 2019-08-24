@@ -154,11 +154,6 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (user == null)
-            {
-                return BadRequest("id");
-            }
-
             if (!_accessService.CheckWriteAccess(task, user))
             {
                 return Forbid();
@@ -322,8 +317,9 @@ namespace Lightest.Api.Controllers
 
             dbEntry.CategoryId = task.CategoryId;
             dbEntry.Examples = task.Examples;
+            dbEntry.Description = task.Description;
             dbEntry.Points = task.Points;
-            dbEntry.Public = dbEntry.Public;
+            dbEntry.Public = task.Public;
             dbEntry.CheckerId = task.CheckerId;
 
             await _context.SaveChangesAsync();
