@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class PutTask: BaseTest
+    public class PutTask : BaseTest
     {
         protected readonly TaskDefinition _updatedTask;
 
@@ -28,7 +28,6 @@ namespace Lightest.Tests.Api.Tests.TasksController
                 CheckerId = Guid.NewGuid()
             };
         }
-
 
         [Fact]
         public async Task IdsDontMatch()

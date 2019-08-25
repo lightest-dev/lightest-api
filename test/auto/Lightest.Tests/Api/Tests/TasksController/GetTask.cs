@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Api.ResponseModels;
 using Lightest.Data.Models;
@@ -12,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class GetTask: BaseTest
+    public class GetTask : BaseTest
     {
         [Fact]
         public async Task HasWriteAccess()

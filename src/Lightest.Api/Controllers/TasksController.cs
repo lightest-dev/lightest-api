@@ -206,6 +206,7 @@ namespace Lightest.Api.Controllers
                 var existingUser = task.Users.SingleOrDefault(u => u.UserId == user.UserId);
                 if (existingUser == null)
                 {
+                    user.IsOwner = false;
                     user.TaskId = id;
                     task.Users.Add(user);
                 }
@@ -219,6 +220,7 @@ namespace Lightest.Api.Controllers
                     existingUser.Deadline = user.Deadline;
                     existingUser.CanRead = user.CanRead;
                     existingUser.CanWrite = user.CanWrite;
+                    existingUser.CanChangeAccess = user.CanChangeAccess;
                 }
             }
             await _context.SaveChangesAsync();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -11,7 +10,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class GetTasks: BaseTest
+    public class GetTasks : BaseTest
     {
         private readonly TaskDefinition _secondTask;
 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -11,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class PostTask: BaseTest
+    public class PostTask : BaseTest
     {
         protected override void AddDataToDb()
         {

@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class DeleteTask: BaseTest
+    public class DeleteTask : BaseTest
     {
         [Fact]
         public async Task EntryNotFound()
