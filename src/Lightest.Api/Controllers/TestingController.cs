@@ -49,9 +49,15 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("checker-result")]
-        public async Task<IActionResult> AddResult([FromBody] CheckerCompilationResult result)
+        public async Task<IActionResult> AddCheckerResult([FromBody] CheckerCompilationResult result)
         {
             var checker = await _context.Checkers.FindAsync(result.Id);
+
+            if (checker == null)
+            {
+                return BadRequest(nameof(result.Id));
+            }
+
             checker.Compiled = result.Compiled;
             checker.Message = result.Message;
             await _context.SaveChangesAsync();
