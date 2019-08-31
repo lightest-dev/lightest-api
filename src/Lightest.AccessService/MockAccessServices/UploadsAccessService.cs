@@ -4,19 +4,19 @@ using Lightest.Data.Models.TaskModels;
 
 namespace Lightest.AccessService.MockAccessServices
 {
-    public class UploadsAccessService : IAccessService<IUpload>
+    public class UploadsAccessService : IAccessService<Upload>
     {
-        public bool CheckAdminAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckAdminAccess(Upload upload, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckReadAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckReadAccess(Upload upload, ApplicationUser requester)
         {
             return true;
         }
 
-        public bool CheckWriteAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckWriteAccess(Upload upload, ApplicationUser requester)
         {
             return true;
         }

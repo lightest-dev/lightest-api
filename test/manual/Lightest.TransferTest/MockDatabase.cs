@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
                 UserId = user.Id,
                 TaskId = task.Id
             };
-            var upload = new CodeUpload
+            var upload = new Upload
             {
                 Language = language,
                 LanguageId = language.Id,

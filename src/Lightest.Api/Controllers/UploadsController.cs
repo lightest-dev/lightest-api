@@ -19,13 +19,13 @@ namespace Lightest.Api.Controllers
     [Authorize]
     public class UploadsController : BaseUserController
     {
-        private readonly IAccessService<IUpload> _accessService;
+        private readonly IAccessService<Upload> _accessService;
         private readonly ITestingService _testingService;
 
         public UploadsController(
             ITestingService testingService,
             RelationalDbContext context,
-            IAccessService<IUpload> accessService,
+            IAccessService<Upload> accessService,
             UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _testingService = testingService;
@@ -77,31 +77,16 @@ namespace Lightest.Api.Controllers
             return Ok(uploads);
         }
 
-        [HttpGet("{type}/{id}/result")]
+        [HttpGet("{id}/result")]
         [ProducesResponseType(200, Type = typeof(UserUploadResult))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetResult([FromRoute] string type, [FromRoute] Guid id)
+        public async Task<IActionResult> GetResult([FromRoute] Guid id)
         {
             var user = await GetCurrentUser();
-            IUpload upload;
-
-            if (type.ToLower() == "code")
-            {
-                upload = await _context.CodeUploads
+            var upload = await _context.CodeUploads
                     .AsNoTracking()
                     .SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else if (type.ToLower() == "project")
-            {
-                upload = await _context.ArchiveUploads
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(u => u.UploadId == id);
-            }
-            else
-            {
-                return BadRequest();
-            }
 
             if (!_accessService.CheckReadAccess(upload, user))
             {
@@ -122,7 +107,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(Guid))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> UploadCode([FromBody] CodeUpload upload)
+        public async Task<IActionResult> UploadCode([FromBody] Upload upload)
         {
             var user = await GetCurrentUser();
 
@@ -163,57 +148,6 @@ namespace Lightest.Api.Controllers
 
             await _testingService.BeginTesting(upload);
             return Ok(upload.UploadId);
-        }
-
-        [HttpPost("project")]
-        [ProducesResponseType(200, Type = typeof(Guid))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        public async Task<IActionResult> UploadProject([FromBody] ArchiveUpload upload)
-        {
-            var user = await GetCurrentUser();
-
-            var task = await _context.Tasks
-                .Include(t => t.Languages)
-                .Include(t => t.Tests)
-                .Include(t => t.Checker)
-                .SingleOrDefaultAsync(t => t.Id == upload.TaskId);
-
-            if (task == null)
-            {
-                ModelState.AddModelError(nameof(upload.TaskId), "Task not found");
-                return BadRequest(ModelState);
-            }
-
-            upload.Task = task;
-
-            if (!_accessService.CheckWriteAccess(upload, user))
-            {
-                return Forbid();
-            }
-
-            var language = await _context.Languages.SingleOrDefaultAsync(l => l.Id == upload.LanguageId);
-            if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
-            {
-                ModelState.AddModelError(nameof(upload.LanguageId), "Language not found");
-                return BadRequest(ModelState);
-            }
-
-            upload.Language = language;
-            upload.Status = UploadStatus.New;
-            upload.Points = 0;
-            upload.UserId = user.Id;
-            upload.UploadDate = DateTime.Now;
-            _context.ArchiveUploads.Add(upload);
-
-            await _context.SaveChangesAsync();
-
-            var successful = await _testingService.BeginTesting(upload);
-            if (successful)
-            {
-                return Ok(upload.UploadId);
-            }
-            return BadRequest();
         }
     }
 }

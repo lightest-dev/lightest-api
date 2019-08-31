@@ -20,9 +20,6 @@ namespace Lightest.Data.Models.TaskModels
         public virtual ICollection<TaskLanguage> Tasks { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<CodeUpload> CodeUploads { get; set; }
+        public virtual ICollection<Upload> CodeUploads { get; set; }
     }
 }

@@ -13,7 +13,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
     public class ReportResult: BaseTests
     {
         private readonly CheckerResult _result;
-        private readonly CodeUpload _upload;
+        private readonly Upload _upload;
         private readonly TaskDefinition _task;
         private readonly UserTask _userTask;
 
@@ -26,7 +26,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Name = "name"
             };
 
-            _upload = new CodeUpload
+            _upload = new Upload
             {
                 UploadId = Guid.NewGuid(),
                 UserId = Guid.NewGuid().ToString(),

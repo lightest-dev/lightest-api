@@ -13,13 +13,11 @@ namespace Lightest.Data
 
         public DbSet<TestingServer> Servers { get; set; }
 
-        public DbSet<ArchiveUpload> ArchiveUploads { get; set; }
-
         public DbSet<Category> Categories { get; set; }
 
         public DbSet<Checker> Checkers { get; set; }
 
-        public DbSet<CodeUpload> CodeUploads { get; set; }
+        public DbSet<Upload> CodeUploads { get; set; }
 
         public DbSet<Group> Groups { get; set; }
 
@@ -133,37 +131,19 @@ namespace Lightest.Data
                 .HasForeignKey(t => t.TaskId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<ArchiveUpload>()
-                .HasOne(up => up.Task)
-                .WithMany(t => t.ArchiveUploads)
-                .HasForeignKey(up => up.TaskId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<ArchiveUpload>()
-                .HasOne(up => up.User)
-                .WithMany(u => u.ArchiveUploads)
-                .HasForeignKey(up => up.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.Entity<ArchiveUpload>()
-                .HasOne(up => up.Language)
-                .WithMany(l => l.ArchiveUploads)
-                .HasForeignKey(up => up.LanguageId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            builder.Entity<CodeUpload>()
+            builder.Entity<Upload>()
                 .HasOne(up => up.Task)
                 .WithMany(t => t.CodeUploads)
                 .HasForeignKey(up => up.TaskId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<CodeUpload>()
+            builder.Entity<Upload>()
                 .HasOne(up => up.User)
                 .WithMany(u => u.CodeUploads)
                 .HasForeignKey(up => up.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<CodeUpload>()
+            builder.Entity<Upload>()
                 .HasOne(up => up.Language)
                 .WithMany(l => l.CodeUploads)
                 .HasForeignKey(up => up.LanguageId)

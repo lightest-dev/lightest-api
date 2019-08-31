@@ -23,7 +23,7 @@ namespace Lightest.Data.Models.TaskModels
         public Guid CheckerId { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<CodeUpload> CodeUploads { get; set; }
+        public virtual ICollection<Upload> CodeUploads { get; set; }
 
         public string Description { get; set; }
 
@@ -43,9 +43,6 @@ namespace Lightest.Data.Models.TaskModels
 
         [JsonIgnore]
         public virtual ICollection<UserTask> Users { get; set; }
-
-        [JsonIgnore]
-        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<TaskLanguage> Languages { get; set; }

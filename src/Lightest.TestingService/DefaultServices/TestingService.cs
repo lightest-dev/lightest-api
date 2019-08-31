@@ -26,7 +26,7 @@ namespace Lightest.TestingService.DefaultServices
             _transferServiceFactory = transferServiceFactory;
         }
 
-        public async Task<bool> BeginTesting(IUpload upload)
+        public async Task<bool> BeginTesting(Upload upload)
         {
             await AddToList(upload);
 
@@ -48,7 +48,7 @@ namespace Lightest.TestingService.DefaultServices
 
             switch (upload)
             {
-                case CodeUpload code:
+                case Upload code:
                     result = await SendData(code, transferService);
                     break;
 
@@ -126,12 +126,12 @@ namespace Lightest.TestingService.DefaultServices
             await _context.SaveChangesAsync();
         }
 
-        private async Task AddToList(IUpload upload)
+        private async Task AddToList(Upload upload)
         {
             upload.Status = UploadStatus.Queue;
             switch (upload)
             {
-                case CodeUpload code:
+                case Upload code:
                     await StartTrackingCodeUpload(code);
                     break;
 
@@ -140,7 +140,7 @@ namespace Lightest.TestingService.DefaultServices
             }
         }
 
-        private async Task<bool> SendData(CodeUpload upload, ITransferService transferService)
+        private async Task<bool> SendData(Upload upload, ITransferService transferService)
         {
             upload.Status = UploadStatus.Queue;
             var save = _context.SaveChangesAsync();
@@ -209,7 +209,7 @@ namespace Lightest.TestingService.DefaultServices
         }
 
         //todo: rename
-        private async Task StartTrackingCodeUpload(CodeUpload upload)
+        private async Task StartTrackingCodeUpload(Upload upload)
         {
             if (!_context.CodeUploads.Any(u => u.UploadId == upload.UploadId))
             {

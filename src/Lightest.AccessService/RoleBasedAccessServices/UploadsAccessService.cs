@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
-    public class UploadsAccessService : RoleChecker, IAccessService<IUpload>
+    public class UploadsAccessService : RoleChecker, IAccessService<Upload>
     {
         private readonly IAccessService<TaskDefinition> _accessService;
 
@@ -16,17 +16,17 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             _accessService = accessService;
         }
 
-        public bool CheckAdminAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckAdminAccess(Upload upload, ApplicationUser requester)
         {
             return IsAdmin(requester);
         }
 
-        public bool CheckReadAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckReadAccess(Upload upload, ApplicationUser requester)
         {
             return _accessService.CheckReadAccess(upload.Task, requester);
         }
 
-        public bool CheckWriteAccess(IUpload upload, ApplicationUser requester)
+        public bool CheckWriteAccess(Upload upload, ApplicationUser requester)
         {
             return _accessService.CheckReadAccess(upload.Task, requester);
         }

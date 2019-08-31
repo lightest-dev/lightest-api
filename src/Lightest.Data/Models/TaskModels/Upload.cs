@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Lightest.Data.Models.TaskModels
 {
-    public class CodeUpload : IUpload
+    public class Upload
     {
         [Key]
         public Guid UploadId { get; set; }

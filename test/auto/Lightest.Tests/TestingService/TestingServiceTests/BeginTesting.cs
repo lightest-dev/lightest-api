@@ -21,7 +21,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
         private readonly TaskDefinition _task;
 
-        private readonly CodeUpload _upload;
+        private readonly Upload _upload;
 
         private readonly Test _test;
 
@@ -79,7 +79,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _task.Tests.Add(_test);
 
-            _upload = new CodeUpload
+            _upload = new Upload
             {
                 UploadId = Guid.NewGuid(),
                 Code = "code",

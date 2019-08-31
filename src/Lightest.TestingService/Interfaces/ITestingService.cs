@@ -6,7 +6,7 @@ namespace Lightest.TestingService.Interfaces
 {
     public interface ITestingService
     {
-        Task<bool> BeginTesting(IUpload upload);
+        Task<bool> BeginTesting(Upload upload);
 
         Task ReportResult(CheckerResult result);
 

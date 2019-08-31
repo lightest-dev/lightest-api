@@ -10,11 +10,9 @@ namespace Lightest.Data.Models
 
         public string Surname { get; set; }
 
-        public virtual ICollection<ArchiveUpload> ArchiveUploads { get; set; }
-
         public virtual ICollection<CategoryUser> AvailableCategories { get; set; }
 
-        public virtual ICollection<CodeUpload> CodeUploads { get; set; }
+        public virtual ICollection<Upload> CodeUploads { get; set; }
 
         public virtual ICollection<UserGroup> Groups { get; set; }
 
