@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using Lightest.AccessService.Interfaces;
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +10,7 @@ using Moq;
 
 namespace Lightest.Tests.Api.Tests.UploadsController
 {
-    public class BaseTest: Api.BaseTest
+    public class BaseTest : Api.BaseTest
     {
         protected Lightest.Api.Controllers.UploadsController _controller
         {
@@ -36,12 +36,20 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         {
             _accessServiceMock = GenerateAccessService<Upload>();
             _claimsPrincipalMock = GenerateClaimsMock();
+            _testingServiceMock = new Mock<ITestingService>();
 
+            var checker = new Checker
+            {
+                Id = Guid.NewGuid(),
+                Name = "name"
+            };
             _task = new TaskDefinition
             {
                 Id = Guid.NewGuid(),
                 Points = 100,
-                Name = "name"
+                Name = "name",
+                Checker = checker,
+                CheckerId = checker.Id
             };
         }
 
@@ -53,6 +61,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             {
                 var upload = new Upload
                 {
+                    Id = Guid.NewGuid(),
                     Code = $"code{i}",
                     Task = _task,
                     TaskId = _task.Id,

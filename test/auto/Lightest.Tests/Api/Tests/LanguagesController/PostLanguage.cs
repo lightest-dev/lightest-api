@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -11,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.LanguagesController
 {
-    public class PostLanguage: BaseTest
+    public class PostLanguage : BaseTest
     {
         [Fact]
         public async Task Forbidden()

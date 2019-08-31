@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -11,7 +9,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.LanguagesController
 {
-    public class DeleteLanguage: BaseTest
+    public class DeleteLanguage : BaseTest
     {
         [Fact]
         public async Task NotFound()
@@ -66,7 +64,6 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
             Assert.Equal(_language.Extension, language.Extension);
 
             Assert.Empty(_context.Languages);
-            
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Lightest.Data.Models.TaskModels
     public class Upload
     {
         [Key]
-        public Guid UploadId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string Code { get; set; }

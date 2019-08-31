@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
                 LanguageId = language.Id,
                 Task = task,
                 TaskId = task.Id,
-                UploadId = new Guid(),
+                Id = new Guid(),
                 UserId = user.Id,
                 Code = @"#include <iostream>
 
@@ -118,7 +118,7 @@ int main()
             context.Tasks.Add(task);
             context.Users.Add(user);
             context.UserTasks.Add(userTask);
-            context.CodeUploads.Add(upload);
+            context.Uploads.Add(upload);
             context.SaveChanges();
             return context;
         }

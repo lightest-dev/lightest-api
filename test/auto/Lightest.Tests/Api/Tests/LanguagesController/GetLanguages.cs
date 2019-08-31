@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Xunit;
 
 namespace Lightest.Tests.Api.Tests.LanguagesController
 {
-    public class GetLanguages: BaseTest
+    public class GetLanguages : BaseTest
     {
         [Fact]
         public void DbEmpty()

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -86,7 +85,7 @@ namespace Lightest.TestingService.DefaultServices
 
         public Task StartNextTesting()
         {
-            var upload = _context.CodeUploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+            var upload = _context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
 
             //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
             if (upload != null)
@@ -99,8 +98,8 @@ namespace Lightest.TestingService.DefaultServices
 
         private async Task ReportCodeResult(CheckerResult result)
         {
-            var upload = await _context.CodeUploads
-                .SingleOrDefaultAsync(u => u.UploadId == result.UploadId);
+            var upload = await _context.Uploads
+                .SingleOrDefaultAsync(u => u.Id == result.UploadId);
             var userTask = await _context.UserTasks
                 .SingleOrDefaultAsync(u => u.UserId == upload.UserId
                 && u.TaskId == upload.TaskId);
@@ -147,7 +146,7 @@ namespace Lightest.TestingService.DefaultServices
             var language = upload.Task.Languages.FirstOrDefault(l => l.LanguageId == upload.LanguageId);
             var request = new TestingRequest
             {
-                UploadId = upload.UploadId,
+                UploadId = upload.Id,
                 MemoryLimit = language.MemoryLimit,
                 TimeLimit = language.TimeLimit,
                 CheckerId = upload.Task.CheckerId,
@@ -178,7 +177,7 @@ namespace Lightest.TestingService.DefaultServices
                 i++;
             }
             await save;
-            fileRequest = new SingleFileCodeRequest($"{upload.UploadId}.{upload.Language.Extension}");
+            fileRequest = new SingleFileCodeRequest($"{upload.Id}.{upload.Language.Extension}");
             result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(upload.Code));
             return result;
         }
@@ -211,9 +210,9 @@ namespace Lightest.TestingService.DefaultServices
         //todo: rename
         private async Task StartTrackingCodeUpload(Upload upload)
         {
-            if (!_context.CodeUploads.Any(u => u.UploadId == upload.UploadId))
+            if (!_context.Uploads.Any(u => u.Id == upload.Id))
             {
-                _context.CodeUploads.Add(upload);
+                _context.Uploads.Add(upload);
                 await _context.SaveChangesAsync();
             }
         }

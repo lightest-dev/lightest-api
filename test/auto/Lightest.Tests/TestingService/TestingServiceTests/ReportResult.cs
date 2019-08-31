@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -10,7 +8,7 @@ using Xunit;
 
 namespace Lightest.Tests.TestingService.TestingServiceTests
 {
-    public class ReportResult: BaseTests
+    public class ReportResult : BaseTests
     {
         private readonly CheckerResult _result;
         private readonly Upload _upload;
@@ -28,14 +26,14 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _upload = new Upload
             {
-                UploadId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 UserId = Guid.NewGuid().ToString(),
                 TaskId = _task.Id
             };
 
             _result = new CheckerResult
             {
-                UploadId = _upload.UploadId,
+                UploadId = _upload.Id,
                 Ip = "1",
                 Status = "ResultStatus",
                 Message = "ResultMessage",
@@ -64,7 +62,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 }
             );
             _context.Tasks.Add(_task);
-            _context.CodeUploads.Add(_upload);
+            _context.Uploads.Add(_upload);
             _context.UserTasks.Add(_userTask);
             _context.SaveChanges();
         }

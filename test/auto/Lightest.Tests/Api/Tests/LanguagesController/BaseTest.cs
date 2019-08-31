@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Security.Claims;
-using System.Text;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Http;
@@ -9,7 +7,7 @@ using Moq;
 
 namespace Lightest.Tests.Api.Tests.LanguagesController
 {
-    public abstract class BaseTest: Api.BaseTest
+    public abstract class BaseTest : Api.BaseTest
     {
         protected Lightest.Api.Controllers.LanguagesController _controller
         {

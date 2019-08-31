@@ -17,7 +17,7 @@ namespace Lightest.Data
 
         public DbSet<Checker> Checkers { get; set; }
 
-        public DbSet<Upload> CodeUploads { get; set; }
+        public DbSet<Upload> Uploads { get; set; }
 
         public DbSet<Group> Groups { get; set; }
 
@@ -145,7 +145,7 @@ namespace Lightest.Data
 
             builder.Entity<Upload>()
                 .HasOne(up => up.Language)
-                .WithMany(l => l.CodeUploads)
+                .WithMany(l => l.Uploads)
                 .HasForeignKey(up => up.LanguageId)
                 .OnDelete(DeleteBehavior.SetNull);
 

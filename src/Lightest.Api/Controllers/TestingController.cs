@@ -43,7 +43,7 @@ namespace Lightest.Api.Controllers
             {
                 result.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
             }
-            await Task.WhenAll(_testingService.ReportResult(result), 
+            await Task.WhenAll(_testingService.ReportResult(result),
                 _testingService.StartNextTesting());
             return Ok();
         }

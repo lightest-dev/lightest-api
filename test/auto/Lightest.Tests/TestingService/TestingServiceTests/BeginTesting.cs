@@ -81,7 +81,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _upload = new Upload
             {
-                UploadId = Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Code = "code",
                 Task = _task,
                 TaskId = _task.Id,
@@ -97,7 +97,6 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _serverRepoMock.Setup(r => r.GetFreeServer())
                 .Returns(_testServer);
-
         }
 
         [Fact]
@@ -129,15 +128,15 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
             _transferMock.Verify(t => t.SendMessage(It.IsNotNull<string>()), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
         }
 
         [Fact]
         public async Task UploadSendingFailed()
         {
-            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(),
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
                 .Returns(Task.FromResult(false));
 
@@ -164,8 +163,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
                 It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
 
             _transferMock.VerifyNoOtherCalls();
@@ -176,7 +175,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         [Fact]
         public async Task TestInputSendingFailed()
         {
-            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(),
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))))
                 .Returns(Task.FromResult(false));
 
@@ -192,7 +191,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Times.Never);
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),
-                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))), 
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))),
                 Times.AtMostOnce);
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),
@@ -203,8 +202,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
                 It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
 
             _transferMock.VerifyNoOtherCalls();
@@ -215,7 +214,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         [Fact]
         public async Task TestOutputSendingFailed()
         {
-            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(), 
+            _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(),
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))))
                 .Returns(Task.FromResult(false));
 
@@ -238,8 +237,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
                 It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
         }
 
@@ -261,8 +260,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
             _transferMock.Verify(t => t.SendMessage(It.IsNotNull<string>()), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Testing, upload.Status);
         }
 
@@ -277,8 +276,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Verify(sr => sr.AddCachedChecker(It.Is<TestingServer>(s => s.Ip == _testServer.Ip),
                 It.Is<Checker>(c => c.Id == _checker.Id)), Times.Once);
 
-            Assert.Equal(1, _context.CodeUploads.Count());
-            var upload = _context.CodeUploads.First();
+            Assert.Equal(1, _context.Uploads.Count());
+            var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Testing, upload.Status);
         }
     }
