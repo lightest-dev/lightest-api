@@ -24,7 +24,8 @@ namespace Lightest.Tests.Api
                 Id = Guid.NewGuid().ToString(),
                 Name = "name",
                 Email = "e@mail.com",
-                UserName = "name"
+                UserName = "name",
+                Surname = "surname"
             };
             _userManager = GenerateUserManager();
             _context = GenerateContext();
