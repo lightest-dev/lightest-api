@@ -125,7 +125,24 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
+            if (group.ParentId != null)
+            {
+                var parentExists = _context.Groups.Any(g => g.Id == group.ParentId);
+                if (!parentExists)
+                {
+                    return BadRequest(nameof(group.ParentId));
+                }
+            }
+
             _context.Groups.Add(group);
+            var categoryUser = new UserGroup { UserId = user.Id, GroupId = group.Id };
+            categoryUser.SetFullRights();
+
+            group.Users = new List<UserGroup>
+            {
+                categoryUser
+            };
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetGroup", new { id = group.Id }, group);
@@ -154,13 +171,24 @@ namespace Lightest.Api.Controllers
 
             foreach (var user in users)
             {
-                if (!UserExists(user.UserId))
+                if (!_context.Users.Any(u => u.Id == user.UserId))
                 {
-                    continue;
+                    return BadRequest();
                 }
-                var userGroup = new UserGroup { GroupId = group.Id, UserId = user.UserId };
-                user.CopyTo(userGroup);
-                group.Users.Add(userGroup);
+
+                var categoryUser = group.Users.SingleOrDefault(u => u.UserId == user.UserId);
+                //todo: check if user has access to parent group (if parent group is set)
+                // if user cannot read parent, he should not have access to child
+                if (categoryUser == null)
+                {
+                    categoryUser = new UserGroup { GroupId = group.Id, UserId = user.UserId };
+                    user.CopyTo(categoryUser);
+                    group.Users.Add(categoryUser);
+                }
+                else
+                {
+                    user.CopyTo(categoryUser);
+                }
             }
             await _context.SaveChangesAsync();
             return Ok();
@@ -224,11 +252,6 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(group);
-        }
-
-        private bool UserExists(string id)
-        {
-            return _context.Users.Any(u => u.Id == id);
         }
     }
 }

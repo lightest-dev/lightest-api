@@ -10,7 +10,7 @@ using Moq;
 
 namespace Lightest.Tests.Api.Tests.UploadsController
 {
-    public class BaseTest : Api.BaseTest
+    public abstract class BaseTest : Api.BaseTest
     {
         protected Lightest.Api.Controllers.UploadsController _controller
         {

@@ -7,7 +7,7 @@ using Moq;
 
 namespace Lightest.Tests.Api.Tests.TestsController
 {
-    public class BaseTest : Api.BaseTest
+    public abstract class BaseTest : Api.BaseTest
     {
         protected Lightest.Api.Controllers.TestsController _controller
         {
