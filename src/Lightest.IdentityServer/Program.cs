@@ -10,10 +10,7 @@ namespace Lightest.IdentityServer
                 .ConfigureWebHostDefaults(builder =>
                 {
                     builder.UseStartup<Startup>()
-                    .ConfigureAppConfiguration((context, config) =>
-                    {
-                        config.AddJsonFile("settings.private.json");
-                    })
+
                     .ConfigureKestrel((options) =>
                     {
                         //listen to localhost only, reverse proxy is used for outside comunication
@@ -24,7 +21,12 @@ namespace Lightest.IdentityServer
                             //listenOptions.UseHttps();
                         });
                     });
-                });
+                })
+            .UseSystemd()
+            .ConfigureAppConfiguration((context, config) =>
+            {
+                config.AddJsonFile("settings.private.json");
+            });
 
         public static void Main(string[] args)
         {

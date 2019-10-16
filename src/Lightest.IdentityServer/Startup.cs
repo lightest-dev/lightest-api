@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 [assembly: ApiController]
 
@@ -21,13 +20,7 @@ namespace Lightest.IdentityServer
 {
     public class Startup
     {
-        private readonly ILoggerFactory _loggerFactory;
-
-        public Startup(IConfiguration configuration, ILoggerFactory loggerFactor)
-        {
-            Configuration = configuration;
-            _loggerFactory = loggerFactor;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 

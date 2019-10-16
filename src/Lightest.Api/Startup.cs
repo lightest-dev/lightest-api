@@ -85,7 +85,7 @@ namespace Lightest.Api
                 });
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info { Title = "Lightest API", Version = "1" });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Lightest API", Version = "1" });
             });
             services.AddHttpContextAccessor();
 

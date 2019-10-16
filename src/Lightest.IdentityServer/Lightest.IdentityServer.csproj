@@ -16,6 +16,11 @@
     <PackageReference Include="IdentityServer4" Version="3.0.1" />
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="3.0.1" />
     <PackageReference Include="IdentityServer4.EntityFramework" Version="3.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="3.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.0.1" />
   </ItemGroup>
 

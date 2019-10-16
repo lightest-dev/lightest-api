@@ -2,7 +2,7 @@ language: csharp
 sudo: required
 dist: xenial
 mono: none
-dotnet: 2.2
+dotnet: 3.0
 before_script:
   - dotnet restore
   - export COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
