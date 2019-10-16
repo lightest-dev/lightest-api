@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 
 namespace Lightest.TestingService.Requests
 {
@@ -15,5 +16,10 @@ namespace Lightest.TestingService.Requests
         public int TestsCount { get; set; }
 
         public override string Type => "upload";
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

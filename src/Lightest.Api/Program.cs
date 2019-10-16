@@ -1,28 +1,31 @@
 ﻿using System.Linq;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Lightest.Api
 {
     public class Program
     {
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateWebHostBuilder(string[] args)
         {
-            return WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .ConfigureAppConfiguration((context, config) =>
+            return Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder =>
                 {
-                    config.AddJsonFile("settings.private.json");
-                })
-                .ConfigureKestrel((options) =>
-                {
-                    //listen to localhost only, reverse proxy is used for outside comunication
-                    options.ListenLocalhost(5100, listenOptions =>
+                    builder.UseStartup<Startup>()
+                    .ConfigureAppConfiguration((context, config) =>
                     {
-                        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
-                        //not working on linux
-                        //listenOptions.UseHttps();
+                        config.AddJsonFile("settings.private.json");
+                    })
+                    .ConfigureKestrel((options) =>
+                    {
+                        //listen to localhost only, reverse proxy is used for outside comunication
+                        options.ListenLocalhost(5100, listenOptions =>
+                        {
+                            listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2;
+                            //not working on linux
+                            //listenOptions.UseHttps();
+                        });
                     });
                 });
         }

@@ -7,7 +7,6 @@ using Lightest.Api.RequestModels;
 using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,6 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
-    [Authorize]
     public class CheckersController : BaseUserController
     {
         private readonly IAccessService<Checker> _accessService;

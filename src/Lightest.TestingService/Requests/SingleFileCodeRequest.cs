@@ -1,4 +1,6 @@
-﻿namespace Lightest.TestingService.Requests
+﻿using System.Text.Json;
+
+namespace Lightest.TestingService.Requests
 {
     public class SingleFileCodeRequest : FileRequest
     {
@@ -7,5 +9,10 @@
         }
 
         public override string FileType => "code";
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }

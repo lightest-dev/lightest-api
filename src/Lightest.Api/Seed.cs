@@ -9,15 +9,13 @@ namespace Lightest.Api
 {
     public static class Seed
     {
-        public async static Task EnsureDataSeeded(this IServiceProvider serviceProvider)
+        public static async Task EnsureDataSeeded(this IServiceProvider serviceProvider)
         {
-            using (var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                await SeedRelational(scope);
-            }
+            using var scope = serviceProvider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            await SeedRelational(scope);
         }
 
-        private async static Task SeedRelational(IServiceScope scope)
+        private static async Task SeedRelational(IServiceScope scope)
         {
             var context = scope.ServiceProvider.GetRequiredService<RelationalDbContext>();
             context.Database.Migrate();

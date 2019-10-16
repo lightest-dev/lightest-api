@@ -8,7 +8,6 @@ using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
 using Lightest.Data;
 using Lightest.Data.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,6 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
-    [Authorize]
     public class CategoriesController : BaseUserController
     {
         private readonly IAccessService<Category> _accessService;

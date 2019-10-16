@@ -3,6 +3,7 @@ using Lightest.Api.RequestModels;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -14,6 +15,7 @@ namespace Lightest.Api.Controllers
     /// </summary>
     [Route("[controller]")]
     [ApiExplorerSettings(IgnoreApi = true)]
+    [AllowAnonymous]
     public class TestingController : ControllerBase
     {
         private readonly ITestingService _testingService;

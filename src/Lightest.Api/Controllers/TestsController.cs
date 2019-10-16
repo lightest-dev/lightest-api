@@ -4,7 +4,6 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ namespace Lightest.Api.Controllers
 {
     [Produces("application/json")]
     [Route("[controller]")]
-    [Authorize]
     public class TestsController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;

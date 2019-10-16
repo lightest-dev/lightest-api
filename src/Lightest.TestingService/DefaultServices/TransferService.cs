@@ -49,20 +49,18 @@ namespace Lightest.TestingService.DefaultServices
                         return false;
                     }
 
-                    using (var netStream = client.GetStream())
-                    using (var writer = new BinaryWriter(netStream))
-                    using (var fileStream = File.OpenRead(path))
-                    {
-                        var message = fileRequest.ToString();
-                        var bytes = Encoding.UTF8.GetBytes(message);
-                        // 1 for type, 4 for message length
-                        var length = fileStream.Length + bytes.Length + 1 + 4;
-                        writer.Write(length);
-                        writer.Write(RequestType.File);
-                        writer.Write(bytes.Length);
-                        writer.Write(bytes);
-                        await fileStream.CopyToAsync(netStream);
-                    }
+                    using var netStream = client.GetStream();
+                    using var writer = new BinaryWriter(netStream);
+                    using var fileStream = File.OpenRead(path);
+                    var message = fileRequest.ToString();
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    // 1 for type, 4 for message length
+                    var length = fileStream.Length + bytes.Length + 1 + 4;
+                    writer.Write(length);
+                    writer.Write(RequestType.File);
+                    writer.Write(bytes.Length);
+                    writer.Write(bytes);
+                    await fileStream.CopyToAsync(netStream);
                 }
 
                 return true;
@@ -94,19 +92,17 @@ namespace Lightest.TestingService.DefaultServices
                     {
                         return false;
                     }
-                    using (var netStream = client.GetStream())
-                    using (var writer = new BinaryWriter(netStream))
-                    {
-                        var message = fileRequest.ToString();
-                        var bytes = Encoding.UTF8.GetBytes(message);
-                        // 1 for type, 4 for message length
-                        long length = data.Length + bytes.Length + 1 + 4;
-                        writer.Write(length);
-                        writer.Write(RequestType.File);
-                        writer.Write(bytes.Length);
-                        writer.Write(bytes);
-                        writer.Write(data);
-                    }
+                    using var netStream = client.GetStream();
+                    using var writer = new BinaryWriter(netStream);
+                    var message = fileRequest.ToString();
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    // 1 for type, 4 for message length
+                    long length = data.Length + bytes.Length + 1 + 4;
+                    writer.Write(length);
+                    writer.Write(RequestType.File);
+                    writer.Write(bytes.Length);
+                    writer.Write(bytes);
+                    writer.Write(data);
                 }
                 return true;
             }
@@ -137,15 +133,13 @@ namespace Lightest.TestingService.DefaultServices
                     {
                         return false;
                     }
-                    using (var stream = client.GetStream())
-                    using (var writer = new BinaryWriter(stream))
-                    {
-                        var bytes = Encoding.UTF8.GetBytes(message);
-                        long length = bytes.Length + 1;
-                        writer.Write(length);
-                        writer.Write(RequestType.Message);
-                        writer.Write(bytes);
-                    }
+                    using var stream = client.GetStream();
+                    using var writer = new BinaryWriter(stream);
+                    var bytes = Encoding.UTF8.GetBytes(message);
+                    long length = bytes.Length + 1;
+                    writer.Write(length);
+                    writer.Write(RequestType.Message);
+                    writer.Write(bytes);
                 }
                 return true;
             }

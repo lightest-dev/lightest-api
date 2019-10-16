@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +10,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.ProfileController
 {
-    public class GetUsersInRole: BaseTest
+    public class GetUsersInRole : BaseTest
     {
         private readonly ApplicationUser _secondUser;
         private readonly IdentityRole _role;

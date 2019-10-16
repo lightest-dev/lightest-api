@@ -8,7 +8,6 @@ using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Lightest.Api.Controllers
 {
     [Route("[controller]")]
-    [Authorize]
     public class UploadsController : BaseUserController
     {
         private readonly IAccessService<Upload> _accessService;

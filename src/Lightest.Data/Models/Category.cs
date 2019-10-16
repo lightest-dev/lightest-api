@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Lightest.Data.Models.TaskModels;
-using Newtonsoft.Json;
 
 namespace Lightest.Data.Models
 {

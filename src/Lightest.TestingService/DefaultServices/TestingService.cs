@@ -45,16 +45,12 @@ namespace Lightest.TestingService.DefaultServices
                 return false;
             }
 
-            switch (upload)
+            result = upload switch
             {
-                case Upload code:
-                    result = await SendData(code, transferService);
-                    break;
+                Upload code => await SendData(code, transferService),
 
-                default:
-                    throw new NotImplementedException();
-            }
-
+                _ => throw new NotImplementedException(),
+            };
             if (result)
             {
                 upload.Status = UploadStatus.Testing;

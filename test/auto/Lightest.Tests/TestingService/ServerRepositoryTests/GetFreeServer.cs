@@ -25,11 +25,13 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         {
             _context.Servers.Add(new Data.Models.TestingServer
             {
-                Status = Data.Models.ServerStatus.Busy
+                Status = Data.Models.ServerStatus.Busy,
+                Ip = "1"
             });
             _context.Servers.Add(new Data.Models.TestingServer
             {
-                Status = Data.Models.ServerStatus.NotResponding
+                Status = Data.Models.ServerStatus.NotResponding,
+                Ip = "2"
             });
             _context.SaveChanges();
 
@@ -42,15 +44,18 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         {
             _context.Servers.Add(new Data.Models.TestingServer
             {
-                Status = Data.Models.ServerStatus.Busy
+                Status = Data.Models.ServerStatus.Busy,
+                Ip = "1"
             });
             _context.Servers.Add(new Data.Models.TestingServer
             {
-                Status = Data.Models.ServerStatus.NotResponding
+                Status = Data.Models.ServerStatus.NotResponding,
+                Ip = "2"
             });
             _context.Servers.Add(new Data.Models.TestingServer
             {
-                Status = Data.Models.ServerStatus.Free
+                Status = Data.Models.ServerStatus.Free,
+                Ip = "3"
             });
             _context.SaveChanges();
 

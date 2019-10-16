@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 [assembly: ApiController]
 
@@ -29,15 +30,21 @@ namespace Lightest.Api
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseRouting();
             app.UseCors("General");
             app.UseAuthentication();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseMvc();
+
+            app.UseAuthorization();
+            app.UseEndpoints(e =>
+            {
+                e.MapControllers().RequireAuthorization();
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -50,12 +57,12 @@ namespace Lightest.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(options =>
+            services.AddControllers(options =>
             {
                 options.Conventions.Add(new RouteTokenTransformerConvention(
                                      new SlugifyParameterTransformer()));
             })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddDbContext<RelationalDbContext>(options =>
             {

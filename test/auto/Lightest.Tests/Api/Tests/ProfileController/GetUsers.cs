@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Lightest.Api.ResponseModels;
 using Lightest.Data.Models;
@@ -11,7 +10,7 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.ProfileController
 {
-    public class GetUsers: BaseTest
+    public class GetUsers : BaseTest
     {
         [Fact]
         public async Task Forbidden()

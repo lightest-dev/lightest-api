@@ -1,4 +1,6 @@
-﻿namespace Lightest.TestingService.Requests
+﻿using System.Text.Json;
+
+namespace Lightest.TestingService.Requests
 {
     public abstract class FileRequest : BaseRequest
     {
@@ -17,5 +19,10 @@
         public override string Type => "file";
 
         public abstract string FileType { get; }
+
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }
