@@ -10,9 +10,6 @@ namespace Lightest.TestingService.Requests
 
         public override string FileType => "test";
 
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(this);
-        }
+        public override string ToString() => JsonSerializer.Serialize(this);
     }
 }

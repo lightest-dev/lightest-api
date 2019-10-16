@@ -22,10 +22,7 @@ namespace Lightest.Api.Controllers
         public CheckersController(
             RelationalDbContext context,
         UserManager<ApplicationUser> userManager,
-            IAccessService<Checker> accessService) : base(context, userManager)
-        {
-            _accessService = accessService;
-        }
+            IAccessService<Checker> accessService) : base(context, userManager) => _accessService = accessService;
 
         // GET: api/Checkers
         [HttpGet]

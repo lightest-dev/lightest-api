@@ -10,13 +10,10 @@ namespace Lightest.Tests.Api.Tests.TestingController
     {
         private readonly NewServer _server;
 
-        public ReportNewServer()
+        public ReportNewServer() => _server = new NewServer
         {
-            _server = new NewServer
-            {
-                ServerVersion = "a"
-            };
-        }
+            ServerVersion = "a"
+        };
 
         [Fact]
         public async Task IpSet()

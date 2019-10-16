@@ -6,19 +6,10 @@ namespace Lightest.AccessService.MockAccessServices
 {
     public class UploadsAccessService : IAccessService<Upload>
     {
-        public bool CheckAdminAccess(Upload upload, ApplicationUser requester)
-        {
-            return true;
-        }
+        public bool CheckAdminAccess(Upload upload, ApplicationUser requester) => true;
 
-        public bool CheckReadAccess(Upload upload, ApplicationUser requester)
-        {
-            return true;
-        }
+        public bool CheckReadAccess(Upload upload, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(Upload upload, ApplicationUser requester)
-        {
-            return true;
-        }
+        public bool CheckWriteAccess(Upload upload, ApplicationUser requester) => true;
     }
 }

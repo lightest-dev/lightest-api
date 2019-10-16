@@ -22,10 +22,7 @@ namespace Lightest.Api.Controllers
         public TasksController(
             RelationalDbContext context,
             IAccessService<TaskDefinition> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager)
-        {
-            _accessService = accessService;
-        }
+            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
 
         // GET: api/Tasks
         [HttpGet]

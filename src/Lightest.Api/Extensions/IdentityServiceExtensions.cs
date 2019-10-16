@@ -19,10 +19,7 @@ namespace Lightest.Api.Extensions
         /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
         public static IdentityBuilder AddIdentityWithoutAuthenticator<TUser, TRole>(this IServiceCollection services)
             where TUser : class
-            where TRole : class
-        {
-            return services.AddIdentityWithoutAuthenticator<TUser, TRole>(setupAction: null);
-        }
+            where TRole : class => services.AddIdentityWithoutAuthenticator<TUser, TRole>(setupAction: null);
 
         /// <summary>
         /// Adds and configures the identity system for the specified User and Role types. (Without Authentication Scheme)

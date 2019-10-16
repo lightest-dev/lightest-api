@@ -10,14 +10,11 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
     {
         private readonly NewServer _testServer;
 
-        public Reporting()
+        public Reporting() => _testServer = new NewServer
         {
-            _testServer = new NewServer
-            {
-                Ip = "1",
-                ServerVersion = "12"
-            };
-        }
+            Ip = "1",
+            ServerVersion = "12"
+        };
 
         [Fact]
         public async Task ReportBrokenServer()

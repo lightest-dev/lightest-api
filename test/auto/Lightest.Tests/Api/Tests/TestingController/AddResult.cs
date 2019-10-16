@@ -10,10 +10,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
     {
         private readonly CheckerResult _result;
 
-        public AddResult()
-        {
-            _result = new CheckerResult();
-        }
+        public AddResult() => _result = new CheckerResult();
 
         [Fact]
         public async Task IpSet()

@@ -10,10 +10,7 @@ namespace Lightest.TestingService.DefaultServices
     {
         private readonly RelationalDbContext _context;
 
-        public ServerRepository(RelationalDbContext context)
-        {
-            _context = context;
-        }
+        public ServerRepository(RelationalDbContext context) => _context = context;
 
         public int ServersCount => _context.Servers.Count();
 

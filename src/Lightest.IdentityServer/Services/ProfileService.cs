@@ -11,10 +11,7 @@ namespace Lightest.IdentityServer.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileService(UserManager<ApplicationUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        public ProfileService(UserManager<ApplicationUser> userManager) => _userManager = userManager;
 
         public async System.Threading.Tasks.Task GetProfileDataAsync(ProfileDataRequestContext context)
         {
@@ -24,12 +21,9 @@ namespace Lightest.IdentityServer.Services
             context.IssuedClaims.Add(new Claim("Teacher", (await _userManager.IsInRoleAsync(user, "Teacher")).ToString()));
         }
 
-        public System.Threading.Tasks.Task IsActiveAsync(IsActiveContext context)
-        {
-            return System.Threading.Tasks.Task.Run(() =>
-            {
-                context.IsActive = true;
-            });
-        }
+        public System.Threading.Tasks.Task IsActiveAsync(IsActiveContext context) => System.Threading.Tasks.Task.Run(() =>
+                                                                                               {
+                                                                                                   context.IsActive = true;
+                                                                                               });
     }
 }

@@ -8,14 +8,8 @@ namespace Lightest.TestingService.DefaultServices
     {
         private readonly ILoggerFactory _loggerFactory;
 
-        public TransferServiceFactory(ILoggerFactory loggerFactory)
-        {
-            _loggerFactory = loggerFactory;
-        }
+        public TransferServiceFactory(ILoggerFactory loggerFactory) => _loggerFactory = loggerFactory;
 
-        public ITransferService Create(IPAddress ip, int port)
-        {
-            return new TransferService(_loggerFactory.CreateLogger(typeof(TransferService)), ip, port);
-        }
+        public ITransferService Create(IPAddress ip, int port) => new TransferService(_loggerFactory.CreateLogger(typeof(TransferService)), ip, port);
     }
 }

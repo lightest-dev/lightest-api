@@ -6,9 +6,7 @@ namespace Lightest.IdentityServer
 {
     public class Program
     {
-        public static IHostBuilder CreateWebHostBuilder(string[] args)
-        {
-            return Host.CreateDefaultBuilder(args)
+        public static IHostBuilder CreateWebHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
                 {
                     builder.UseStartup<Startup>()
@@ -27,7 +25,6 @@ namespace Lightest.IdentityServer
                         });
                     });
                 });
-        }
 
         public static void Main(string[] args)
         {

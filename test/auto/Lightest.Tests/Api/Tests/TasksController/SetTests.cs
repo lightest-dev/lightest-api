@@ -13,15 +13,12 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         private readonly Test _newTest;
 
-        public SetTests()
+        public SetTests() => _newTest = new Test
         {
-            _newTest = new Test
-            {
-                Input = "new_input",
-                Output = "new_output",
-                Id = Guid.NewGuid()
-            };
-        }
+            Input = "new_input",
+            Output = "new_output",
+            Id = Guid.NewGuid()
+        };
 
         [Fact]
         public async Task Forbidden()

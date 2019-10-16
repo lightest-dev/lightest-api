@@ -23,10 +23,7 @@ namespace Lightest.Api.Controllers
         public CategoriesController(
             RelationalDbContext context,
             IAccessService<Category> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager)
-        {
-            _accessService = accessService;
-        }
+            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
 
         // GET: api/Categories
         [HttpGet]

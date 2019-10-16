@@ -21,13 +21,7 @@ namespace Lightest.Data.Models
         public string Version { get; set; }
 
         [NotMapped]
-        public IPAddress IPAddress
-        {
-            get
-            {
-                return IPAddress.Parse(Ip);
-            }
-        }
+        public IPAddress IPAddress => IPAddress.Parse(Ip);
 
         [JsonIgnore]
         public virtual ICollection<ServerChecker> Checkers { get; set; }

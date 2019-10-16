@@ -20,10 +20,7 @@ namespace Lightest.Api.Controllers
 
         public ProfileController(RelationalDbContext context,
             IAccessService<ApplicationUser> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager)
-        {
-            _accessService = accessService;
-        }
+            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileViewModel>))]

@@ -45,12 +45,9 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
         }
 
         [Fact]
-        public void NonExistent()
-        {
-            Assert.Throws<ArgumentException>(() =>
-            {
-                _repo.AddCachedChecker(_testServer, _testChecker);
-            });
-        }
+        public void NonExistent() => Assert.Throws<ArgumentException>(() =>
+                                   {
+                                       _repo.AddCachedChecker(_testServer, _testChecker);
+                                   });
     }
 }

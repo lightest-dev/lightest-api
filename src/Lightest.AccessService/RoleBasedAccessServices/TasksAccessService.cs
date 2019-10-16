@@ -12,20 +12,11 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
-        public bool CheckAdminAccess(TaskDefinition task, ApplicationUser requester)
-        {
-            return IsAdmin(requester);
-        }
+        public bool CheckAdminAccess(TaskDefinition task, ApplicationUser requester) => IsAdmin(requester);
 
-        public bool CheckReadAccess(TaskDefinition task, ApplicationUser requester)
-        {
-            return task?.Users?.Any(u => u.UserId == requester.Id) == true || IsTeacherOrAdmin(requester)
+        public bool CheckReadAccess(TaskDefinition task, ApplicationUser requester) => task?.Users?.Any(u => u.UserId == requester.Id) == true || IsTeacherOrAdmin(requester)
                            || task?.Public == true;
-        }
 
-        public bool CheckWriteAccess(TaskDefinition task, ApplicationUser requester)
-        {
-            return IsTeacherOrAdmin(requester);
-        }
+        public bool CheckWriteAccess(TaskDefinition task, ApplicationUser requester) => IsTeacherOrAdmin(requester);
     }
 }

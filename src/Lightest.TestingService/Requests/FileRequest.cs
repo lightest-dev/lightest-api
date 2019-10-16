@@ -4,15 +4,9 @@ namespace Lightest.TestingService.Requests
 {
     public abstract class FileRequest : BaseRequest
     {
-        public FileRequest(string filename)
-        {
-            Filename = filename;
-        }
+        public FileRequest(string filename) => Filename = filename;
 
-        public FileRequest()
-        {
-            Filename = string.Empty;
-        }
+        public FileRequest() => Filename = string.Empty;
 
         public string Filename { get; set; }
 
@@ -20,9 +14,6 @@ namespace Lightest.TestingService.Requests
 
         public abstract string FileType { get; }
 
-        public override string ToString()
-        {
-            return JsonSerializer.Serialize(this);
-        }
+        public override string ToString() => JsonSerializer.Serialize(this);
     }
 }

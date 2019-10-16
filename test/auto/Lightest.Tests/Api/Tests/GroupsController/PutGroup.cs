@@ -12,15 +12,12 @@ namespace Lightest.Tests.Api.Tests.GroupsController
     {
         protected readonly Group _updatedChild;
 
-        public PutGroup()
+        public PutGroup() => _updatedChild = new Group
         {
-            _updatedChild = new Group
-            {
-                Id = _child2.Id,
-                Name = "updatedName",
-                ParentId = null
-            };
-        }
+            Id = _child2.Id,
+            Name = "updatedName",
+            ParentId = null
+        };
 
         [Fact]
         public async Task IdsDontMatch()

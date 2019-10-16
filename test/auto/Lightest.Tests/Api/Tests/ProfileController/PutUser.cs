@@ -13,15 +13,12 @@ namespace Lightest.Tests.Api.Tests.ProfileController
     {
         private readonly PersonalDataRequest _personalData;
 
-        public PutUser()
+        public PutUser() => _personalData = new PersonalDataRequest
         {
-            _personalData = new PersonalDataRequest
-            {
-                Name = "new_name",
-                Surname = "new_surename",
-                UserId = _user.Id
-            };
-        }
+            Name = "new_name",
+            Surname = "new_surename",
+            UserId = _user.Id
+        };
 
         [Fact]
         public async Task Forbidden()

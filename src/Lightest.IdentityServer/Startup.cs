@@ -31,9 +31,7 @@ namespace Lightest.IdentityServer
 
         public IConfiguration Configuration { get; }
 
-        public static IEnumerable<ApiResource> GetApiResources()
-        {
-            return new List<ApiResource>
+        public static IEnumerable<ApiResource> GetApiResources() => new List<ApiResource>
             {
                 new ApiResource()
                 {
@@ -45,16 +43,12 @@ namespace Lightest.IdentityServer
                     }
                 }
             };
-        }
 
-        public static IEnumerable<IdentityResource> GetIdentityResources()
-        {
-            return new List<IdentityResource>
+        public static IEnumerable<IdentityResource> GetIdentityResources() => new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile()
             };
-        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

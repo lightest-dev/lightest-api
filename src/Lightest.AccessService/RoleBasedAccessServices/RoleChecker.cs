@@ -7,26 +7,14 @@ namespace Lightest.AccessService.RoleBasedAccessServices
     {
         protected readonly UserManager<ApplicationUser> _userManager;
 
-        protected RoleChecker(UserManager<ApplicationUser> userManager)
-        {
-            _userManager = userManager;
-        }
+        protected RoleChecker(UserManager<ApplicationUser> userManager) => _userManager = userManager;
 
-        protected bool IsAdmin(ApplicationUser user)
-        {
-            return _userManager.IsInRoleAsync(user, "Admin")
+        protected bool IsAdmin(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Admin")
                 .ConfigureAwait(false).GetAwaiter().GetResult();
-        }
 
-        protected bool IsTeacher(ApplicationUser user)
-        {
-            return _userManager.IsInRoleAsync(user, "Teacher")
+        protected bool IsTeacher(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Teacher")
                 .ConfigureAwait(false).GetAwaiter().GetResult();
-        }
 
-        protected bool IsTeacherOrAdmin(ApplicationUser user)
-        {
-            return IsTeacher(user) || IsAdmin(user);
-        }
+        protected bool IsTeacherOrAdmin(ApplicationUser user) => IsTeacher(user) || IsAdmin(user);
     }
 }

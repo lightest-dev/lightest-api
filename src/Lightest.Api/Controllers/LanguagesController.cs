@@ -19,18 +19,12 @@ namespace Lightest.Api.Controllers
         public LanguagesController(
             RelationalDbContext context,
             IAccessService<Language> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager)
-        {
-            _accessService = accessService;
-        }
+            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
 
         // GET: api/Languages
         [HttpGet]
         [ProducesResponseType(200)]
-        public IEnumerable<Language> GetLanguages()
-        {
-            return _context.Languages;
-        }
+        public IEnumerable<Language> GetLanguages() => _context.Languages;
 
         // POST: api/Languages
         [HttpPost]
