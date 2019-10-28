@@ -21,6 +21,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
         [Fact]
         public async Task Forbidden()
         {
+            throw new NotImplementedException();
             _context.Checkers.Add(_checker);
             _context.CachedCheckers.Add(_cachedChecker);
             await _context.SaveChangesAsync();
