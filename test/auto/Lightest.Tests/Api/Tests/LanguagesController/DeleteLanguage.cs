@@ -14,6 +14,7 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
         [Fact]
         public async Task NotFound()
         {
+            throw new NotImplementedException();
             _context.Languages.Add(_language);
             await _context.SaveChangesAsync();
 
