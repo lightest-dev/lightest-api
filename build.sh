@@ -8,8 +8,6 @@ dotnet build
 dotnet test @coverage.rsp
 
 # Upload coverage data
-curl -s https://codecov.io/bash > codecov
-chmod +x codecov
-./codecov -f "cover.xml" -t $CODECOV_TOKEN
+codecov -f cover.xml
 
 set +v
