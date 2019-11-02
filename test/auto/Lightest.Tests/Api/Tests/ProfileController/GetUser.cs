@@ -76,13 +76,6 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             Assert.Equal(_user.Email, user.Email);
             Assert.Equal(_user.UserName, user.Login);
 
-            Assert.Single(user.Tasks);
-            var resultTask = user.Tasks.First();
-            Assert.Equal(task.Id, resultTask.Id);
-            Assert.Equal(task.Name, resultTask.Name);
-            Assert.Equal(userTask.Completed, resultTask.Completed);
-            Assert.Equal(userTask.HighScore, resultTask.HighScore);
-
             Assert.Single(user.Groups);
             var resultGroup = user.Groups.First();
             Assert.Equal(group.Id, resultGroup.Id);

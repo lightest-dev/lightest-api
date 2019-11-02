@@ -12,8 +12,6 @@ namespace Lightest.Api.ResponseModels
 
         public string Email { get; set; }
 
-        public IEnumerable<UserTaskViewModel> Tasks { get; set; }
-
         public IEnumerable<BasicNameViewModel> Groups { get; set; }
     }
 }

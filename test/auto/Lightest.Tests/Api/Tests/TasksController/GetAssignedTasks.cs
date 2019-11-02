@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.Api.ResponseModels;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,11 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.TasksController
 {
-    public class GetTasks : BaseTest
+    public class GetAssignedTasks : BaseTest
     {
         private readonly TaskDefinition _secondTask;
 
-        public GetTasks() => _secondTask = new TaskDefinition
+        public GetAssignedTasks() => _secondTask = new TaskDefinition
         {
             Id = Guid.NewGuid(),
             Public = true,
@@ -36,34 +37,38 @@ namespace Lightest.Tests.Api.Tests.TasksController
         }
 
         [Fact]
-        public async Task HasAdminAccess()
+        public async Task HasAssignedTasks()
         {
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetTasks();
+            var result = _controller.GetAssignedTasks();
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var tasksResult = okResult.Value as IEnumerable<TaskDefinition>;
+            var tasksResult = okResult.Value as IEnumerable<UserTaskViewModel>;
 
             Assert.NotNull(tasksResult);
-            Assert.Equal(2, tasksResult.Count());
+            Assert.Single(tasksResult);
         }
 
         [Fact]
-        public async Task NoAdminAccess()
+        public async Task NoAssignedTasks()
         {
+            _task.Users = new List<UserTask>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<TaskDefinition>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+            var result = _controller.GetAssignedTasks();
 
-            var result = await _controller.GetTasks();
-            Assert.IsAssignableFrom<ForbidResult>(result);
+            var okResult = result as OkObjectResult;
+            Assert.NotNull(okResult);
+
+            var tasksResult = okResult.Value as IEnumerable<UserTaskViewModel>;
+
+            Assert.NotNull(tasksResult);
+            Assert.Empty(tasksResult);
         }
     }
 }

@@ -36,11 +36,32 @@ namespace Lightest.Api.Controllers
 
             if (!_accessService.CheckAdminAccess(null, user))
             {
-                tasks = tasks.Where(t => t.Users
-                    .Select(u => u.UserId).Contains(user.Id));
+                return Forbid();
             }
 
             return Ok(tasks);
+        }
+
+        [HttpGet("tasks")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserTaskViewModel>))]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public IActionResult GetAssignedTasks()
+        {
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub").Value;
+            var assignedTasks = _context.UserTasks.AsNoTracking()
+                .Include(ut => ut.Task)
+                .Where(ut => ut.UserId == id);
+
+            return Ok(assignedTasks.Select(t => new UserTaskViewModel
+            {
+                Id = t.TaskId,
+                Name = t.Task.Name,
+                Deadline = t.Deadline,
+                Completed = t.Completed,
+                HighScore = t.HighScore
+            }));
         }
 
         // GET: api/Tasks/5
