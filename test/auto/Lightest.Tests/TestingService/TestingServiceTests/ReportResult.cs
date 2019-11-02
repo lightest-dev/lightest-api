@@ -73,7 +73,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _result.Type = "qwe";
             await _context.SaveChangesAsync();
 
-            await Assert.ThrowsAsync<NotImplementedException>(() => _testingService.ReportResult(_result));
+            await Assert.ThrowsAsync<NotSupportedException>(() => _testingService.ReportResult(_result));
             _serverRepoMock.Verify(s => s.AddFreeServer(It.Is<TestingServer>(ts => ts.Ip == _result.Ip)), Times.Once);
             _serverRepoMock.VerifyNoOtherCalls();
             _factoryMock.VerifyNoOtherCalls();

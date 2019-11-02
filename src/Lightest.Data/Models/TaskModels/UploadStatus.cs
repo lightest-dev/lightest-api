@@ -2,10 +2,10 @@
 {
     public static class UploadStatus
     {
-        public const string New = "NEW";
+        public static readonly string New = "NEW";
 
-        public const string Queue = "QUEUE";
+        public static readonly string Queue = "QUEUE";
 
-        public const string Testing = "TESTING";
+        public static readonly string Testing = "TESTING";
     }
 }

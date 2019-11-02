@@ -5,16 +5,13 @@ using Microsoft.Extensions.Hosting;
 
 namespace Lightest.Api
 {
-    public class Program
+    public static class Program
     {
         public static IHostBuilder CreateWebHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
                 {
                     builder.UseStartup<Startup>()
-                    .ConfigureAppConfiguration((context, config) =>
-                    {
-                        config.AddJsonFile("settings.private.json");
-                    })
+                    .ConfigureAppConfiguration((context, config) => config.AddJsonFile("settings.private.json"))
                     .ConfigureKestrel((options) =>
                     {
                         //listen to localhost only, reverse proxy is used for outside comunication

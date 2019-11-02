@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
-    public abstract class RoleChecker
+    public class RoleChecker
     {
         protected readonly UserManager<ApplicationUser> _userManager;
 

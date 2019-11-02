@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Lightest.IdentityServer
 {
-    public class Program
+    public static class Program
     {
         public static IHostBuilder CreateWebHostBuilder(string[] args) => Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(builder =>
@@ -23,10 +23,7 @@ namespace Lightest.IdentityServer
                     });
                 })
             .UseSystemd()
-            .ConfigureAppConfiguration((context, config) =>
-            {
-                config.AddJsonFile("settings.private.json");
-            });
+            .ConfigureAppConfiguration((context, config) => config.AddJsonFile("settings.private.json"));
 
         public static void Main(string[] args)
         {

@@ -9,7 +9,7 @@ namespace Lightest.TestingService.DefaultServices
         {
             services.AddScoped<IServerRepository, ServerRepository>();
             services.AddScoped<ITransferServiceFactory, TransferServiceFactory>();
-            services.AddScoped<ITestingService, TestingService>();
+            services.AddScoped<ITestingService, DefaultTestingService>();
             return services;
         }
     }

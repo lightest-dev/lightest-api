@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Security.Claims;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -13,7 +14,7 @@ namespace Lightest.IdentityServer.Services
 
         public ProfileService(UserManager<ApplicationUser> userManager) => _userManager = userManager;
 
-        public async System.Threading.Tasks.Task GetProfileDataAsync(ProfileDataRequestContext context)
+        public async System.Threading.Tasks.Task GetProfileDataAsync([NotNull] ProfileDataRequestContext context)
         {
             var sub = context.Subject.GetSubjectId();
             var user = await _userManager.FindByIdAsync(sub);
@@ -21,9 +22,6 @@ namespace Lightest.IdentityServer.Services
             context.IssuedClaims.Add(new Claim("Teacher", (await _userManager.IsInRoleAsync(user, "Teacher")).ToString()));
         }
 
-        public System.Threading.Tasks.Task IsActiveAsync(IsActiveContext context) => System.Threading.Tasks.Task.Run(() =>
-                                                                                               {
-                                                                                                   context.IsActive = true;
-                                                                                               });
+        public System.Threading.Tasks.Task IsActiveAsync(IsActiveContext context) => System.Threading.Tasks.Task.Run(() => context.IsActive = true);
     }
 }

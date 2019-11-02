@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
             var privateTask = new TaskDefinition
             {
                 Id = Guid.NewGuid(),
-                Description = @"You are given 2 numbers separated by new line. Print the sum and the difference of numbers.",
+                Description = "You are given 2 numbers separated by new line. Print the sum and the difference of numbers.",
                 Name = "Sum and difference",
                 Points = 100,
                 Category = privateCategory,

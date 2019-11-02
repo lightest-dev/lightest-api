@@ -12,13 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.TestingService.DefaultServices
 {
-    public class TestingService : ITestingService
+    public class DefaultTestingService : ITestingService
     {
         private readonly RelationalDbContext _context;
         private readonly IServerRepository _repository;
         private readonly ITransferServiceFactory _transferServiceFactory;
 
-        public TestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
+        public DefaultTestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
         {
             _context = context;
             _repository = repository;
@@ -76,7 +76,7 @@ namespace Lightest.TestingService.DefaultServices
                 return ReportCodeResult(result);
             }
 
-            throw new NotImplementedException($"Uploads with type {result.Type} are currently not supported");
+            throw new NotSupportedException($"Uploads with type {result.Type} are currently not supported");
         }
 
         public Task StartNextTesting()
@@ -124,15 +124,7 @@ namespace Lightest.TestingService.DefaultServices
         private async Task AddToList(Upload upload)
         {
             upload.Status = UploadStatus.Queue;
-            switch (upload)
-            {
-                case Upload code:
-                    await StartTrackingCodeUpload(code);
-                    break;
-
-                default:
-                    throw new NotImplementedException();
-            }
+            await StartTrackingCodeUpload(upload);
         }
 
         private async Task<bool> SendData(Upload upload, ITransferService transferService)
@@ -158,13 +150,13 @@ namespace Lightest.TestingService.DefaultServices
             FileRequest fileRequest;
             foreach (var test in upload.Task.Tests)
             {
-                fileRequest = new TestRequest($"{i}.in");
+                fileRequest = new TestRequest($"{i.ToString()}.in");
                 result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(test.Input));
                 if (!result)
                 {
                     return false;
                 }
-                fileRequest = new TestRequest($"{i}.out");
+                fileRequest = new TestRequest($"{i.ToString()}.out");
                 result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(test.Output));
                 if (!result)
                 {
@@ -173,12 +165,12 @@ namespace Lightest.TestingService.DefaultServices
                 i++;
             }
             await save;
-            fileRequest = new SingleFileCodeRequest($"{upload.Id}.{upload.Language.Extension}");
+            fileRequest = new SingleFileCodeRequest($"{upload.Id.ToString()}.{upload.Language.Extension}");
             result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(upload.Code));
             return result;
         }
 
-        private async Task<bool> SendChecker(Checker checker, ITransferService transferService)
+        private static async Task<bool> SendChecker(Checker checker, ITransferService transferService)
         {
             var checkerRequest = new CheckerRequest
             {

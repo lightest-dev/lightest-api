@@ -72,8 +72,8 @@ namespace Lightest.Api.Controllers
 
             var tasks = _context.Tasks
                 .Include(t => t.Users)
-                .Where(t => t.CategoryId == id &&
-                    (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
+                .Where(t => t.CategoryId == id
+                    && (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
 
             var result = new CategoryChildrenViewModel
             {

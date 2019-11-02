@@ -38,16 +38,13 @@ namespace Lightest.Api
             }
 
             app.UseAuthorization();
-            app.UseEndpoints(e =>
-            {
-                e.MapControllers().RequireAuthorization();
-            });
+            app.UseEndpoints(e => e.MapControllers().RequireAuthorization());
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lightest API V1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = "";
             });
         }
 
@@ -62,9 +59,7 @@ namespace Lightest.Api
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddDbContext<RelationalDbContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
-            });
+                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api")));
 
             var auth = Configuration.GetSection("Authority").Value;
 
@@ -84,9 +79,7 @@ namespace Lightest.Api
                     options.RequireHttpsMetadata = false;
                 });
             services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Lightest API", Version = "1" });
-            });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Lightest API", Version = "1" }));
             services.AddHttpContextAccessor();
 
             services.AddCors(options =>

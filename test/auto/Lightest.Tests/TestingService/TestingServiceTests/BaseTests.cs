@@ -7,7 +7,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
     public abstract class BaseTests : BaseTest
     {
         protected ITestingService _testingService =>
-            new Lightest.TestingService.DefaultServices.TestingService(_serverRepoMock.Object, _context, _factoryMock.Object);
+            new Lightest.TestingService.DefaultServices.DefaultTestingService(_serverRepoMock.Object, _context, _factoryMock.Object);
 
         protected readonly Mock<IServerRepository> _serverRepoMock;
         protected readonly Mock<ITransferServiceFactory> _factoryMock;
