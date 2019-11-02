@@ -41,7 +41,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetTasks();
+            var result = await _controller.GetTasks(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -62,7 +62,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetTasks();
+            var result = await _controller.GetTasks(new Sieve.Models.SieveModel());
             Assert.IsAssignableFrom<ForbidResult>(result);
         }
     }

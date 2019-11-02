@@ -10,6 +10,8 @@ using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -18,26 +20,33 @@ namespace Lightest.Api.Controllers
     public class TasksController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public TasksController(
             RelationalDbContext context,
             IAccessService<TaskDefinition> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
         // GET: api/Tasks
         [HttpGet]
         [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetTasks()
+        public async Task<IActionResult> GetTasks([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
-
-            var tasks = _context.Tasks.AsNoTracking();
 
             if (!_accessService.CheckAdminAccess(null, user))
             {
                 return Forbid();
             }
+
+            var tasks = _context.Tasks.AsNoTracking();
+            tasks = _sieveProcessor.Apply(sieveModel, tasks);
 
             return Ok(tasks);
         }

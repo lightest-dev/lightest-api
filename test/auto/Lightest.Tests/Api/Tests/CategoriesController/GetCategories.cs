@@ -16,7 +16,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetCategories();
+            var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -37,7 +37,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetCategories();
+            var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -59,7 +59,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetCategories();
+            var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);

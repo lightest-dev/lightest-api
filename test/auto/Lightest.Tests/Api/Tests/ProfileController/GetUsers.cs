@@ -19,7 +19,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetUsers();
+            var result = await _controller.GetUsers(new Sieve.Models.SieveModel());
 
             Assert.IsAssignableFrom<ForbidResult>(result);
         }
@@ -35,7 +35,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetUsers();
+            var result = await _controller.GetUsers(new Sieve.Models.SieveModel());
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 

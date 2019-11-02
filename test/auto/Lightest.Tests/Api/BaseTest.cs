@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data;
@@ -7,6 +8,7 @@ using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Sieve.Services;
 
 namespace Lightest.Tests.Api
 {
@@ -77,6 +79,17 @@ namespace Lightest.Tests.Api
                 .Returns(true);
 
             return mock;
+        }
+
+        protected virtual Mock<ISieveProcessor> GenerateSieveProcessor<T>()
+        {
+            var sieveProcessorMock = new Mock<ISieveProcessor>();
+            sieveProcessorMock.Setup(p => p.Apply(It.IsAny<Sieve.Models.SieveModel>(),
+                It.IsAny<IQueryable<T>>(), It.IsAny<object[]>(), It.IsAny<bool>(),
+                It.IsAny<bool>(), It.IsAny<bool>()))
+                .Returns((Sieve.Models.SieveModel i1, IQueryable<T> input, 
+                object[] i2, bool i3, bool i4, bool i5) => input);
+            return sieveProcessorMock;
         }
 
         public void Dispose() => _context.Dispose();

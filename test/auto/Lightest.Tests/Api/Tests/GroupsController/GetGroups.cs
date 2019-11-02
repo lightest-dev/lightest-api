@@ -15,7 +15,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetGroups();
+            var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
             var categoriesResult = result as IEnumerable<Group>;
 
@@ -33,7 +33,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetGroups();
+            var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
             var categoriesResult = result as IEnumerable<Group>;
 

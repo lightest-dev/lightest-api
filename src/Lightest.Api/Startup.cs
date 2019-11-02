@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.AccessTokenValidation;
 using Lightest.AccessService;
 using Lightest.Api.Extensions;
+using Lightest.Api.Services;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Seeding;
@@ -15,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sieve.Models;
+using Sieve.Services;
 
 [assembly: ApiController]
 
@@ -92,9 +95,18 @@ namespace Lightest.Api
                 });
             });
 
+            services.Configure<SieveOptions>(c =>
+            {
+                c.CaseSensitive = false;
+                c.DefaultPageSize = 25;
+                c.MaxPageSize = 100;
+                c.ThrowExceptions = true;
+            });
+
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
             services.AddTransient<ISeeder, DefaultSeeder>();
+            services.AddScoped<ISieveProcessor, ApiSieveProcessor>();
         }
     }
 }

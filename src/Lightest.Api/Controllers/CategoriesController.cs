@@ -11,6 +11,8 @@ using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -19,16 +21,22 @@ namespace Lightest.Api.Controllers
     public class CategoriesController : BaseUserController
     {
         private readonly IAccessService<Category> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public CategoriesController(
             RelationalDbContext context,
             IAccessService<Category> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
         // GET: api/Categories
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetCategories([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
@@ -40,6 +48,8 @@ namespace Lightest.Api.Controllers
                     .Where(c => (c.Public || c.Users.Select(u => u.UserId)
                     .Contains(user.Id)) && c.ParentId == null);
             }
+
+            categories = _sieveProcessor.Apply(sieveModel, categories);
 
             return Ok(categories);
         }

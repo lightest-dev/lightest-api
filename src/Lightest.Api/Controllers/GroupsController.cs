@@ -11,6 +11,8 @@ using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -19,15 +21,21 @@ namespace Lightest.Api.Controllers
     public class GroupsController : BaseUserController
     {
         private readonly IAccessService<Group> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public GroupsController(
             RelationalDbContext context,
             IAccessService<Group> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
         // GET: api/Groups
         [HttpGet]
-        public async Task<IEnumerable<Group>> GetGroups()
+        public async Task<IEnumerable<Group>> GetGroups([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
@@ -38,6 +46,7 @@ namespace Lightest.Api.Controllers
                 groups = groups.Include(g => g.Users)
                 .Where(g => g.Users.Select(u => u.UserId).Contains(user.Id));
             }
+            groups = _sieveProcessor.Apply(sieveModel, groups);
 
             return groups;
         }

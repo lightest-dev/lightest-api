@@ -9,6 +9,8 @@ using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -17,27 +19,38 @@ namespace Lightest.Api.Controllers
     public class ProfileController : BaseUserController
     {
         private readonly IAccessService<ApplicationUser> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public ProfileController(RelationalDbContext context,
             IAccessService<ApplicationUser> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileViewModel>))]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
+
             if (!_accessService.CheckWriteAccess(null, user))
             {
                 return Forbid();
             }
-            return Ok(_context.Users.Select(u => new ProfileViewModel
+
+            var users = _sieveProcessor.Apply(sieveModel, _context.Users);
+
+            return Ok(users.Select(u => new ProfileViewModel
             {
                 Id = u.Id,
                 Email = u.Email,
                 Name = u.Name,
-                Surname = u.Surname
+                Surname = u.Surname,
+                UserName = u.UserName
             }));
         }
 
