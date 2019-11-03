@@ -8,6 +8,11 @@ Supported fields:
 * Name
 * Public
 
+Future supported fields:
+
+* CanRead
+* CanWrite
+
 ## Get All Categories (admin only)
 
 URL: /categories/all  
@@ -23,6 +28,11 @@ Supported fields:
 
 * Name
 * Public
+
+Future supported fields:
+
+* CanRead
+* CanWrite
 
 ## Get All Groups (admin only)
 
@@ -50,7 +60,18 @@ Supported fields:
 * Email
 * UserName
 
+## Task uploads (teacher/admin only)
+
+URL: /uploads/{taskId}/all  
+Supported fields:
+
+* UserId
+* Status
+* Points
+
 ## Usage
+
+Full docs available here: <https://github.com/Biarity/Sieve/blob/master/README.md>
 
 ### Send a request
 
