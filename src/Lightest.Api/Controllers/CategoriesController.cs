@@ -65,7 +65,22 @@ namespace Lightest.Api.Controllers
 
             categories = _sieveProcessor.Apply(sieveModel, categories);
 
-            return Ok(categories);
+            var result = categories.Select(c => new ListCategoryView
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Public = c.Public,
+                User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
+            });
+
+            await result.Where(c => c.User != null).ForEachAsync(c =>
+            {
+                c.CanWrite = c.User.CanWrite;
+                c.CanRead = c.User.CanRead;
+                c.CanChangeAccess = c.User.CanChangeAccess;
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("{id}/children")]

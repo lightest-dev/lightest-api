@@ -62,6 +62,22 @@ namespace Lightest.Api.Controllers
                 .Where(g => g.ParentId == null && g.Users.Select(u => u.UserId).Contains(user.Id));
 
             groups = _sieveProcessor.Apply(sieveModel, groups);
+
+            var result = groups.Select(c => new ListGroupView
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Public = c.Public,
+                User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
+            });
+
+            await result.Where(c => c.User != null).ForEachAsync(c =>
+            {
+                c.CanWrite = c.User.CanWrite;
+                c.CanRead = c.User.CanRead;
+                c.CanChangeAccess = c.User.CanChangeAccess;
+            });
+
             return groups;
         }
 

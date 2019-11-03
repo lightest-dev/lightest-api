@@ -8,9 +8,25 @@ Supported fields:
 * Name
 * Public
 
-## Get Groups
+## Get All Categories (admin only)
+
+URL: /categories/all  
+Supported fields:
+
+* Name
+* Public
+
+## Get Available Groups
 
 URL: /groups  
+Supported fields:
+
+* Name
+* Public
+
+## Get All Groups (admin only)
+
+URL: /groups/all  
 Supported fields:
 
 * Name

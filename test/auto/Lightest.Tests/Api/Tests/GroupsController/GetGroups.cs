@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -17,10 +18,13 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 
             var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
-            var categoriesResult = result as IEnumerable<Group>;
+            var okResult = result as OkObjectResult;
+            Assert.NotNull(okResult);
 
-            Assert.NotNull(categoriesResult);
-            Assert.Equal(3, categoriesResult.Count());
+            var groupsResult = okResult.Value as IEnumerable<Group>;
+
+            Assert.NotNull(groupsResult);
+            Assert.Equal(3, groupsResult.Count());
         }
 
         [Fact]
@@ -34,10 +38,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 
             var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
-            var categoriesResult = result as IEnumerable<Group>;
-
-            Assert.NotNull(categoriesResult);
-            Assert.Single(categoriesResult);
+            Assert.IsAssignableFrom<ForbidResult>(result);
         }
     }
 }
