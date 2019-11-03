@@ -5,10 +5,10 @@ namespace Lightest.AccessService.MockAccessServices
 {
     public class ProfileAccessService : IAccessService<ApplicationUser>
     {
-        public bool CheckAdminAccess(ApplicationUser requested, ApplicationUser requester) => true;
+        public bool HasAdminAccess(ApplicationUser requester) => true;
 
-        public bool CheckReadAccess(ApplicationUser requested, ApplicationUser requester) => true;
+        public bool HasReadAccess(ApplicationUser requested, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(ApplicationUser requested, ApplicationUser requester) => true;
+        public bool HasWriteAccess(ApplicationUser requested, ApplicationUser requester) => true;
     }
 }

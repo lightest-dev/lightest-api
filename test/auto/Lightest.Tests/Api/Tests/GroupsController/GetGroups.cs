@@ -29,8 +29,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Group>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
             var result = await _controller.GetGroups(new Sieve.Models.SieveModel());

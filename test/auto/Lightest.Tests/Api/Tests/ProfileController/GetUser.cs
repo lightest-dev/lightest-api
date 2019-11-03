@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UserViews;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             _context.Users.Add(_user);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<ApplicationUser>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<ApplicationUser>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -69,7 +69,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var user = okResult.Value as CompleteUser;
+            var user = okResult.Value as CompleteUserView;
             Assert.NotNull(user);
             Assert.Equal(_user.Name, user.Name);
             Assert.Equal(_user.Surname, user.Surname);

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lightest.Api.ResponseModels
+namespace Lightest.Api.ResponseModels.TaskViews
 {
-    public class UserTaskViewModel : BasicNameViewModel
+    public class UserTaskView : BasicNameView
     {
         public bool Completed { get; set; }
 

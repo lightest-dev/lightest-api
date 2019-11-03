@@ -6,6 +6,7 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Api.Extensions;
 using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.CategoryViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -33,20 +34,18 @@ namespace Lightest.Api.Controllers
             _sieveProcessor = sieveProcessor;
         }
 
-        // GET: api/Categories
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> GetCategories([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
                 .AsNoTracking();
 
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.HasAdminAccess(user))
             {
-                categories = categories.Include(c => c.Users)
-                    .Where(c => (c.Public || c.Users.Select(u => u.UserId)
-                    .Contains(user.Id)) && c.ParentId == null);
+                return Forbid();
             }
 
             categories = _sieveProcessor.Apply(sieveModel, categories);
@@ -54,8 +53,23 @@ namespace Lightest.Api.Controllers
             return Ok(categories);
         }
 
+        [HttpGet]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        public async Task<IActionResult> GetAvailableCategories([FromQuery]SieveModel sieveModel)
+        {
+            var user = await GetCurrentUser();
+            var categories = _context.Categories
+                .AsNoTracking().Include(c => c.Users)
+                .Where(c => (c.Public || c.Users.Select(u => u.UserId)
+                .Contains(user.Id)) && c.ParentId == null);
+
+            categories = _sieveProcessor.Apply(sieveModel, categories);
+
+            return Ok(categories);
+        }
+
         [HttpGet("{id}/children")]
-        [ProducesResponseType(200, Type = typeof(CategoryChildrenViewModel))]
+        [ProducesResponseType(200, Type = typeof(CategoryChildrenView))]
         public async Task<IActionResult> GetChildren(Guid id)
         {
             var user = await GetCurrentUser();
@@ -69,7 +83,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(parent, user))
+            if (!_accessService.HasReadAccess(parent, user))
             {
                 return Forbid();
             }
@@ -85,10 +99,10 @@ namespace Lightest.Api.Controllers
                 .Where(t => t.CategoryId == id
                     && (t.Public || t.Users.Select(u => u.UserId).Contains(user.Id)));
 
-            var result = new CategoryChildrenViewModel
+            var result = new CategoryChildrenView
             {
                 SubCategories = categories,
-                Tasks = tasks.Select(t => new BasicNameViewModel
+                Tasks = tasks.Select(t => new BasicNameView
                 {
                     Name = t.Name,
                     Id = t.Id
@@ -99,7 +113,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Categories/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteCategory))]
+        [ProducesResponseType(200, Type = typeof(CompleteCategoryView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -121,12 +135,12 @@ namespace Lightest.Api.Controllers
             }
 
             // full info is disclosed here, so write access is required
-            if (!_accessService.CheckWriteAccess(category, currentUser))
+            if (!_accessService.HasWriteAccess(category, currentUser))
             {
                 return Forbid();
             }
 
-            var result = new CompleteCategory
+            var result = new CompleteCategoryView
             {
                 Id = category.Id,
                 Name = category.Name,
@@ -141,7 +155,7 @@ namespace Lightest.Api.Controllers
                     CanChangeAccess = user.CanChangeAccess,
                     IsOwner = user.IsOwner
                 }),
-                Tasks = category.Tasks.Select(t => new BasicNameViewModel
+                Tasks = category.Tasks.Select(t => new BasicNameView
                 {
                     Id = t.Id,
                     Name = t.Name
@@ -153,14 +167,14 @@ namespace Lightest.Api.Controllers
 
         // POST: api/Categories
         [HttpPost]
-        [ProducesResponseType(201, Type = typeof(CompleteCategory))]
+        [ProducesResponseType(201, Type = typeof(CompleteCategoryView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> PostCategory([FromBody] Category category)
         {
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(category, currentUser))
+            if (!_accessService.HasWriteAccess(category, currentUser))
             {
                 return Forbid();
             }
@@ -202,7 +216,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(category, currentUser))
+            if (!_accessService.HasWriteAccess(category, currentUser))
             {
                 return Forbid();
             }
@@ -255,7 +269,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(dbEntry, currentUser))
+            if (!_accessService.HasWriteAccess(dbEntry, currentUser))
             {
                 return Forbid();
             }
@@ -282,7 +296,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(category, currentUser))
+            if (!_accessService.HasWriteAccess(category, currentUser))
             {
                 return Forbid();
             }

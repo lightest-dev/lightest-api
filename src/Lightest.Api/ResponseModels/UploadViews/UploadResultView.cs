@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lightest.Api.ResponseModels
+namespace Lightest.Api.ResponseModels.UploadViews
 {
-    public class UserUploadResult
+    public class UploadResultView
     {
         public Guid Id { get; set; }
 

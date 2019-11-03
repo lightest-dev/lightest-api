@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.Checker;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -20,7 +20,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var checkersResult = okResult.Value as IEnumerable<BaseChecker>;
+            var checkersResult = okResult.Value as IEnumerable<BasicCheckerView>;
 
             Assert.NotNull(checkersResult);
             Assert.Empty(checkersResult);
@@ -32,7 +32,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
             _context.Checkers.Add(_checker);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<Checker>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Checker>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -59,7 +59,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var checkersResult = okResult.Value as IEnumerable<BaseChecker>;
+            var checkersResult = okResult.Value as IEnumerable<BasicCheckerView>;
 
             Assert.NotNull(checkersResult);
             Assert.Equal(2, checkersResult.Count());

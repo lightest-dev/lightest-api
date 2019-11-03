@@ -26,7 +26,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

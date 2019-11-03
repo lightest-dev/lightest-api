@@ -33,7 +33,7 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
             _context.Languages.Add(_language);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Language>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Language>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

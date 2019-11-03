@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Api.RequestModels;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UserViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -31,20 +32,20 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("all")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileViewModel>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileView>))]
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetUsers([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(null, user))
+            if (!_accessService.HasWriteAccess(null, user))
             {
                 return Forbid();
             }
 
             var users = _sieveProcessor.Apply(sieveModel, _context.Users);
 
-            return Ok(users.Select(u => new ProfileViewModel
+            return Ok(users.Select(u => new ProfileView
             {
                 Id = u.Id,
                 Email = u.Email,
@@ -61,7 +62,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsersInRole(string roleName)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckWriteAccess(null, user))
+            if (!_accessService.HasWriteAccess(null, user))
             {
                 return Forbid();
             }
@@ -80,7 +81,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteUser))]
+        [ProducesResponseType(200, Type = typeof(CompleteUserView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -100,18 +101,18 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(requestedUser, currentUser))
+            if (!_accessService.HasReadAccess(requestedUser, currentUser))
             {
                 return Forbid();
             }
 
-            return Ok(new CompleteUser
+            return Ok(new CompleteUserView
             {
                 Name = requestedUser.Name,
                 Surname = requestedUser.Surname,
                 Email = requestedUser.Email,
                 Login = requestedUser.UserName,
-                Groups = requestedUser.Groups.Select(g => new BasicNameViewModel
+                Groups = requestedUser.Groups.Select(g => new BasicNameView
                 {
                     Id = g.GroupId,
                     Name = g.Group.Name
@@ -140,7 +141,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(requestedUser, currentUser))
+            if (!_accessService.HasWriteAccess(requestedUser, currentUser))
             {
                 return Forbid();
             }

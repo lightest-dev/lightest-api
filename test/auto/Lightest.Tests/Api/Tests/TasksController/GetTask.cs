@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.TaskViews;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var task = okResult.Value as CompleteTask;
+            var task = okResult.Value as CompleteTaskView;
             Assert.NotNull(task);
 
             Assert.Single(task.Tests);
@@ -43,7 +43,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -52,7 +52,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var task = okResult.Value as CompleteTask;
+            var task = okResult.Value as CompleteTaskView;
             Assert.NotNull(task);
 
             Assert.Null(task.Tests);
@@ -74,7 +74,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

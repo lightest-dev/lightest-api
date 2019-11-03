@@ -2,7 +2,7 @@
 
 namespace Lightest.Api.ResponseModels
 {
-    public class BasicNameViewModel
+    public class BasicNameView
     {
         public Guid Id { get; set; }
 

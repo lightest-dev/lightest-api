@@ -1,6 +1,6 @@
-﻿namespace Lightest.Api.ResponseModels
+﻿namespace Lightest.Api.ResponseModels.Language
 {
-    public class BasicLanguage : BasicNameViewModel
+    public class BasicLanguageView : BasicNameView
     {
         public int MemoryLimit { get; set; }
 

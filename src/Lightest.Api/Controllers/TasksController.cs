@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.Checker;
+using Lightest.Api.ResponseModels.Language;
+using Lightest.Api.ResponseModels.TaskViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -40,7 +43,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.HasAdminAccess(user))
             {
                 return Forbid();
             }
@@ -52,10 +55,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("tasks")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<UserTaskViewModel>))]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserTaskView>))]
         public IActionResult GetAssignedTasks()
         {
             var id = User.Claims.SingleOrDefault(c => c.Type == "sub").Value;
@@ -63,7 +63,7 @@ namespace Lightest.Api.Controllers
                 .Include(ut => ut.Task)
                 .Where(ut => ut.UserId == id);
 
-            return Ok(assignedTasks.Select(t => new UserTaskViewModel
+            return Ok(assignedTasks.Select(t => new UserTaskView
             {
                 Id = t.TaskId,
                 Name = t.Task.Name,
@@ -75,7 +75,7 @@ namespace Lightest.Api.Controllers
 
         // GET: api/Tasks/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteTask))]
+        [ProducesResponseType(200, Type = typeof(CompleteTaskView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -97,12 +97,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, user))
+            if (!_accessService.HasReadAccess(task, user))
             {
                 return Forbid();
             }
 
-            var result = new CompleteTask
+            var result = new CompleteTaskView
             {
                 Id = task.Id,
                 Name = task.Name,
@@ -111,14 +111,14 @@ namespace Lightest.Api.Controllers
                 Examples = task.Examples,
                 Description = task.Description,
                 Category = task.Category,
-                Checker = new BaseChecker
+                Checker = new BasicCheckerView
                 {
                     Id = task.Checker.Id,
                     Name = task.Checker.Name,
                     Compiled = task.Checker.Compiled
                 },
                 Tests = task.Tests,
-                Languages = task.Languages.Select(t => new BasicLanguage
+                Languages = task.Languages.Select(t => new BasicLanguageView
                 {
                     Id = t.LanguageId,
                     Name = t.Language.Name,
@@ -127,7 +127,7 @@ namespace Lightest.Api.Controllers
                 })
             };
 
-            if (!_accessService.CheckWriteAccess(task, user))
+            if (!_accessService.HasWriteAccess(task, user))
             {
                 result.Tests = null;
                 result.Checker = null;
@@ -154,7 +154,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -179,7 +179,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(task, user))
+            if (!_accessService.HasWriteAccess(task, user))
             {
                 return Forbid();
             }
@@ -194,9 +194,9 @@ namespace Lightest.Api.Controllers
                 }
             }
 
-            task.Users = new List<UserTask>
+            task.Users = new List<Data.Models.UserTask>
             {
-                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
+                new Data.Models.UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
             };
 
             _context.Tasks.Add(task);
@@ -210,7 +210,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] UserTask[] users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] Data.Models.UserTask[] users)
         {
             var task = await _context.Tasks
                .Include(t => t.Users)
@@ -221,7 +221,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -267,7 +267,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -299,7 +299,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -338,7 +338,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -368,7 +368,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }

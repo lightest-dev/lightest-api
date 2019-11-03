@@ -10,10 +10,10 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
-        public bool CheckAdminAccess(Category category, ApplicationUser requester) => IsAdmin(requester);
+        public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester);
 
-        public bool CheckReadAccess(Category category, ApplicationUser requester) => true;
+        public bool HasReadAccess(Category category, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(Category category, ApplicationUser requester) => IsTeacherOrAdmin(requester);
+        public bool HasWriteAccess(Category category, ApplicationUser requester) => IsTeacherOrAdmin(requester);
     }
 }

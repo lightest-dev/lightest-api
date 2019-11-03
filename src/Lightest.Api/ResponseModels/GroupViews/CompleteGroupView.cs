@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Lightest.Data.Models;
 
-namespace Lightest.Api.ResponseModels
+namespace Lightest.Api.ResponseModels.GroupViews
 {
-    public class CompleteGroup : BasicNameViewModel
+    public class CompleteGroupView : BasicNameView
     {
         public Group Parent { get; set; }
 

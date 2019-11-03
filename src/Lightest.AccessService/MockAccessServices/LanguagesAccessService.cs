@@ -6,10 +6,10 @@ namespace Lightest.AccessService.MockAccessServices
 {
     public class LanguagesAccessService : IAccessService<Language>
     {
-        public bool CheckAdminAccess(Language language, ApplicationUser requester) => true;
+        public bool HasAdminAccess(ApplicationUser requester) => true;
 
-        public bool CheckReadAccess(Language language, ApplicationUser requester) => true;
+        public bool HasReadAccess(Language language, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(Language language, ApplicationUser requester) => true;
+        public bool HasWriteAccess(Language language, ApplicationUser requester) => true;
     }
 }

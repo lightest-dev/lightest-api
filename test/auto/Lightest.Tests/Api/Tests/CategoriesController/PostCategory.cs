@@ -29,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Category>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Category>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

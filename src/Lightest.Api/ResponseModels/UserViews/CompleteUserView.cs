@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace Lightest.Api.ResponseModels
+namespace Lightest.Api.ResponseModels.UserViews
 {
-    public class CompleteUser
+    public class CompleteUserView
     {
         public string Name { get; set; }
 
@@ -12,6 +12,6 @@ namespace Lightest.Api.ResponseModels
 
         public string Email { get; set; }
 
-        public IEnumerable<BasicNameViewModel> Groups { get; set; }
+        public IEnumerable<BasicNameView> Groups { get; set; }
     }
 }

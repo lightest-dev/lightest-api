@@ -58,8 +58,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<TaskDefinition>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
             var result = await _controller.GetTasks(new Sieve.Models.SieveModel());

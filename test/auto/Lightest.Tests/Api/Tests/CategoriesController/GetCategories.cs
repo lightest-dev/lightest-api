@@ -33,8 +33,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Category>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
             var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
@@ -55,8 +54,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Category>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
             var result = await _controller.GetCategories(new Sieve.Models.SieveModel());

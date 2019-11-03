@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var uploadsResult = (okResult.Value as IEnumerable<LastUploadModel>).ToList();
+            var uploadsResult = (okResult.Value as IEnumerable<LastUploadView>).ToList();
             Assert.Equal(15, uploadsResult.Count());
             for (var i = 0; i < 15; i++)
             {
@@ -50,7 +50,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var uploadsResult = okResult.Value as IEnumerable<LastUploadModel>;
+            var uploadsResult = okResult.Value as IEnumerable<LastUploadView>;
             Assert.NotNull(uploadsResult);
 
             Assert.Equal(10, uploadsResult.Count());
@@ -62,7 +62,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _context.Tasks.Add(_task);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Upload>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Upload>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

@@ -1,6 +1,6 @@
-﻿namespace Lightest.Api.ResponseModels
+﻿namespace Lightest.Api.ResponseModels.UserViews
 {
-    public class ProfileViewModel
+    public class ProfileView
     {
         public string Id { get; set; }
 

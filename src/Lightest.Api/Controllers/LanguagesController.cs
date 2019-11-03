@@ -35,7 +35,7 @@ namespace Lightest.Api.Controllers
         {
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(language, currentUser))
+            if (!_accessService.HasWriteAccess(language, currentUser))
             {
                 return Forbid();
             }
@@ -63,7 +63,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(language, currentUser))
+            if (!_accessService.HasWriteAccess(language, currentUser))
             {
                 return Forbid();
             }

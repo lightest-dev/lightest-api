@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.TaskViews;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             Name = "name",
             Tests = new List<Test>(),
             Languages = new List<TaskLanguage>(),
-            Users = new List<UserTask>()
+            Users = new List<Data.Models.UserTask>()
         };
 
         protected override void AddDataToDb()
@@ -45,7 +45,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var tasksResult = okResult.Value as IEnumerable<UserTaskViewModel>;
+            var tasksResult = okResult.Value as IEnumerable<UserTaskView>;
 
             Assert.NotNull(tasksResult);
             Assert.Single(tasksResult);
@@ -54,7 +54,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
         [Fact]
         public async Task NoAssignedTasks()
         {
-            _task.Users = new List<UserTask>();
+            _task.Users = new List<Data.Models.UserTask>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 
@@ -63,7 +63,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var tasksResult = okResult.Value as IEnumerable<UserTaskViewModel>;
+            var tasksResult = okResult.Value as IEnumerable<UserTaskView>;
 
             Assert.NotNull(tasksResult);
             Assert.Empty(tasksResult);
