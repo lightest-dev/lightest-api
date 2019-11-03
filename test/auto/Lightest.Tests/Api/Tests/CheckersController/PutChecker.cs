@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -11,9 +11,9 @@ namespace Lightest.Tests.Api.Tests.CheckersController
 {
     public class PutChecker : BaseTest
     {
-        private readonly CheckerUpdate _modifiedChecker;
+        private readonly UpdateCheckerRequest _modifiedChecker;
 
-        public PutChecker() => _modifiedChecker = new CheckerUpdate
+        public PutChecker() => _modifiedChecker = new UpdateCheckerRequest
         {
             Id = _checker.Id,
             Code = "code2",

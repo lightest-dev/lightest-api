@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Api.RequestModels
+namespace Lightest.TestingService.ResponsModels
 {
-    public class CheckerCompilationResult
+    public class CheckerCompilationResponse
     {
         [Required]
         public Guid Id { get; set; }

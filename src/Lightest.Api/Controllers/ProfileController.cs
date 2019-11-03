@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.UserRequests;
 using Lightest.Api.ResponseModels;
 using Lightest.Api.ResponseModels.UserViews;
 using Lightest.Data;

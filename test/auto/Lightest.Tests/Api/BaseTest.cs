@@ -86,7 +86,7 @@ namespace Lightest.Tests.Api
             sieveProcessorMock.Setup(p => p.Apply(It.IsAny<Sieve.Models.SieveModel>(),
                 It.IsAny<IQueryable<T>>(), It.IsAny<object[]>(), It.IsAny<bool>(),
                 It.IsAny<bool>(), It.IsAny<bool>()))
-                .Returns((Sieve.Models.SieveModel i1, IQueryable<T> input, 
+                .Returns((Sieve.Models.SieveModel i1, IQueryable<T> input,
                 object[] i2, bool i3, bool i4, bool i5) => input);
             return sieveProcessorMock;
         }

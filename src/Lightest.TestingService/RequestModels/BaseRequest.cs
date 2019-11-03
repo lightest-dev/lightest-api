@@ -1,4 +1,4 @@
-﻿namespace Lightest.TestingService.Requests
+﻿namespace Lightest.TestingService.RequestModels
 {
     public abstract class BaseRequest
     {

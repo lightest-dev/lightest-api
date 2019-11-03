@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Api.ResponseModels.Checker;
 using Lightest.Data;
 using Lightest.Data.Models;
@@ -64,7 +64,7 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         [ProducesResponseType(403)]
         [ProducesResponseType(201, Type = typeof(Checker))]
-        public async Task<IActionResult> PostChecker([FromBody] CheckerAdd checker)
+        public async Task<IActionResult> PostChecker([FromBody] AddCheckerRequest checker)
         {
             var entry = new Checker
             {
@@ -88,7 +88,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutChecker([FromRoute] Guid id, [FromBody] CheckerUpdate checker)
+        public async Task<IActionResult> PutChecker([FromRoute] Guid id, [FromBody] UpdateCheckerRequest checker)
         {
             if (id != checker.Id)
             {

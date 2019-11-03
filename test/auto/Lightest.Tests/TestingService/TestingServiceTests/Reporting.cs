@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data.Models;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Moq;
 using Xunit;
 
@@ -8,9 +8,9 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 {
     public class Reporting : BaseTests
     {
-        private readonly NewServer _testServer;
+        private readonly ServerStatusResponse _testServer;
 
-        public Reporting() => _testServer = new NewServer
+        public Reporting() => _testServer = new ServerStatusResponse
         {
             Ip = "1",
             ServerVersion = "12"

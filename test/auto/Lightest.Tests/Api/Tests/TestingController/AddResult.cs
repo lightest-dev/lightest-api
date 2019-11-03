@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -8,9 +8,9 @@ namespace Lightest.Tests.Api.Tests.TestingController
 {
     public class AddResult : BaseTest
     {
-        private readonly CheckerResult _result;
+        private readonly CheckingResponse _result;
 
-        public AddResult() => _result = new CheckerResult();
+        public AddResult() => _result = new CheckingResponse();
 
         [Fact]
         public async Task IpSet()
@@ -19,7 +19,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             var result = await _controller.AddResult(_result);
 
             Assert.IsAssignableFrom<OkResult>(result);
-            _testingServiceMock.Verify(m => m.ReportResult(It.Is<CheckerResult>(r => r.Ip == _result.Ip)), Times.Once);
+            _testingServiceMock.Verify(m => m.ReportResult(It.Is<CheckingResponse>(r => r.Ip == _result.Ip)), Times.Once);
             _testingServiceMock.Verify(m => m.StartNextTesting(), Times.Once);
         }
 
@@ -29,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             var result = await _controller.AddResult(_result);
 
             Assert.IsAssignableFrom<OkResult>(result);
-            _testingServiceMock.Verify(m => m.ReportResult(It.Is<CheckerResult>(r => r.Ip == DefaultIp)), Times.Once);
+            _testingServiceMock.Verify(m => m.ReportResult(It.Is<CheckingResponse>(r => r.Ip == DefaultIp)), Times.Once);
             _testingServiceMock.Verify(m => m.StartNextTesting(), Times.Once);
         }
     }

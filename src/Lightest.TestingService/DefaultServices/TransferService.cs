@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Requests;
+using Lightest.TestingService.RequestModels;
 using Microsoft.Extensions.Logging;
 
 namespace Lightest.TestingService.DefaultServices

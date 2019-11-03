@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lightest.Api.ResponseModels.TaskViews;
-using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;

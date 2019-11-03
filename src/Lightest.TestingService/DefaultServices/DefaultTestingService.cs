@@ -6,8 +6,8 @@ using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Models;
-using Lightest.TestingService.Requests;
+using Lightest.TestingService.RequestModels;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.TestingService.DefaultServices
@@ -63,7 +63,7 @@ namespace Lightest.TestingService.DefaultServices
             return result;
         }
 
-        public Task ReportResult(CheckerResult result)
+        public Task ReportResult(CheckingResponse result)
         {
             var server = new TestingServer
             {
@@ -92,7 +92,7 @@ namespace Lightest.TestingService.DefaultServices
             return Task.CompletedTask;
         }
 
-        private async Task ReportCodeResult(CheckerResult result)
+        private async Task ReportCodeResult(CheckingResponse result)
         {
             var upload = await _context.Uploads
                 .SingleOrDefaultAsync(u => u.Id == result.UploadId);
@@ -205,7 +205,7 @@ namespace Lightest.TestingService.DefaultServices
             }
         }
 
-        public Task ReportNewServer(NewServer serverData)
+        public Task ReportNewServer(ServerStatusResponse serverData)
         {
             var server = new TestingServer
             {
@@ -218,7 +218,7 @@ namespace Lightest.TestingService.DefaultServices
             return Task.CompletedTask;
         }
 
-        public Task ReportBrokenServer(NewServer serverData)
+        public Task ReportBrokenServer(ServerStatusResponse serverData)
         {
             var server = new TestingServer
             {

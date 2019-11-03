@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -10,9 +10,9 @@ namespace Lightest.Tests.Api.Tests.CheckersController
 {
     public class PostChecker : BaseTest
     {
-        private readonly CheckerAdd _addModel;
+        private readonly AddCheckerRequest _addModel;
 
-        public PostChecker() => _addModel = new CheckerAdd
+        public PostChecker() => _addModel = new AddCheckerRequest
         {
             Code = "code",
             Name = "name"

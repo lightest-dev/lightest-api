@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.TestingService.Models
+namespace Lightest.TestingService.ResponsModels
 {
-    public class NewServer
+    public class ServerStatusResponse
     {
         public string Ip { get; set; }
 

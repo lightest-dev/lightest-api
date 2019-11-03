@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Lightest.TestingService.Models;
 
-namespace Lightest.Api.RequestModels
+namespace Lightest.TestingService.ResponsModels
 {
-    public class TestingError : NewServer
+    public class TestingErrorResponse : ServerStatusResponse
     {
         [Required]
         public string ErrorMessage { get; set; }

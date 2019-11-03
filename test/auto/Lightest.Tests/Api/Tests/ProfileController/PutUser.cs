@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.UserRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

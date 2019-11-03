@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Lightest.TestingService.Models
+namespace Lightest.TestingService.ResponsModels
 {
-    public class CheckerResult
+    public class CheckingResponse
     {
         public Guid UploadId { get; set; }
 

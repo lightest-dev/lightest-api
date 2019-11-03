@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Lightest.TestingService.Requests
+namespace Lightest.TestingService.RequestModels
 {
     public class SingleFileCodeRequest : FileRequest
     {

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Api.RequestModels
+namespace Lightest.Api.RequestModels.CheckerRequests
 {
-    public class CheckerAdd
+    public class AddCheckerRequest
     {
         [Required]
         public string Name { get; set; }

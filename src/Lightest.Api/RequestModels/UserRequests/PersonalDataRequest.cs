@@ -1,4 +1,4 @@
-﻿namespace Lightest.Api.RequestModels
+﻿namespace Lightest.Api.RequestModels.UserRequests
 {
     public class PersonalDataRequest
     {

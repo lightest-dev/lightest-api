@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Moq;
 using Xunit;
 
@@ -10,7 +10,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 {
     public class ReportResult : BaseTests
     {
-        private readonly CheckerResult _result;
+        private readonly CheckingResponse _result;
         private readonly Upload _upload;
         private readonly TaskDefinition _task;
         private readonly UserTask _userTask;
@@ -31,7 +31,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 TaskId = _task.Id
             };
 
-            _result = new CheckerResult
+            _result = new CheckingResponse
             {
                 UploadId = _upload.Id,
                 Ip = "1",

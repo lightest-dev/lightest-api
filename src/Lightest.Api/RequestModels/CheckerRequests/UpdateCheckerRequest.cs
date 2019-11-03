@@ -1,9 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.Api.RequestModels
+namespace Lightest.Api.RequestModels.CheckerRequests
 {
-    public class CheckerUpdate : CheckerAdd
+    public class UpdateCheckerRequest : AddCheckerRequest
     {
         [Required]
         public Guid Id { get; set; }
