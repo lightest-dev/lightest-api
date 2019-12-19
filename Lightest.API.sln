@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auto", "Auto", "{34FE60CB-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests", "test\auto\Lightest.Tests\Lightest.Tests.csproj", "{BDDD8F57-8090-49D6-BB0F-55578B600016}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lightest.Data.Mongo", "src\Lightest.Data.Mongo\Lightest.Data.Mongo.csproj", "{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDDD8F57-8090-49D6-BB0F-55578B600016}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -90,6 +96,7 @@ Global
 		{C393868C-512E-464E-A202-B23B82B65EAE} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
 		{34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A} = {9654540D-389B-40CC-94F9-CE5BEB98B66B}
 		{BDDD8F57-8090-49D6-BB0F-55578B600016} = {34FE60CB-387E-49DE-9E6F-76F2EDDA9C6A}
+		{C954FC5C-919A-4EFC-BAC4-C6F5D3586421} = {5990EB9D-81FC-4D3D-BD99-DFC9E1ABF083}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8A7756E5-070E-44DC-ABA2-27F8AD7143DC}
