@@ -1,7 +1,7 @@
 set -e
 set -v
 
-dotnet build
+dotnet build -p:Version=${VERSION} -p:AssemblyVersion=${VERSION}
 
 # code coverage generation settings are very long,
 # they are moved to custrom .rsp file
