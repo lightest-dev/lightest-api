@@ -54,7 +54,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
-        public async Task<IEnumerable<Group>> GetAvailableGroups([FromQuery]SieveModel sieveModel)
+        public async Task<IEnumerable<ListGroupView>> GetAvailableGroups([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
@@ -69,16 +69,20 @@ namespace Lightest.Api.Controllers
                 Name = c.Name,
                 Public = c.Public,
                 User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
-            });
+            }).ToList();
 
-            await result.Where(c => c.User != null).ForEachAsync(c =>
+            foreach (var group in result)
             {
-                c.CanWrite = c.User.CanWrite;
-                c.CanRead = c.User.CanRead;
-                c.CanChangeAccess = c.User.CanChangeAccess;
-            });
+                if (group.User == null)
+                {
+                    continue;
+                }
+                group.CanWrite = group.User.CanWrite;
+                group.CanRead = group.User.CanRead;
+                group.CanChangeAccess = group.User.CanChangeAccess;
+            }
 
-            return groups;
+            return result;
         }
 
         [HttpGet("{id}")]

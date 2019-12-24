@@ -61,7 +61,7 @@ namespace Lightest.Api.Controllers
             var categories = _context.Categories
                 .AsNoTracking().Include(c => c.Users)
                 .Where(c => (c.Public || c.Users.Select(u => u.UserId)
-                .Contains(user.Id)) && c.ParentId == null);
+                    .Contains(user.Id)) && c.ParentId == null);
 
             categories = _sieveProcessor.Apply(sieveModel, categories);
 
@@ -71,14 +71,21 @@ namespace Lightest.Api.Controllers
                 Name = c.Name,
                 Public = c.Public,
                 User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
-            });
+            }).ToList();
 
-            await result.Where(c => c.User != null).ForEachAsync(c =>
+
+            foreach (var category in result)
             {
-                c.CanWrite = c.User.CanWrite;
-                c.CanRead = c.User.CanRead;
-                c.CanChangeAccess = c.User.CanChangeAccess;
-            });
+                if (category.User == null)
+                {
+                    category.CanRead = true;
+                    continue;
+                }
+
+                category.CanWrite = category.User.CanWrite;
+                category.CanRead = category.User.CanRead;
+                category.CanChangeAccess = category.User.CanChangeAccess;
+            }
 
             return Ok(result);
         }
