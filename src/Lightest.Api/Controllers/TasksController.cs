@@ -308,6 +308,8 @@ namespace Lightest.Api.Controllers
 
             foreach (var test in tests)
             {
+                test.Input = test.Input.Replace("\r\n", "\n");
+                test.Output = test.Output.Replace("\r\n", "\n");
                 test.TaskId = id;
                 task.Tests.Add(test);
                 _context.Tests.Add(test);

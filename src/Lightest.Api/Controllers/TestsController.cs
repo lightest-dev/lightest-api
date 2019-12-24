@@ -57,6 +57,9 @@ namespace Lightest.Api.Controllers
         {
             var task = await _context.Tasks.FindAsync(test.TaskId);
 
+            test.Input = test.Input.Replace("\r\n", "\n");
+            test.Output = test.Output.Replace("\r\n", "\n");
+
             if (task == null)
             {
                 return BadRequest();
@@ -100,8 +103,8 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            dbEntry.Input = test.Input;
-            dbEntry.Output = test.Output;
+            dbEntry.Input = test.Input.Replace("\r\n", "\n");
+            dbEntry.Output = test.Output.Replace("\r\n", "\n");
 
             await _context.SaveChangesAsync();
             return Ok();
