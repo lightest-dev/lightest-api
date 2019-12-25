@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.IdentityServer.ViewModels
+namespace Lightest.IdentityServer.RequestModels
 {
-    public class LogOutViewModel
+    public class LogOutRequest
     {
         [Required]
         public string ClientName { get; set; }

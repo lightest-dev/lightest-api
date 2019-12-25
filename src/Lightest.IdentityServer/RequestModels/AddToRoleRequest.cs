@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Lightest.IdentityServer.ViewModels
+namespace Lightest.IdentityServer.RequestModels
 {
-    public class AddToRoleViewModel
+    public class AddToRoleRequest
     {
         [Required]
         public string UserId { get; set; }

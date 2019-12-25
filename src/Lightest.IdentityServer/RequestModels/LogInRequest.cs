@@ -1,6 +1,6 @@
-﻿namespace Lightest.IdentityServer.ViewModels
+﻿namespace Lightest.IdentityServer.RequestModels
 {
-    public class LogInViewModel
+    public class LogInRequest
     {
         public string Login { get; set; }
 

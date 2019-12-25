@@ -1,6 +1,6 @@
-﻿namespace Lightest.IdentityServer.ViewModels
+﻿namespace Lightest.IdentityServer.RequestModels
 {
-    public class RegisterViewModel
+    public class RegisterRequest
     {
         public string Email { get; set; }
 
