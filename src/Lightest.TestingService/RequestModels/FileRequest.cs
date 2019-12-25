@@ -4,9 +4,15 @@ namespace Lightest.TestingService.RequestModels
 {
     public abstract class FileRequest : BaseRequest
     {
-        protected FileRequest(string filename) => Filename = filename;
+        protected FileRequest(string filename)
+        {
+            Filename = filename;
+        }
 
-        protected FileRequest() => Filename = "";
+        protected FileRequest()
+        {
+            Filename = "";
+        }
 
         public string Filename { get; set; }
 

@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.TestsController
     {
         private readonly Test _modifiedTest;
 
-        public Put() => _modifiedTest = new Test
+        public Put()
         {
-            Id = _test.Id,
-            Input = "new_input",
-            Output = "new_output"
-        };
+            _modifiedTest = new Test
+            {
+                Id = _test.Id,
+                Input = "new_input",
+                Output = "new_output"
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()

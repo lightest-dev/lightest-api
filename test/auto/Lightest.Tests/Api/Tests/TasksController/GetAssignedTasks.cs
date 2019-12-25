@@ -12,20 +12,23 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         private readonly TaskDefinition _secondTask;
 
-        public GetAssignedTasks() => _secondTask = new TaskDefinition
+        public GetAssignedTasks()
         {
-            Id = Guid.NewGuid(),
-            Public = true,
-            Points = 100,
-            Checker = _checker,
-            CheckerId = _checker.Id,
-            Category = _category,
-            CategoryId = _category.Id,
-            Name = "name",
-            Tests = new List<Test>(),
-            Languages = new List<TaskLanguage>(),
-            Users = new List<Data.Models.UserTask>()
-        };
+            _secondTask = new TaskDefinition
+            {
+                Id = Guid.NewGuid(),
+                Public = true,
+                Points = 100,
+                Checker = _checker,
+                CheckerId = _checker.Id,
+                Category = _category,
+                CategoryId = _category.Id,
+                Name = "name",
+                Tests = new List<Test>(),
+                Languages = new List<TaskLanguage>(),
+                Users = new List<Data.Models.UserTask>()
+            };
+        }
 
         protected override void AddDataToDb()
         {

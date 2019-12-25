@@ -12,7 +12,10 @@ namespace Lightest.IdentityServer.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public ProfileService(UserManager<ApplicationUser> userManager) => _userManager = userManager;
+        public ProfileService(UserManager<ApplicationUser> userManager)
+        {
+            _userManager = userManager;
+        }
 
         public async System.Threading.Tasks.Task GetProfileDataAsync([NotNull] ProfileDataRequestContext context)
         {

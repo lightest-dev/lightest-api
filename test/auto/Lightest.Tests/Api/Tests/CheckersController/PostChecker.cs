@@ -12,11 +12,14 @@ namespace Lightest.Tests.Api.Tests.CheckersController
     {
         private readonly AddCheckerRequest _addModel;
 
-        public PostChecker() => _addModel = new AddCheckerRequest
+        public PostChecker()
         {
-            Code = "code",
-            Name = "name"
-        };
+            _addModel = new AddCheckerRequest
+            {
+                Code = "code",
+                Name = "name"
+            };
+        }
 
         [Fact]
         public async Task Forbidden()

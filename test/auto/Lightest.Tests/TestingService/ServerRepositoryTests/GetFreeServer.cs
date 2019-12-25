@@ -8,7 +8,10 @@ namespace Lightest.Tests.TestingService.ServerRepositoryTests
     {
         private readonly IServerRepository _repo;
 
-        public GetFreeServer() => _repo = new ServerRepository(_context);
+        public GetFreeServer()
+        {
+            _repo = new ServerRepository(_context);
+        }
 
         [Fact]
         public void Empty()

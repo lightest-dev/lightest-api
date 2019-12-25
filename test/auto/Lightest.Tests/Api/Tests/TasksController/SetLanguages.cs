@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         protected readonly TaskLanguage _taskLanguage;
 
-        public SetLanguages() => _taskLanguage = new TaskLanguage
+        public SetLanguages()
         {
-            LanguageId = Guid.NewGuid(),
-            MemoryLimit = 500,
-            TimeLimit = 500
-        };
+            _taskLanguage = new TaskLanguage
+            {
+                LanguageId = Guid.NewGuid(),
+                MemoryLimit = 500,
+                TimeLimit = 500
+            };
+        }
 
         [Fact]
         public async Task Forbidden()

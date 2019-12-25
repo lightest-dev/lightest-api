@@ -12,12 +12,15 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
     {
         protected readonly Category _updatedChild;
 
-        public PutCategory() => _updatedChild = new Category
+        public PutCategory()
         {
-            Id = _child2.Id,
-            Name = "updatedName",
-            ParentId = null
-        };
+            _updatedChild = new Category
+            {
+                Id = _child2.Id,
+                Name = "updatedName",
+                ParentId = null
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()

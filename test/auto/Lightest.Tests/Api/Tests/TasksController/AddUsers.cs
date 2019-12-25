@@ -14,16 +14,19 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         private readonly UserTask _userTask;
 
-        public AddUsers() => _userTask = new UserTask
+        public AddUsers()
         {
-            User = _user,
-            UserId = _user.Id,
-            CanChangeAccess = false,
-            CanRead = false,
-            CanWrite = false,
-            Deadline = DateTime.Now,
-            IsOwner = false
-        };
+            _userTask = new UserTask
+            {
+                User = _user,
+                UserId = _user.Id,
+                CanChangeAccess = false,
+                CanRead = false,
+                CanWrite = false,
+                Deadline = DateTime.Now,
+                IsOwner = false
+            };
+        }
 
         [Fact]
         public async Task Forbidden()

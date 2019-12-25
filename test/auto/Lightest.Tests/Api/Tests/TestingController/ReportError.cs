@@ -10,11 +10,14 @@ namespace Lightest.Tests.Api.Tests.TestingController
     {
         private readonly TestingErrorResponse _error;
 
-        public ReportError() => _error = new TestingErrorResponse
+        public ReportError()
         {
-            ErrorMessage = "error",
-            ServerVersion = "version"
-        };
+            _error = new TestingErrorResponse
+            {
+                ErrorMessage = "error",
+                ServerVersion = "version"
+            };
+        }
 
         [Fact]
         public async Task IpSet()

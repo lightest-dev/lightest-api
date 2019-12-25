@@ -19,7 +19,10 @@ namespace Lightest.Api.Controllers
         public TestsController(
             RelationalDbContext context,
             IAccessService<TaskDefinition> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
+        {
+            _accessService = accessService;
+        }
 
         // GET: api/Tests/5
         [HttpGet("{id}")]

@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.CheckersController
     {
         private readonly UpdateCheckerRequest _modifiedChecker;
 
-        public PutChecker() => _modifiedChecker = new UpdateCheckerRequest
+        public PutChecker()
         {
-            Id = _checker.Id,
-            Code = "code2",
-            Name = "name2"
-        };
+            _modifiedChecker = new UpdateCheckerRequest
+            {
+                Id = _checker.Id,
+                Code = "code2",
+                Name = "name2"
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()
