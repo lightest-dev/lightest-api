@@ -125,6 +125,9 @@ dotnet_diagnostic.RCS1016.severity = none
 # RCS1219: Call 'Enumerable.Skip' and 'Enumerable.Any' instead of 'Enumerable.Count'.
 dotnet_diagnostic.RCS1219.severity = none
 
+# RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1124.severity = none
+
 [*.vb] 
 # Modifier preferences 
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion 

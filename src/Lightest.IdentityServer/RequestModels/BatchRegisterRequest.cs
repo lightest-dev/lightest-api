@@ -4,6 +4,8 @@
     {
         public string Prefix { get; set; }
 
-        public uint Count { get; set; }
+        public int StartIndex { get; set; }
+
+        public int EndIndex { get; set; }
     }
 }

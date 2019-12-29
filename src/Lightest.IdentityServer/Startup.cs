@@ -85,9 +85,18 @@ namespace Lightest.IdentityServer
                     b.WithOrigins(origins);
                 });
             });
+
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 5;
+            });
+
             services.ConfigureApplicationCookie(o =>
                 o.Cookie.Domain = Configuration.GetSection("Domain").Value);
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
@@ -104,6 +113,7 @@ namespace Lightest.IdentityServer
                     options.EnableTokenCleanup = true;
                 })
                 .AddProfileService<ProfileService>();
+            services.AddTransient<IPasswordGenerator, PasswordGenerator>();
         }
 
         public IEnumerable<Client> Clients

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Moq;
 using Xunit;
 
 namespace Lightest.Tests.IdentityServer.ServicesTests
@@ -16,7 +18,12 @@ namespace Lightest.Tests.IdentityServer.ServicesTests
                 {
                     Password = _passwordOptions
                 };
-                return new Lightest.IdentityServer.Services.PasswordGenerator(identityOptions);
+
+                var monitor = new Mock<IOptionsMonitor<IdentityOptions>>();
+                monitor.SetupGet(m => m.CurrentValue)
+                    .Returns(identityOptions);
+
+                return new Lightest.IdentityServer.Services.PasswordGenerator(monitor.Object);
             }
         }
 

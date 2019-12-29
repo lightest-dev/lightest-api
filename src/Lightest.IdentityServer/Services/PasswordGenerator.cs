@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace Lightest.IdentityServer.Services
 {
     public class PasswordGenerator : IPasswordGenerator
     {
-        protected readonly IdentityOptions _identityOptions;
+        protected readonly IOptionsMonitor<IdentityOptions> _identityOptions;
 
-        public PasswordGenerator(IdentityOptions identityOptions)
+        public PasswordGenerator(IOptionsMonitor<IdentityOptions> identityOptions)
         {
             _identityOptions = identityOptions;
         }
 
         public string GeneratePassword()
         {
-            var password = GenerateRandomPassword(_identityOptions.Password);
+            var password = GenerateRandomPassword(_identityOptions.CurrentValue.Password);
             return password;
         }
 
