@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.RequestModels.ContestRequests;
 using Lightest.Api.ResponseModels.ContestViews;
+using Lightest.Api.ResponseModels.ContestViews.ContestTable;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -72,6 +74,57 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(result);
+        }
+
+        [HttpPost("start/{contestId}")]
+        public async Task<IActionResult> StartContest(Guid contestId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPost("reset/{contestId}")]
+        public async Task<IActionResult> ResetContest(Guid contestId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [HttpPut("settings/{contestId}")]
+        public async Task<IActionResult> ChangeSettings(Guid contestId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ActionResult<ContestTableView> GetContestTable(Guid contestId)
+        {
+            var contest = _context.Categories.AsNoTracking()
+                .First(c => c.Id == contestId);
+
+            if (contest == null)
+            {
+                return NotFound();
+            }
+
+            var tasks = _context.Tasks.AsNoTracking()
+                .Include(t => t.Users)
+                .Where(t => t.CategoryId == contestId)
+                .Select(t => new TaskResultsView
+                {
+                    TaskId = t.Id,
+                    UserResults = t.Users.Select(u => new UserResultView
+                    {
+                        Score = u.HighScore,
+                        UserId = u.UserId
+                    })
+                });
+
+            var result = new ContestTableView
+            {
+                ContestId = contestId,
+                Name = contest.Name,
+                TaskResults = tasks
+            };
+
+            return result;
         }
     }
 }
