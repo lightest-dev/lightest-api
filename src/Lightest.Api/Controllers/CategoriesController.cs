@@ -61,7 +61,7 @@ namespace Lightest.Api.Controllers
             var categories = _context.Categories
                 .AsNoTracking().Include(c => c.Users)
                 .Where(c => (c.Public || c.Users.Select(u => u.UserId)
-                    .Contains(user.Id)) && c.ParentId == null);
+                    .Contains(user.Id)) && c.ParentId == null && !c.Contest);
 
             categories = _sieveProcessor.Apply(sieveModel, categories);
 
@@ -201,12 +201,17 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
+            if (category.Contest && category.ParentId != null)
+            {
+                return BadRequest(nameof(category.Contest));
+            }
+
             if (category.Public && category.ParentId != null)
             {
                 var parent = await _context.Categories
                     .AsNoTracking()
                     .SingleOrDefaultAsync(t => t.Id == category.ParentId);
-                if (parent == null || !parent.Public)
+                if (parent?.Public != true)
                 {
                     return BadRequest(nameof(category.ParentId));
                 }

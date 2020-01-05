@@ -105,5 +105,17 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             Assert.NotNull(error);
             Assert.Equal(nameof(_child2.ParentId), error);
         }
+
+        [Fact]
+        public async Task ContestHasParent()
+        {
+            _child2.Contest = true;
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.PostCategory(_child2);
+            var badRequest = result as BadRequestObjectResult;
+            Assert.NotNull(badRequest);
+        }
     }
 }

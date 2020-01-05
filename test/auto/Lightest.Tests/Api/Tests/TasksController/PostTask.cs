@@ -91,5 +91,27 @@ namespace Lightest.Tests.Api.Tests.TasksController
 
             Assert.Equal(0, _context.Tasks.Count());
         }
+
+        [Fact]
+        public async Task TaskInContestIsPublic()
+        {
+            _task.Public = false;
+            _category.Contest = true;
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.PostTask(_task);
+            var createdAtResult = result as CreatedAtActionResult;
+            Assert.NotNull(createdAtResult);
+
+            var taskResult = createdAtResult.Value as TaskDefinition;
+            Assert.NotNull(taskResult);
+            Assert.True(taskResult.Public);
+
+            taskResult = _context.Tasks
+                .Include(c => c.Users)
+                .Single(c => c.Id == _task.Id);
+            Assert.True(taskResult.Public);
+        }
     }
 }

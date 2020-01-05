@@ -184,19 +184,22 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            if (task.Public)
-            {
-                var category = await _context.Categories
+            var category = await _context.Categories
                     .SingleOrDefaultAsync(c => c.Id == task.CategoryId);
-                if (!category.Public)
-                {
-                    return BadRequest(nameof(task.Public));
-                }
+
+            if (task.Public && !category.Public)
+            {
+                return BadRequest(nameof(task.Public));
             }
 
-            task.Users = new List<Data.Models.UserTask>
+            if (category.Contest)
             {
-                new Data.Models.UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
+                task.Public = true;
+            }
+
+            task.Users = new List<UserTask>
+            {
+                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
             };
 
             _context.Tasks.Add(task);
@@ -210,7 +213,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] Data.Models.UserTask[] users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] UserTask[] users)
         {
             var task = await _context.Tasks
                .Include(t => t.Users)
@@ -349,8 +352,19 @@ namespace Lightest.Api.Controllers
             dbEntry.Examples = task.Examples;
             dbEntry.Description = task.Description;
             dbEntry.Points = task.Points;
-            dbEntry.Public = task.Public;
             dbEntry.CheckerId = task.CheckerId;
+
+            if (dbEntry.Public != task.Public)
+            {
+                var category = _context.Categories.Find(task.CategoryId);
+                if (category.Contest && !task.Public)
+                {
+                    ModelState.AddModelError(nameof(task.Public), "Contest tasks can only be public.");
+                    return BadRequest(ModelState);
+                }
+
+                dbEntry.Public = task.Public;
+            }
 
             await _context.SaveChangesAsync();
             return Ok();
