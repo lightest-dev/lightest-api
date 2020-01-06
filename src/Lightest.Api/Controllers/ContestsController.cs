@@ -77,21 +77,108 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("start/{contestId}")]
-        public async Task<IActionResult> StartContest(Guid contestId)
+        public async Task<ActionResult<ContestSettings>> StartContest(Guid contestId)
         {
-            throw new NotImplementedException();
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                var settingsResult = await CreateDefaultSettings(contestId);
+                dbSettings = settingsResult.Value;
+                if (dbSettings == null)
+                {
+                    return settingsResult.Result;
+                }
+            }
+
+            dbSettings.StartTime = DateTime.Now;
+            if (dbSettings.Length.HasValue)
+            {
+                dbSettings.EndTime = dbSettings.StartTime + dbSettings.Length;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(dbSettings);
         }
 
         [HttpPost("reset/{contestId}")]
-        public async Task<IActionResult> ResetContest(Guid contestId)
+        public async Task<ActionResult<ContestSettings>> ResetContest(Guid contestId)
         {
-            throw new NotImplementedException();
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                return NotFound();
+            }
+
+            dbSettings.StartTime = null;
+            dbSettings.EndTime = null;
+            await _context.SaveChangesAsync();
+
+            return dbSettings;
+        }
+
+        [HttpPost("stop/{contestId}")]
+        public async Task<ActionResult<ContestSettings>> StopContest(Guid contestId)
+        {
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                return NotFound();
+            }
+
+            dbSettings.EndTime = DateTime.Now;
+            await _context.SaveChangesAsync();
+
+            return dbSettings;
         }
 
         [HttpPut("settings/{contestId}")]
-        public async Task<IActionResult> ChangeSettings(Guid contestId)
+        public async Task<ActionResult<ContestSettings>> ChangeSettings([FromRoute]Guid contestId, [FromBody]UpdateSettingsRequest settings)
         {
-            throw new NotImplementedException();
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                var settingsResult = await CreateDefaultSettings(contestId);
+                dbSettings = settingsResult.Value;
+                if (dbSettings == null)
+                {
+                    return settingsResult.Result;
+                }
+            }
+
+            dbSettings.StartTime = settings.StartTime;
+            dbSettings.Length = settings.Length;
+
+            if (dbSettings.StartTime.HasValue && dbSettings.Length.HasValue)
+            {
+                dbSettings.EndTime = dbSettings.StartTime + dbSettings.Length;
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(dbSettings);
+        }
+
+        private async Task<ActionResult<ContestSettings>> CreateDefaultSettings(Guid contestId)
+        {
+            var category = await _context.Categories.AsNoTracking()
+                                .Select(c => new { c.Contest, c.Id })
+                                .FirstOrDefaultAsync(c => c.Id == contestId);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            if (!category.Contest)
+            {
+                ModelState.AddModelError(nameof(contestId), $"Category with id {contestId.ToString()} is not a contest");
+                return BadRequest(ModelState);
+            }
+
+            var dbSettings = ContestSettings.Default;
+            dbSettings.CategoryId = contestId;
+            _context.Contests.Add(dbSettings);
+
+            return dbSettings;
         }
 
         public ActionResult<ContestTableView> GetContestTable(Guid contestId)

@@ -31,6 +31,8 @@ namespace Lightest.Data
 
         public DbSet<ServerChecker> CachedCheckers { get; set; }
 
+        public DbSet<ContestSettings> Contests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -157,6 +159,11 @@ namespace Lightest.Data
 
             builder.Entity<ServerChecker>()
                 .HasKey(sc => new { sc.CheckerId, sc.ServerIp });
+
+            builder.Entity<ContestSettings>()
+                .HasOne(s => s.Category)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
