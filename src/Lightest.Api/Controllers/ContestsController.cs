@@ -73,7 +73,7 @@ namespace Lightest.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(result);
+            return result;
         }
 
         [HttpPost("start/{contestId}")]
@@ -97,7 +97,7 @@ namespace Lightest.Api.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return Ok(dbSettings);
+            return dbSettings;
         }
 
         [HttpPost("reset/{contestId}")]
