@@ -3,6 +3,10 @@ namespace Lightest.Data.Mongo.Models
 {
     public class Mongo
     {
-        public long Code { get; set; }
+        public Guid Id { get; set; }
+        
+        public string Code { get; set; }
+        
+        public byte[] Hold { get; set; }
     }
 }
