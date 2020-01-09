@@ -5,10 +5,10 @@ namespace Lightest.AccessService.MockAccessServices
 {
     public class GroupsAccessService : IAccessService<Group>
     {
-        public bool CheckAdminAccess(Group group, ApplicationUser requester) => true;
+        public bool HasAdminAccess(ApplicationUser requester) => true;
 
-        public bool CheckReadAccess(Group group, ApplicationUser requester) => true;
+        public bool HasReadAccess(Group group, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(Group group, ApplicationUser requester) => true;
+        public bool HasWriteAccess(Group group, ApplicationUser requester) => true;
     }
 }

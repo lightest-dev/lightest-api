@@ -6,6 +6,7 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Sieve.Services;
 
 namespace Lightest.Tests.Api.Tests.CategoriesController
 {
@@ -15,7 +16,8 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
         {
             get
             {
-                var controller = new Lightest.Api.Controllers.CategoriesController(_context, _accessServiceMock.Object, _userManager.Object);
+                var controller = new Lightest.Api.Controllers.CategoriesController(_context,
+                    _accessServiceMock.Object, _userManager.Object, _sieveProcessor.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -27,6 +29,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
         protected readonly Mock<IAccessService<Category>> _accessServiceMock;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
+        protected readonly Mock<ISieveProcessor> _sieveProcessor;
 
         protected readonly Category _parent;
         protected readonly Category _child1;
@@ -37,6 +40,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
         public BaseTest()
         {
+            _sieveProcessor = GenerateSieveProcessor<Category>();
             _accessServiceMock = GenerateAccessService<Category>();
             _claimsPrincipalMock = GenerateClaimsMock();
 

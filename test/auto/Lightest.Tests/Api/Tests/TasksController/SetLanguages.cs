@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         protected readonly TaskLanguage _taskLanguage;
 
-        public SetLanguages() => _taskLanguage = new TaskLanguage
+        public SetLanguages()
         {
-            LanguageId = Guid.NewGuid(),
-            MemoryLimit = 500,
-            TimeLimit = 500
-        };
+            _taskLanguage = new TaskLanguage
+            {
+                LanguageId = Guid.NewGuid(),
+                MemoryLimit = 500,
+                TimeLimit = 500
+            };
+        }
 
         [Fact]
         public async Task Forbidden()
@@ -26,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

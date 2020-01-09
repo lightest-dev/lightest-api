@@ -5,6 +5,7 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Sieve.Services;
 
 namespace Lightest.Tests.Api.Tests.GroupsController
 {
@@ -14,7 +15,8 @@ namespace Lightest.Tests.Api.Tests.GroupsController
         {
             get
             {
-                var controller = new Lightest.Api.Controllers.GroupsController(_context, _accessServiceMock.Object, _userManager.Object);
+                var controller = new Lightest.Api.Controllers.GroupsController(_context,
+                    _accessServiceMock.Object, _userManager.Object, _sieveProcessorMock.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -26,6 +28,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 
         protected readonly Mock<IAccessService<Group>> _accessServiceMock;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
+        protected readonly Mock<ISieveProcessor> _sieveProcessorMock;
 
         protected readonly Group _parent;
         protected readonly Group _child1;
@@ -34,6 +37,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 
         public BaseTest()
         {
+            _sieveProcessorMock = GenerateSieveProcessor<Group>();
             _accessServiceMock = GenerateAccessService<Group>();
             _claimsPrincipalMock = GenerateClaimsMock();
 

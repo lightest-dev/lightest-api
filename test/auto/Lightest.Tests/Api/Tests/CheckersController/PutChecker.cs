@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -11,14 +11,17 @@ namespace Lightest.Tests.Api.Tests.CheckersController
 {
     public class PutChecker : BaseTest
     {
-        private readonly CheckerUpdate _modifiedChecker;
+        private readonly UpdateCheckerRequest _modifiedChecker;
 
-        public PutChecker() => _modifiedChecker = new CheckerUpdate
+        public PutChecker()
         {
-            Id = _checker.Id,
-            Code = "code2",
-            Name = "name2"
-        };
+            _modifiedChecker = new UpdateCheckerRequest
+            {
+                Id = _checker.Id,
+                Code = "code2",
+                Name = "name2"
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()
@@ -43,7 +46,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
             _context.CachedCheckers.Add(_cachedChecker);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Checker>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Checker>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

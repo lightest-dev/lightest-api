@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.CategoryViews;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,7 +17,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Category>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Category>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -46,7 +46,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CompleteCategory;
+            var categoriesResult = okResult.Value as CompleteCategoryView;
 
             Assert.NotNull(categoriesResult);
             Assert.Equal(_parent.Id, categoriesResult.Id);
@@ -70,7 +70,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CompleteCategory;
+            var categoriesResult = okResult.Value as CompleteCategoryView;
 
             Assert.NotNull(categoriesResult);
             Assert.Equal(_child2.Id, categoriesResult.Id);

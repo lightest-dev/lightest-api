@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.Checker;
+using Lightest.Api.ResponseModels.Language;
+using Lightest.Api.ResponseModels.TaskViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -18,34 +23,59 @@ namespace Lightest.Api.Controllers
     public class TasksController : BaseUserController
     {
         private readonly IAccessService<TaskDefinition> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public TasksController(
             RelationalDbContext context,
             IAccessService<TaskDefinition> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
         // GET: api/Tasks
         [HttpGet]
         [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetTasks()
+        public async Task<IActionResult> GetTasks([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
-            var tasks = _context.Tasks.AsNoTracking();
-
-            if (!_accessService.CheckAdminAccess(null, user))
+            if (!_accessService.HasAdminAccess(user))
             {
-                tasks = tasks.Where(t => t.Users
-                    .Select(u => u.UserId).Contains(user.Id));
+                return Forbid();
             }
+
+            var tasks = _context.Tasks.AsNoTracking();
+            tasks = _sieveProcessor.Apply(sieveModel, tasks);
 
             return Ok(tasks);
         }
 
+        [HttpGet("tasks")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<UserTaskView>))]
+        public IActionResult GetAssignedTasks()
+        {
+            var id = User.Claims.SingleOrDefault(c => c.Type == "sub").Value;
+            var assignedTasks = _context.UserTasks.AsNoTracking()
+                .Include(ut => ut.Task)
+                .Where(ut => ut.UserId == id);
+
+            return Ok(assignedTasks.Select(t => new UserTaskView
+            {
+                Id = t.TaskId,
+                Name = t.Task.Name,
+                Deadline = t.Deadline,
+                Completed = t.Completed,
+                HighScore = t.HighScore
+            }));
+        }
+
         // GET: api/Tasks/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteTask))]
+        [ProducesResponseType(200, Type = typeof(CompleteTaskView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -67,12 +97,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(task, user))
+            if (!_accessService.HasReadAccess(task, user))
             {
                 return Forbid();
             }
 
-            var result = new CompleteTask
+            var result = new CompleteTaskView
             {
                 Id = task.Id,
                 Name = task.Name,
@@ -81,14 +111,14 @@ namespace Lightest.Api.Controllers
                 Examples = task.Examples,
                 Description = task.Description,
                 Category = task.Category,
-                Checker = new BaseChecker
+                Checker = new BasicCheckerView
                 {
                     Id = task.Checker.Id,
                     Name = task.Checker.Name,
                     Compiled = task.Checker.Compiled
                 },
                 Tests = task.Tests,
-                Languages = task.Languages.Select(t => new BasicLanguage
+                Languages = task.Languages.Select(t => new BasicLanguageView
                 {
                     Id = t.LanguageId,
                     Name = t.Language.Name,
@@ -97,7 +127,7 @@ namespace Lightest.Api.Controllers
                 })
             };
 
-            if (!_accessService.CheckWriteAccess(task, user))
+            if (!_accessService.HasWriteAccess(task, user))
             {
                 result.Tests = null;
                 result.Checker = null;
@@ -124,7 +154,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -149,19 +179,22 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(task, user))
+            if (!_accessService.HasWriteAccess(task, user))
             {
                 return Forbid();
             }
 
-            if (task.Public)
-            {
-                var category = await _context.Categories
+            var category = await _context.Categories
                     .SingleOrDefaultAsync(c => c.Id == task.CategoryId);
-                if (!category.Public)
-                {
-                    return BadRequest(nameof(task.Public));
-                }
+
+            if (task.Public && !category.Public)
+            {
+                return BadRequest(nameof(task.Public));
+            }
+
+            if (category.Contest)
+            {
+                task.Public = true;
             }
 
             task.Users = new List<UserTask>
@@ -191,7 +224,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -237,7 +270,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -269,7 +302,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -278,6 +311,8 @@ namespace Lightest.Api.Controllers
 
             foreach (var test in tests)
             {
+                test.Input = test.Input.Replace("\r\n", "\n");
+                test.Output = test.Output.Replace("\r\n", "\n");
                 test.TaskId = id;
                 task.Tests.Add(test);
                 _context.Tests.Add(test);
@@ -308,7 +343,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -317,8 +352,19 @@ namespace Lightest.Api.Controllers
             dbEntry.Examples = task.Examples;
             dbEntry.Description = task.Description;
             dbEntry.Points = task.Points;
-            dbEntry.Public = task.Public;
             dbEntry.CheckerId = task.CheckerId;
+
+            if (dbEntry.Public != task.Public)
+            {
+                var category = _context.Categories.Find(task.CategoryId);
+                if (category.Contest && !task.Public)
+                {
+                    ModelState.AddModelError(nameof(task.Public), "Contest tasks can only be public.");
+                    return BadRequest(ModelState);
+                }
+
+                dbEntry.Public = task.Public;
+            }
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -338,7 +384,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }

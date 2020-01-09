@@ -16,7 +16,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetCategories();
+            var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -33,41 +33,11 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Category>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetCategories();
-
-            var okResult = result as OkObjectResult;
-            Assert.NotNull(okResult);
-
-            var categoriesResult = okResult.Value as IEnumerable<Category>;
-
-            Assert.NotNull(categoriesResult);
-            Assert.Single(categoriesResult);
-        }
-
-        [Fact]
-        public async Task NoPublicCategories()
-        {
-            _parent.Public = false;
-            AddDataToDb();
-            await _context.SaveChangesAsync();
-
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Category>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
-
-            var result = await _controller.GetCategories();
-
-            var okResult = result as OkObjectResult;
-            Assert.NotNull(okResult);
-
-            var categoriesResult = okResult.Value as IEnumerable<Category>;
-
-            Assert.NotNull(categoriesResult);
-            Assert.Empty(categoriesResult);
+            var result = await _controller.GetCategories(new Sieve.Models.SieveModel());
+            Assert.IsAssignableFrom<ForbidResult>(result);
         }
     }
 }

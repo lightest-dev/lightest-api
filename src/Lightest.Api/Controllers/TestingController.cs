@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +38,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("result")]
-        public async Task<IActionResult> AddResult([FromBody] CheckerResult result)
+        public async Task<IActionResult> AddResult([FromBody] CheckingResponse result)
         {
             if (result.Ip == null)
             {
@@ -51,7 +50,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("checker-result")]
-        public async Task<IActionResult> AddCheckerResult([FromBody] CheckerCompilationResult result)
+        public async Task<IActionResult> AddCheckerResult([FromBody] CheckerCompilationResponse result)
         {
             var checker = await _context.Checkers.FindAsync(result.Id);
 
@@ -67,7 +66,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<IActionResult> ReportNewServer([FromBody] NewServer server)
+        public async Task<IActionResult> ReportNewServer([FromBody] ServerStatusResponse server)
         {
             if (server.Ip == null)
             {
@@ -78,7 +77,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("error")]
-        public async Task<IActionResult> ReportError([FromBody] TestingError error)
+        public async Task<IActionResult> ReportError([FromBody] TestingErrorResponse error)
         {
             if (error.Ip == null)
             {

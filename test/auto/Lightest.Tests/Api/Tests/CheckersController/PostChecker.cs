@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -10,18 +10,21 @@ namespace Lightest.Tests.Api.Tests.CheckersController
 {
     public class PostChecker : BaseTest
     {
-        private readonly CheckerAdd _addModel;
+        private readonly AddCheckerRequest _addModel;
 
-        public PostChecker() => _addModel = new CheckerAdd
+        public PostChecker()
         {
-            Code = "code",
-            Name = "name"
-        };
+            _addModel = new AddCheckerRequest
+            {
+                Code = "code",
+                Name = "name"
+            };
+        }
 
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Checker>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Checker>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -8,12 +8,15 @@ namespace Lightest.Tests.Api.Tests.TestingController
 {
     public class ReportNewServer : BaseTest
     {
-        private readonly NewServer _server;
+        private readonly ServerStatusResponse _server;
 
-        public ReportNewServer() => _server = new NewServer
+        public ReportNewServer()
         {
-            ServerVersion = "a"
-        };
+            _server = new ServerStatusResponse
+            {
+                ServerVersion = "a"
+            };
+        }
 
         [Fact]
         public async Task IpSet()
@@ -24,7 +27,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             Assert.IsAssignableFrom<OkResult>(result);
 
             _testingServiceMock.Verify(m => m.ReportNewServer(
-                It.Is<NewServer>(s => s.Ip == _server.Ip && s.ServerVersion == _server.ServerVersion)),
+                It.Is<ServerStatusResponse>(s => s.Ip == _server.Ip && s.ServerVersion == _server.ServerVersion)),
                 Times.Once);
         }
 
@@ -35,7 +38,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             Assert.IsAssignableFrom<OkResult>(result);
 
             _testingServiceMock.Verify(m => m.ReportNewServer(
-                It.Is<NewServer>(s => s.Ip == DefaultIp && s.ServerVersion == _server.ServerVersion)),
+                It.Is<ServerStatusResponse>(s => s.Ip == DefaultIp && s.ServerVersion == _server.ServerVersion)),
                 Times.Once);
         }
     }

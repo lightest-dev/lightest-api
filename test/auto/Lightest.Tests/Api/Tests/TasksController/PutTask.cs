@@ -12,19 +12,26 @@ namespace Lightest.Tests.Api.Tests.TasksController
     public class PutTask : BaseTest
     {
         protected readonly TaskDefinition _updatedTask;
+        protected readonly Category _newCategory;
 
         public PutTask()
         {
-            _task.Public = false;
+            _newCategory = new Category
+            {
+                Id = Guid.NewGuid(),
+                Name = "New Name"
+            };
+
+            _task.Public = true;
 
             _updatedTask = new TaskDefinition
             {
                 Id = _task.Id,
-                CategoryId = Guid.NewGuid(),
+                CategoryId = _newCategory.Id,
                 Examples = "new examples",
                 Description = "new description",
                 Points = 10,
-                Public = true,
+                Public = false,
                 CheckerId = Guid.NewGuid()
             };
         }
@@ -80,7 +87,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -103,6 +110,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
         [Fact]
         public async Task Updated()
         {
+            _context.Categories.Add(_newCategory);
             AddDataToDb();
             await _context.SaveChangesAsync();
 
@@ -119,6 +127,19 @@ namespace Lightest.Tests.Api.Tests.TasksController
             Assert.Equal(_updatedTask.Points, taskResult.Points);
             Assert.Equal(_updatedTask.Public, taskResult.Public);
             Assert.Equal(_updatedTask.CheckerId, taskResult.CheckerId);
+        }
+
+        [Fact]
+        public async Task PublicCantBeModified()
+        {
+            _newCategory.Contest = true;
+            _context.Categories.Add(_newCategory);
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.PutTask(_updatedTask.Id, _updatedTask);
+
+            Assert.IsAssignableFrom<BadRequestObjectResult>(result);
         }
     }
 }

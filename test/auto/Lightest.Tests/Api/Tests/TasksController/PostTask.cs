@@ -24,7 +24,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -90,6 +90,28 @@ namespace Lightest.Tests.Api.Tests.TasksController
             Assert.Equal(nameof(_task.Public), error);
 
             Assert.Equal(0, _context.Tasks.Count());
+        }
+
+        [Fact]
+        public async Task TaskInContestIsPublic()
+        {
+            _task.Public = false;
+            _category.Contest = true;
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.PostTask(_task);
+            var createdAtResult = result as CreatedAtActionResult;
+            Assert.NotNull(createdAtResult);
+
+            var taskResult = createdAtResult.Value as TaskDefinition;
+            Assert.NotNull(taskResult);
+            Assert.True(taskResult.Public);
+
+            taskResult = _context.Tasks
+                .Include(c => c.Users)
+                .Single(c => c.Id == _task.Id);
+            Assert.True(taskResult.Public);
         }
     }
 }

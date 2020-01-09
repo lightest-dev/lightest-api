@@ -1,11 +1,16 @@
 language: csharp
 sudo: required
-dist: xenial
+dist: bionic
 mono: none
-dotnet: 3.0
+dotnet: 3.1
+
+env:
+  global:
+    - VERSION: 0.10.1.${TRAVIS_BUILD_NUMBER}
+
+install:
+  - pip install --user codecov
 before_script:
   - dotnet restore
-  - export COMMITTER_EMAIL="$(git log -1 $TRAVIS_COMMIT --pretty="%cE")"
-  - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
 script:  
   - bash build.sh

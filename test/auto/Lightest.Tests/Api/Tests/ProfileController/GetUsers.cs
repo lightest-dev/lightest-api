@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UserViews;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -15,11 +15,11 @@ namespace Lightest.Tests.Api.Tests.ProfileController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<ApplicationUser>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<ApplicationUser>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetUsers();
+            var result = await _controller.GetUsers(new Sieve.Models.SieveModel());
 
             Assert.IsAssignableFrom<ForbidResult>(result);
         }
@@ -35,11 +35,11 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetUsers();
+            var result = await _controller.GetUsers(new Sieve.Models.SieveModel());
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var users = okResult.Value as IEnumerable<ProfileViewModel>;
+            var users = okResult.Value as IEnumerable<ProfileView>;
             Assert.NotNull(users);
             Assert.Equal(2, users.Count());
         }

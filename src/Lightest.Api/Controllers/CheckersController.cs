@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
-using Lightest.Api.RequestModels;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.RequestModels.CheckerRequests;
+using Lightest.Api.ResponseModels.Checker;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
@@ -22,20 +22,23 @@ namespace Lightest.Api.Controllers
         public CheckersController(
             RelationalDbContext context,
         UserManager<ApplicationUser> userManager,
-            IAccessService<Checker> accessService) : base(context, userManager) => _accessService = accessService;
+            IAccessService<Checker> accessService) : base(context, userManager)
+        {
+            _accessService = accessService;
+        }
 
         // GET: api/Checkers
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<BaseChecker>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<BasicCheckerView>))]
         public async Task<IActionResult> GetCheckers()
         {
-            if (!_accessService.CheckReadAccess(null, await GetCurrentUser()))
+            if (!_accessService.HasReadAccess(null, await GetCurrentUser()))
             {
                 return Forbid();
             }
             return Ok(_context.Checkers
                 .AsNoTracking()
-                .Select(c => new BaseChecker { Id = c.Id, Name = c.Name, Compiled = c.Compiled }));
+                .Select(c => new BasicCheckerView { Id = c.Id, Name = c.Name, Compiled = c.Compiled }));
         }
 
         // GET: api/Checkers/5
@@ -52,7 +55,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(checker, await GetCurrentUser()))
+            if (!_accessService.HasReadAccess(checker, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -64,7 +67,7 @@ namespace Lightest.Api.Controllers
         [HttpPost]
         [ProducesResponseType(403)]
         [ProducesResponseType(201, Type = typeof(Checker))]
-        public async Task<IActionResult> PostChecker([FromBody] CheckerAdd checker)
+        public async Task<IActionResult> PostChecker([FromBody] AddCheckerRequest checker)
         {
             var entry = new Checker
             {
@@ -72,7 +75,7 @@ namespace Lightest.Api.Controllers
                 Code = checker.Code
             };
 
-            if (!_accessService.CheckWriteAccess(entry, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(entry, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -88,7 +91,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutChecker([FromRoute] Guid id, [FromBody] CheckerUpdate checker)
+        public async Task<IActionResult> PutChecker([FromRoute] Guid id, [FromBody] UpdateCheckerRequest checker)
         {
             if (id != checker.Id)
             {
@@ -102,7 +105,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(entry, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(entry, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -130,7 +133,7 @@ namespace Lightest.Api.Controllers
         {
             var checker = await _context.Checkers.FindAsync(id);
 
-            if (!_accessService.CheckWriteAccess(checker, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(checker, await GetCurrentUser()))
             {
                 return Forbid();
             }

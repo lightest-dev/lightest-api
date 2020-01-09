@@ -14,20 +14,23 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         private readonly TaskDefinition _secondTask;
 
-        public GetTasks() => _secondTask = new TaskDefinition
+        public GetTasks()
         {
-            Id = Guid.NewGuid(),
-            Public = true,
-            Points = 100,
-            Checker = _checker,
-            CheckerId = _checker.Id,
-            Category = _category,
-            CategoryId = _category.Id,
-            Name = "name",
-            Tests = new List<Test>(),
-            Languages = new List<TaskLanguage>(),
-            Users = new List<UserTask>()
-        };
+            _secondTask = new TaskDefinition
+            {
+                Id = Guid.NewGuid(),
+                Public = true,
+                Points = 100,
+                Checker = _checker,
+                CheckerId = _checker.Id,
+                Category = _category,
+                CategoryId = _category.Id,
+                Name = "name",
+                Tests = new List<Test>(),
+                Languages = new List<TaskLanguage>(),
+                Users = new List<UserTask>()
+            };
+        }
 
         protected override void AddDataToDb()
         {
@@ -41,7 +44,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetTasks();
+            var result = await _controller.GetTasks(new Sieve.Models.SieveModel());
 
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
@@ -58,41 +61,11 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<TaskDefinition>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetTasks();
-
-            var okResult = result as OkObjectResult;
-            Assert.NotNull(okResult);
-
-            var tasksResult = okResult.Value as IEnumerable<TaskDefinition>;
-
-            Assert.NotNull(tasksResult);
-            Assert.Single(tasksResult);
-        }
-
-        [Fact]
-        public async Task NoAssignedTasks()
-        {
-            _task.Users = new List<UserTask>();
-            AddDataToDb();
-            await _context.SaveChangesAsync();
-
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<TaskDefinition>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
-
-            var result = await _controller.GetTasks();
-
-            var okResult = result as OkObjectResult;
-            Assert.NotNull(okResult);
-
-            var tasksResult = okResult.Value as IEnumerable<TaskDefinition>;
-
-            Assert.NotNull(tasksResult);
-            Assert.Empty(tasksResult);
+            var result = await _controller.GetTasks(new Sieve.Models.SieveModel());
+            Assert.IsAssignableFrom<ForbidResult>(result);
         }
     }
 }

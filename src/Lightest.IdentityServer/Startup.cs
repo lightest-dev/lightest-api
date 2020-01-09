@@ -20,13 +20,16 @@ namespace Lightest.IdentityServer
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
         public IConfiguration Configuration { get; }
 
         public static IEnumerable<ApiResource> GetApiResources() => new List<ApiResource>
             {
-                new ApiResource()
+                new ApiResource
                 {
                     Name = "api",
                     DisplayName = "Api",
@@ -55,10 +58,7 @@ namespace Lightest.IdentityServer
 
             app.UseIdentityServer();
             app.UseAuthorization();
-            app.UseEndpoints(e =>
-            {
-                e.MapControllers();
-            });
+            app.UseEndpoints(e => e.MapControllers());
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -66,9 +66,7 @@ namespace Lightest.IdentityServer
         {
             services.AddControllers().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddDbContext<RelationalDbContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
-            });
+                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api")));
             services.AddCors(options =>
             {
                 options.AddPolicy("General", b =>
@@ -87,18 +85,25 @@ namespace Lightest.IdentityServer
                     b.WithOrigins(origins);
                 });
             });
+
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
-            services.ConfigureApplicationCookie(o =>
+
+            services.Configure<IdentityOptions>(options =>
             {
-                o.Cookie.Domain = Configuration.GetSection("Domain").Value;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 5;
             });
+
+            services.ConfigureApplicationCookie(o =>
+                o.Cookie.Domain = Configuration.GetSection("Domain").Value);
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
                 .AddAspNetIdentity<ApplicationUser>()
-                .AddInMemoryClients(GetClients())
+                .AddInMemoryClients(Clients)
                 .AddInMemoryIdentityResources(GetIdentityResources())
                 .AddInMemoryApiResources(GetApiResources())
                 .AddOperationalStore(options =>
@@ -108,35 +113,39 @@ namespace Lightest.IdentityServer
                     options.EnableTokenCleanup = true;
                 })
                 .AddProfileService<ProfileService>();
+            services.AddTransient<IPasswordGenerator, PasswordGenerator>();
         }
 
-        public IEnumerable<Client> GetClients()
+        public IEnumerable<Client> Clients
         {
-            var uris = Configuration.GetSection("URIs").GetChildren();
-            var links = new List<string>();
-            foreach (var uri in uris)
+            get
             {
-                links.Add(uri.Value);
-            }
-            return new List<Client>
-            {
-                new Client()
+                var uris = Configuration.GetSection("URIs").GetChildren();
+                var links = new List<string>();
+                foreach (var uri in uris)
                 {
-                    ClientId = "client",
-                    ClientName = "client",
-                    AllowedScopes = {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "api"
-                    },
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowOfflineAccess = true,
-                    AllowAccessTokensViaBrowser = true,
-                    RedirectUris = links,
-                    RequireConsent = false,
-                    AccessTokenType = AccessTokenType.Jwt
+                    links.Add(uri.Value);
                 }
-            };
+                return new List<Client>
+                {
+                    new Client
+                    {
+                        ClientId = "client",
+                        ClientName = "client",
+                        AllowedScopes = {
+                            IdentityServerConstants.StandardScopes.OpenId,
+                            IdentityServerConstants.StandardScopes.Profile,
+                            "api"
+                        },
+                        AllowedGrantTypes = GrantTypes.Implicit,
+                        AllowOfflineAccess = true,
+                        AllowAccessTokensViaBrowser = true,
+                        RedirectUris = links,
+                        RequireConsent = false,
+                        AccessTokenType = AccessTokenType.Jwt
+                    }
+                };
+            }
         }
     }
 }

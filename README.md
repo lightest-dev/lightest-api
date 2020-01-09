@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/lightest-dev/lightest-api.svg?branch=master)](https://travis-ci.com/lightest-dev/lightest-api)
-[![Coverage Status](https://coveralls.io/repos/github/lightest-dev/lightest-api/badge.svg?branch=master)](https://coveralls.io/github/lightest-dev/lightest-api?branch=master)
+[![codecov](https://codecov.io/gh/lightest-dev/lightest-api/branch/master/graph/badge.svg)](https://codecov.io/gh/lightest-dev/lightest-api)
 
 # Logging in to Lightest.Api
 Api project is split into 2 parts: API itself and IdentityServer, which provides log in and register functionality.

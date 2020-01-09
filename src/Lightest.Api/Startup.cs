@@ -1,6 +1,7 @@
 ﻿using IdentityServer4.AccessTokenValidation;
 using Lightest.AccessService;
 using Lightest.Api.Extensions;
+using Lightest.Api.Services;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Seeding;
@@ -15,6 +16,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sieve.Models;
+using Sieve.Services;
 
 [assembly: ApiController]
 
@@ -22,7 +25,10 @@ namespace Lightest.Api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
 
         public IConfiguration Configuration { get; }
 
@@ -38,16 +44,13 @@ namespace Lightest.Api
             }
 
             app.UseAuthorization();
-            app.UseEndpoints(e =>
-            {
-                e.MapControllers().RequireAuthorization();
-            });
+            app.UseEndpoints(e => e.MapControllers().RequireAuthorization());
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Lightest API V1");
-                c.RoutePrefix = string.Empty;
+                c.RoutePrefix = "";
             });
         }
 
@@ -62,9 +65,7 @@ namespace Lightest.Api
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             services.AddDbContext<RelationalDbContext>(options =>
-            {
-                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api"));
-            });
+                options.UseNpgsql(Configuration.GetConnectionString("Relational"), b => b.MigrationsAssembly("Lightest.Api")));
 
             var auth = Configuration.GetSection("Authority").Value;
 
@@ -84,9 +85,7 @@ namespace Lightest.Api
                     options.RequireHttpsMetadata = false;
                 });
             services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Lightest API", Version = "1" });
-            });
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Lightest API", Version = "1" }));
             services.AddHttpContextAccessor();
 
             services.AddCors(options =>
@@ -99,9 +98,18 @@ namespace Lightest.Api
                 });
             });
 
+            services.Configure<SieveOptions>(c =>
+            {
+                c.CaseSensitive = false;
+                c.DefaultPageSize = 25;
+                c.MaxPageSize = 100;
+                c.ThrowExceptions = true;
+            });
+
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
             services.AddTransient<ISeeder, DefaultSeeder>();
+            services.AddScoped<ISieveProcessor, ApiSieveProcessor>();
         }
     }
 }

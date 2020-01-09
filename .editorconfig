@@ -66,7 +66,7 @@ csharp_style_var_when_type_is_apparent = true:preferences
 csharp_style_var_elsewhere = true:preferences 
 # Expression-bodied members 
 csharp_style_expression_bodied_methods = true:warning 
-csharp_style_expression_bodied_constructors = true:warning 
+csharp_style_expression_bodied_constructors = false:warning
 csharp_style_expression_bodied_operators = true:warning 
 csharp_style_expression_bodied_properties = true:warning 
 csharp_style_expression_bodied_indexers = true:warning 
@@ -118,6 +118,16 @@ csharp_preserve_single_line_blocks = true
 ############################### 
 # VB Coding Conventions       # 
 ############################### 
+
+# RCS1016: Use expression-bodied member.
+dotnet_diagnostic.RCS1016.severity = none
+
+# RCS1219: Call 'Enumerable.Skip' and 'Enumerable.Any' instead of 'Enumerable.Count'.
+dotnet_diagnostic.RCS1219.severity = none
+
+# RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1124.severity = none
+
 [*.vb] 
 # Modifier preferences 
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var upload = okResult.Value as UserUploadResult;
+            var upload = okResult.Value as UploadResultView;
             Assert.NotNull(upload);
 
             Assert.Equal(_upload.Id, upload.Id);
@@ -49,7 +49,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _context.Uploads.Add(_upload);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<Upload>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Upload>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

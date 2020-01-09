@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using Lightest.Data.Models;
-using Lightest.IdentityServer.ViewModels;
+using Lightest.IdentityServer.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Lightest.IdentityServer.Controllers
 {
@@ -17,30 +16,24 @@ namespace Lightest.IdentityServer.Controllers
     [Authorize]
     public class AccountController : Controller
     {
-        private readonly ILogger _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IPersistedGrantService _persistedGrantService;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             IPersistedGrantService persistedGrantService,
-            SignInManager<ApplicationUser> signInManager,
-            RoleManager<IdentityRole> roleManager,
-            ILoggerFactory loggerFactory)
+            SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _roleManager = roleManager;
             _persistedGrantService = persistedGrantService;
-            _logger = loggerFactory.CreateLogger<AccountController>();
         }
 
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody]LogInViewModel model)
+        public async Task<IActionResult> Login([FromBody]LogInRequest model)
         {
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, set lockoutOnFailure: true
@@ -67,7 +60,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [Route("logout")]
-        public async Task<IActionResult> Logout([FromBody]LogOutViewModel model)
+        public async Task<IActionResult> Logout([FromBody]LogOutRequest model)
         {
             var subjectId = HttpContext.User.Identity.GetSubjectId();
 
@@ -86,7 +79,7 @@ namespace Lightest.IdentityServer.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterViewModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest model)
         {
             var user = new ApplicationUser
             {
@@ -105,7 +98,7 @@ namespace Lightest.IdentityServer.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("role")]
-        public async Task<IActionResult> AddToRole([FromBody] AddToRoleViewModel model)
+        public async Task<IActionResult> AddToRole([FromBody] AddToRoleRequest model)
         {
             if (model.Role != "Admin" && model.Role != "Teacher")
             {

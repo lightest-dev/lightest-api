@@ -6,10 +6,10 @@ namespace Lightest.AccessService.MockAccessServices
 {
     public class TasksAccessService : IAccessService<TaskDefinition>
     {
-        public bool CheckAdminAccess(TaskDefinition task, ApplicationUser requester) => true;
+        public bool HasAdminAccess(ApplicationUser requester) => true;
 
-        public bool CheckReadAccess(TaskDefinition task, ApplicationUser requester) => true;
+        public bool HasReadAccess(TaskDefinition task, ApplicationUser requester) => true;
 
-        public bool CheckWriteAccess(TaskDefinition task, ApplicationUser requester) => true;
+        public bool HasWriteAccess(TaskDefinition task, ApplicationUser requester) => true;
     }
 }

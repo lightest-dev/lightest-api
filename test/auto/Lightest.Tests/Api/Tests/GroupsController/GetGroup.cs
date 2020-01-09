@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.GroupViews;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -17,7 +17,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<Group>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Group>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -46,7 +46,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var groupResult = okResult.Value as CompleteGroup;
+            var groupResult = okResult.Value as CompleteGroupView;
 
             Assert.NotNull(groupResult);
             Assert.Equal(_parent.Id, groupResult.Id);
@@ -67,7 +67,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var groupResult = okResult.Value as CompleteGroup;
+            var groupResult = okResult.Value as CompleteGroupView;
 
             Assert.NotNull(groupResult);
             Assert.Equal(_child2.Id, groupResult.Id);
@@ -85,7 +85,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
         {
             AddDataToDb();
             await _context.SaveChangesAsync();
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Group>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Group>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
@@ -94,7 +94,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var groupResult = okResult.Value as CompleteGroup;
+            var groupResult = okResult.Value as CompleteGroupView;
 
             Assert.NotNull(groupResult);
             Assert.Equal(_child2.Id, groupResult.Id);

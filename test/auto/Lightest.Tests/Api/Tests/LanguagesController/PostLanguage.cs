@@ -14,7 +14,7 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Language>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Language>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

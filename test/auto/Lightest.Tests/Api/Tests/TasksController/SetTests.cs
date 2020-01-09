@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.TasksController
     {
         private readonly Test _newTest;
 
-        public SetTests() => _newTest = new Test
+        public SetTests()
         {
-            Input = "new_input",
-            Output = "new_output",
-            Id = Guid.NewGuid()
-        };
+            _newTest = new Test
+            {
+                Input = "new_input",
+                Output = "new_output",
+                Id = Guid.NewGuid()
+            };
+        }
 
         [Fact]
         public async Task Forbidden()
@@ -26,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -15,12 +16,15 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.GetGroups();
+            var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
-            var categoriesResult = result as IEnumerable<Group>;
+            var okResult = result as OkObjectResult;
+            Assert.NotNull(okResult);
 
-            Assert.NotNull(categoriesResult);
-            Assert.Equal(3, categoriesResult.Count());
+            var groupsResult = okResult.Value as IEnumerable<Group>;
+
+            Assert.NotNull(groupsResult);
+            Assert.Equal(3, groupsResult.Count());
         }
 
         [Fact]
@@ -29,16 +33,12 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckAdminAccess(It.IsAny<Group>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _accessServiceMock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 
-            var result = await _controller.GetGroups();
+            var result = await _controller.GetGroups(new Sieve.Models.SieveModel());
 
-            var categoriesResult = result as IEnumerable<Group>;
-
-            Assert.NotNull(categoriesResult);
-            Assert.Single(categoriesResult);
+            Assert.IsAssignableFrom<ForbidResult>(result);
         }
     }
 }

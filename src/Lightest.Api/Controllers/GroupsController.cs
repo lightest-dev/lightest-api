@@ -6,11 +6,14 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Api.Extensions;
 using Lightest.Api.Models;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.GroupViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -19,32 +22,71 @@ namespace Lightest.Api.Controllers
     public class GroupsController : BaseUserController
     {
         private readonly IAccessService<Group> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public GroupsController(
             RelationalDbContext context,
             IAccessService<Group> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
-        // GET: api/Groups
+        [HttpGet("all")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
+        [ProducesResponseType(403)]
+        public async Task<IActionResult> GetGroups([FromQuery]SieveModel sieveModel)
+        {
+            var user = await GetCurrentUser();
+            var groups = _context.Groups.AsNoTracking();
+
+            if (!_accessService.HasAdminAccess(user))
+            {
+                return Forbid();
+            }
+
+            groups = _sieveProcessor.Apply(sieveModel, groups);
+
+            return Ok(groups);
+        }
+
         [HttpGet]
-        public async Task<IEnumerable<Group>> GetGroups()
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
+        public async Task<IEnumerable<ListGroupView>> GetAvailableGroups([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
-            var groups = _context.Groups.AsNoTracking();
+            var groups = _context.Groups.AsNoTracking().Include(g => g.Users)
+                .Where(g => g.ParentId == null && g.Users.Select(u => u.UserId).Contains(user.Id));
 
-            if (!_accessService.CheckAdminAccess(null, user))
+            groups = _sieveProcessor.Apply(sieveModel, groups);
+
+            var result = groups.Select(c => new ListGroupView
             {
-                groups = groups.Include(g => g.Users)
-                .Where(g => g.Users.Select(u => u.UserId).Contains(user.Id));
+                Id = c.Id,
+                Name = c.Name,
+                Public = c.Public,
+                User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
+            }).ToList();
+
+            foreach (var group in result)
+            {
+                if (group.User == null)
+                {
+                    continue;
+                }
+                group.CanWrite = group.User.CanWrite;
+                group.CanRead = group.User.CanRead;
+                group.CanChangeAccess = group.User.CanChangeAccess;
             }
 
-            return groups;
+            return result;
         }
 
-        // GET: api/Groups/5
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteGroup))]
+        [ProducesResponseType(200, Type = typeof(CompleteGroupView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -65,16 +107,16 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckReadAccess(group, user))
+            if (!_accessService.HasReadAccess(group, user))
             {
                 return Forbid();
             }
 
-            CompleteGroup result;
+            CompleteGroupView result;
 
-            if (_accessService.CheckWriteAccess(group, user))
+            if (_accessService.HasWriteAccess(group, user))
             {
-                result = new CompleteGroup
+                result = new CompleteGroupView
                 {
                     Id = group.Id,
                     Name = group.Name,
@@ -93,7 +135,7 @@ namespace Lightest.Api.Controllers
             }
             else
             {
-                result = new CompleteGroup
+                result = new CompleteGroupView
                 {
                     Id = group.Id,
                     Name = group.Name,
@@ -106,7 +148,6 @@ namespace Lightest.Api.Controllers
             return Ok(result);
         }
 
-        // POST: api/Groups
         [HttpPost]
         [ProducesResponseType(201, Type = typeof(Group))]
         [ProducesResponseType(400)]
@@ -115,7 +156,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(group, user))
+            if (!_accessService.HasWriteAccess(group, user))
             {
                 return Forbid();
             }
@@ -159,7 +200,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(group, currentUser))
+            if (!_accessService.HasWriteAccess(group, currentUser))
             {
                 return Forbid();
             }
@@ -189,7 +230,6 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        // PUT: api/Groups/5
         [HttpPut("{id}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
@@ -211,7 +251,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(group, user))
+            if (!_accessService.HasWriteAccess(group, user))
             {
                 return Forbid();
             }
@@ -222,7 +262,6 @@ namespace Lightest.Api.Controllers
             return Ok();
         }
 
-        // DELETE: api/Groups/5
         [HttpDelete("{id}")]
         [ProducesResponseType(200, Type = typeof(Group))]
         [ProducesResponseType(400)]
@@ -238,7 +277,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(group, user))
+            if (!_accessService.HasWriteAccess(group, user))
             {
                 return Forbid();
             }

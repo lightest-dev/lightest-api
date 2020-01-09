@@ -19,7 +19,10 @@ namespace Lightest.Api.Controllers
         public LanguagesController(
             RelationalDbContext context,
             IAccessService<Language> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
+        {
+            _accessService = accessService;
+        }
 
         // GET: api/Languages
         [HttpGet]
@@ -35,7 +38,7 @@ namespace Lightest.Api.Controllers
         {
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(language, currentUser))
+            if (!_accessService.HasWriteAccess(language, currentUser))
             {
                 return Forbid();
             }
@@ -63,7 +66,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.CheckWriteAccess(language, currentUser))
+            if (!_accessService.HasWriteAccess(language, currentUser))
             {
                 return Forbid();
             }

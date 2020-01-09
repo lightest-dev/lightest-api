@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.TestingService.Requests;
+using Lightest.TestingService.RequestModels;
 using Moq;
 using Xunit;
 

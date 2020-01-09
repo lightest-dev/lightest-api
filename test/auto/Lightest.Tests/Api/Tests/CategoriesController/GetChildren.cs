@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.CategoryViews;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -23,7 +23,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Equal(2, categoriesResult.SubCategories.Count());
@@ -43,7 +43,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Single(categoriesResult.SubCategories);
@@ -64,7 +64,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Single(categoriesResult.SubCategories);
@@ -85,7 +85,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Single(categoriesResult.Tasks);
@@ -103,7 +103,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Single(categoriesResult.Tasks);
@@ -122,7 +122,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var categoriesResult = okResult.Value as CategoryChildrenViewModel;
+            var categoriesResult = okResult.Value as CategoryChildrenView;
 
             Assert.NotNull(categoriesResult);
             Assert.Empty(categoriesResult.Tasks);
@@ -134,7 +134,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckReadAccess(It.IsAny<Category>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Category>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

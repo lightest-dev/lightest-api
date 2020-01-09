@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.UserRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.ProfileController
     {
         private readonly PersonalDataRequest _personalData;
 
-        public PutUser() => _personalData = new PersonalDataRequest
+        public PutUser()
         {
-            Name = "new_name",
-            Surname = "new_surename",
-            UserId = _user.Id
-        };
+            _personalData = new PersonalDataRequest
+            {
+                Name = "new_name",
+                Surname = "new_surename",
+                UserId = _user.Id
+            };
+        }
 
         [Fact]
         public async Task Forbidden()
@@ -26,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             _context.Users.Add(_user);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<ApplicationUser>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<ApplicationUser>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
 using Lightest.Data.Models;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -9,7 +9,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
 {
     public class AddCheckerResult : BaseTest
     {
-        private readonly CheckerCompilationResult _result;
+        private readonly CheckerCompilationResponse _result;
         private readonly Checker _checker;
 
         public AddCheckerResult()
@@ -23,7 +23,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
                 Message = "non-empty message"
             };
 
-            _result = new CheckerCompilationResult
+            _result = new CheckerCompilationResponse
             {
                 Id = _checker.Id,
                 Compiled = true,

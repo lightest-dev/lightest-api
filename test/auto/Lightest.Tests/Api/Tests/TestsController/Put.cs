@@ -13,12 +13,15 @@ namespace Lightest.Tests.Api.Tests.TestsController
     {
         private readonly Test _modifiedTest;
 
-        public Put() => _modifiedTest = new Test
+        public Put()
         {
-            Id = _test.Id,
-            Input = "new_input",
-            Output = "new_output"
-        };
+            _modifiedTest = new Test
+            {
+                Id = _test.Id,
+                Input = "new_input",
+                Output = "new_output"
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()
@@ -42,7 +45,7 @@ namespace Lightest.Tests.Api.Tests.TestsController
             _context.Tests.Add(_test);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

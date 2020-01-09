@@ -12,12 +12,15 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
     {
         protected readonly Category _updatedChild;
 
-        public PutCategory() => _updatedChild = new Category
+        public PutCategory()
         {
-            Id = _child2.Id,
-            Name = "updatedName",
-            ParentId = null
-        };
+            _updatedChild = new Category
+            {
+                Id = _child2.Id,
+                Name = "updatedName",
+                ParentId = null
+            };
+        }
 
         [Fact]
         public async Task IdsDontMatch()
@@ -60,7 +63,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.CheckWriteAccess(It.IsAny<Category>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Category>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .Returns(false);
 

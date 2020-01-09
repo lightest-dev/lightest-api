@@ -21,6 +21,8 @@ namespace Lightest.Data.Models
 
         public bool Public { get; set; }
 
+        public bool Contest { get; set; }
+
         [JsonIgnore]
         public virtual ICollection<Category> SubCategories { get; set; }
 

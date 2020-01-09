@@ -19,7 +19,10 @@ namespace Lightest.Api.Controllers
         public TestsController(
             RelationalDbContext context,
             IAccessService<TaskDefinition> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager) : base(context, userManager)
+        {
+            _accessService = accessService;
+        }
 
         // GET: api/Tests/5
         [HttpGet("{id}")]
@@ -40,7 +43,7 @@ namespace Lightest.Api.Controllers
             }
 
             //user can only view test if he can edit it
-            if (!_accessService.CheckWriteAccess(test.Task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(test.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -57,12 +60,15 @@ namespace Lightest.Api.Controllers
         {
             var task = await _context.Tasks.FindAsync(test.TaskId);
 
+            test.Input = test.Input.Replace("\r\n", "\n");
+            test.Output = test.Output.Replace("\r\n", "\n");
+
             if (task == null)
             {
                 return BadRequest();
             }
 
-            if (!_accessService.CheckWriteAccess(task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -95,13 +101,13 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(dbEntry.Task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(dbEntry.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }
 
-            dbEntry.Input = test.Input;
-            dbEntry.Output = test.Output;
+            dbEntry.Input = test.Input.Replace("\r\n", "\n");
+            dbEntry.Output = test.Output.Replace("\r\n", "\n");
 
             await _context.SaveChangesAsync();
             return Ok();
@@ -124,7 +130,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(test.Task, await GetCurrentUser()))
+            if (!_accessService.HasWriteAccess(test.Task, await GetCurrentUser()))
             {
                 return Forbid();
             }

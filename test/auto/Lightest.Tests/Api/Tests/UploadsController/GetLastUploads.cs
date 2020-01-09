@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UploadViews;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
@@ -23,7 +23,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var uploadsResult = (okResult.Value as IEnumerable<LastUploadModel>).ToList();
+            var uploadsResult = (okResult.Value as IEnumerable<LastUploadView>).ToList();
             Assert.Equal(10, uploadsResult.Count());
             for (var i = 0; i < 10; i++)
             {
@@ -47,7 +47,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var uploadsResult = okResult.Value as IEnumerable<LastUploadModel>;
+            var uploadsResult = okResult.Value as IEnumerable<LastUploadView>;
             Assert.NotNull(uploadsResult);
 
             Assert.Equal(8, uploadsResult.Count());

@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Lightest.Api.RequestModels;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -9,13 +8,16 @@ namespace Lightest.Tests.Api.Tests.TestingController
 {
     public class ReportError : BaseTest
     {
-        private readonly TestingError _error;
+        private readonly TestingErrorResponse _error;
 
-        public ReportError() => _error = new TestingError
+        public ReportError()
         {
-            ErrorMessage = "error",
-            ServerVersion = "version"
-        };
+            _error = new TestingErrorResponse
+            {
+                ErrorMessage = "error",
+                ServerVersion = "version"
+            };
+        }
 
         [Fact]
         public async Task IpSet()
@@ -26,7 +28,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             Assert.IsAssignableFrom<OkResult>(result);
 
             _testingServiceMock.Verify(m => m.ReportBrokenServer(
-                It.Is<NewServer>(s => s.Ip == _error.Ip && s.ServerVersion == _error.ServerVersion)),
+                It.Is<ServerStatusResponse>(s => s.Ip == _error.Ip && s.ServerVersion == _error.ServerVersion)),
                 Times.Once);
         }
 
@@ -37,7 +39,7 @@ namespace Lightest.Tests.Api.Tests.TestingController
             Assert.IsAssignableFrom<OkResult>(result);
 
             _testingServiceMock.Verify(m => m.ReportBrokenServer(
-                It.Is<NewServer>(s => s.Ip == DefaultIp && s.ServerVersion == _error.ServerVersion)),
+                It.Is<ServerStatusResponse>(s => s.Ip == DefaultIp && s.ServerVersion == _error.ServerVersion)),
                 Times.Once);
         }
     }

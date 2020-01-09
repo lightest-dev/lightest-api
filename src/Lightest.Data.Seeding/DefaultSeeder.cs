@@ -6,6 +6,7 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.Data.Seeding.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Lightest.Data.Seeding.Properties;
 
 namespace Lightest.Data.Seeding
 {
@@ -118,40 +119,39 @@ namespace Lightest.Data.Seeding
 
         protected async Task AddSampleCheckers()
         {
-            var checker = new Checker
+            Context.Checkers.Add(new Checker
             {
                 Id = Guid.NewGuid(),
-                Name = "Sample two number checker",
-                Code = @"#include ""testlib.h""
+                Name = "Integer sequence",
+                Code = Resources.IntSequenceChecker
+            });
 
-int main(int argc, char *argv[])
-{
-    registerTestlibCmd(argc, argv);
-    int pans1 = ouf.readInt(-2000, 2000, ""sum of numbers"");
-    int jans1 = ans.readInt();
+            Context.Checkers.Add(new Checker
+            {
+                Id = Guid.NewGuid(),
+                Name = "Double sequence",
+                Code = Resources.DoubleSequenceChecker
+            });
 
-    int pans2 = ouf.readInt(-2000, 2000, ""sum of numbers"");
-    int jans2 = ans.readInt();
+            Context.Checkers.Add(new Checker
+            {
+                Id = Guid.NewGuid(),
+                Name = "Text (line by line comparer)",
+                Code = Resources.LineSequenceChecker
+            });
 
-    if (pans1 == jans1 && pans2 == jans2)
-        quitf(_ok, ""The sum is correct."");
-    else
-        quitf(_wa, ""The sum is wrong"");
-}"
-            };
-            Context.Checkers.Add(checker);
             await Context.SaveChangesAsync();
         }
 
         protected async Task AddSampleTasks()
         {
-            var checker = Context.Checkers.First();
+            var checker = Context.Checkers.First(c => c.Name == "Integer sequence");
             var privateCategory = Context.Categories.First(c => !c.Public);
             var publicCategory = Context.Categories.First(c => c.Public);
             var privateTask = new TaskDefinition
             {
                 Id = Guid.NewGuid(),
-                Description = @"You are given 2 numbers separated by new line. Print the sum and the difference of numbers.",
+                Description = "You are given 2 numbers separated by new line. Print the sum and the difference of numbers.",
                 Name = "Sum and difference",
                 Points = 100,
                 Category = privateCategory,

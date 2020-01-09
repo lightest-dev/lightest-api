@@ -10,7 +10,10 @@ namespace Lightest.TestingService.DefaultServices
     {
         private readonly RelationalDbContext _context;
 
-        public ServerRepository(RelationalDbContext context) => _context = context;
+        public ServerRepository(RelationalDbContext context)
+        {
+            _context = context;
+        }
 
         public int ServersCount => _context.Servers.Count();
 
@@ -64,7 +67,7 @@ namespace Lightest.TestingService.DefaultServices
             var serverExists = _context.Servers.Any(s => s.Ip == server.Ip);
             if (!serverExists)
             {
-                throw new ArgumentException(nameof(server));
+                throw new ArgumentException("Server does not exist", nameof(server));
             }
 
             var cachedChecker = new ServerChecker

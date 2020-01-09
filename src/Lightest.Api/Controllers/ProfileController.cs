@@ -2,13 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
-using Lightest.Api.RequestModels;
+using Lightest.Api.RequestModels.UserRequests;
 using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UserViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Lightest.Api.Controllers
 {
@@ -17,27 +20,38 @@ namespace Lightest.Api.Controllers
     public class ProfileController : BaseUserController
     {
         private readonly IAccessService<ApplicationUser> _accessService;
+        private readonly ISieveProcessor _sieveProcessor;
 
         public ProfileController(RelationalDbContext context,
             IAccessService<ApplicationUser> accessService,
-            UserManager<ApplicationUser> userManager) : base(context, userManager) => _accessService = accessService;
+            UserManager<ApplicationUser> userManager,
+            ISieveProcessor sieveProcessor) : base(context, userManager)
+        {
+            _accessService = accessService;
+            _sieveProcessor = sieveProcessor;
+        }
 
-        [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileViewModel>))]
+        [HttpGet("all")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileView>))]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetUsers()
+        public async Task<IActionResult> GetUsers([FromQuery]SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckWriteAccess(null, user))
+
+            if (!_accessService.HasWriteAccess(null, user))
             {
                 return Forbid();
             }
-            return Ok(_context.Users.Select(u => new ProfileViewModel
+
+            var users = _sieveProcessor.Apply(sieveModel, _context.Users);
+
+            return Ok(users.Select(u => new ProfileView
             {
                 Id = u.Id,
                 Email = u.Email,
                 Name = u.Name,
-                Surname = u.Surname
+                Surname = u.Surname,
+                UserName = u.UserName
             }));
         }
 
@@ -48,7 +62,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsersInRole(string roleName)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckWriteAccess(null, user))
+            if (!_accessService.HasWriteAccess(null, user))
             {
                 return Forbid();
             }
@@ -67,7 +81,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(200, Type = typeof(CompleteUser))]
+        [ProducesResponseType(200, Type = typeof(CompleteUserView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -87,25 +101,18 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(requestedUser, currentUser))
+            if (!_accessService.HasReadAccess(requestedUser, currentUser))
             {
                 return Forbid();
             }
 
-            return Ok(new CompleteUser
+            return Ok(new CompleteUserView
             {
                 Name = requestedUser.Name,
                 Surname = requestedUser.Surname,
                 Email = requestedUser.Email,
                 Login = requestedUser.UserName,
-                Tasks = requestedUser.Tasks.Select(t => new UserTaskViewModel
-                {
-                    Id = t.Task.Id,
-                    Name = t.Task.Name,
-                    Completed = t.Completed,
-                    HighScore = t.HighScore
-                }),
-                Groups = requestedUser.Groups.Select(g => new BasicNameViewModel
+                Groups = requestedUser.Groups.Select(g => new BasicNameView
                 {
                     Id = g.GroupId,
                     Name = g.Group.Name
@@ -134,7 +141,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckWriteAccess(requestedUser, currentUser))
+            if (!_accessService.HasWriteAccess(requestedUser, currentUser))
             {
                 return Forbid();
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
-using Lightest.Api.ResponseModels;
+using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -31,7 +31,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{taskId}")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadModel>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
         public async Task<IActionResult> GetLastUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
@@ -40,7 +40,7 @@ namespace Lightest.Api.Controllers
                 .Where(u => u.UserId == user.Id && u.TaskId == taskId)
                 .OrderByDescending(u => u.UploadDate)
                 .Take(10)
-                .Select(u => new LastUploadModel
+                .Select(u => new LastUploadView
                 {
                     Id = u.Id,
                     Message = u.Message,
@@ -52,11 +52,11 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{taskId}/all")]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadModel>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
         public async Task<IActionResult> GetAllUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
-            if (!_accessService.CheckWriteAccess(null, user))
+            if (!_accessService.HasWriteAccess(null, user))
             {
                 return Forbid();
             }
@@ -64,7 +64,7 @@ namespace Lightest.Api.Controllers
                 .AsNoTracking()
                 .Where(u => u.TaskId == taskId)
                 .OrderByDescending(u => u.UploadDate)
-                .Select(u => new LastUploadModel
+                .Select(u => new LastUploadView
                 {
                     Id = u.Id,
                     Message = u.Message,
@@ -76,7 +76,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{id}/result")]
-        [ProducesResponseType(200, Type = typeof(UserUploadResult))]
+        [ProducesResponseType(200, Type = typeof(UploadResultView))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         public async Task<IActionResult> GetResult([FromRoute] Guid id)
@@ -91,12 +91,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.CheckReadAccess(upload, user))
+            if (!_accessService.HasReadAccess(upload, user))
             {
                 return Forbid();
             }
 
-            var result = new UserUploadResult
+            var result = new UploadResultView
             {
                 Id = id,
                 Status = upload.Status,
@@ -128,7 +128,7 @@ namespace Lightest.Api.Controllers
 
             upload.Task = task;
 
-            if (!_accessService.CheckWriteAccess(upload, user))
+            if (!_accessService.HasWriteAccess(upload, user))
             {
                 return Forbid();
             }

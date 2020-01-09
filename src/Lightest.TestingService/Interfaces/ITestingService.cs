@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data.Models.TaskModels;
-using Lightest.TestingService.Models;
+using Lightest.TestingService.ResponsModels;
 
 namespace Lightest.TestingService.Interfaces
 {
@@ -8,11 +8,11 @@ namespace Lightest.TestingService.Interfaces
     {
         Task<bool> BeginTesting(Upload upload);
 
-        Task ReportResult(CheckerResult result);
+        Task ReportResult(CheckingResponse result);
 
-        Task ReportNewServer(NewServer server);
+        Task ReportNewServer(ServerStatusResponse server);
 
-        Task ReportBrokenServer(NewServer server);
+        Task ReportBrokenServer(ServerStatusResponse server);
 
         Task StartNextTesting();
     }

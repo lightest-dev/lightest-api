@@ -11,12 +11,15 @@ namespace Lightest.AccessService.RoleBasedAccessServices
 
         public UploadsAccessService(
             UserManager<ApplicationUser> userManager,
-            IAccessService<TaskDefinition> accessService) : base(userManager) => _accessService = accessService;
+            IAccessService<TaskDefinition> accessService) : base(userManager)
+        {
+            _accessService = accessService;
+        }
 
-        public bool CheckAdminAccess(Upload upload, ApplicationUser requester) => IsAdmin(requester);
+        public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester);
 
-        public bool CheckReadAccess(Upload upload, ApplicationUser requester) => _accessService.CheckReadAccess(upload.Task, requester);
+        public bool HasReadAccess(Upload upload, ApplicationUser requester) => _accessService.HasReadAccess(upload.Task, requester);
 
-        public bool CheckWriteAccess(Upload upload, ApplicationUser requester) => _accessService.CheckReadAccess(upload.Task, requester);
+        public bool HasWriteAccess(Upload upload, ApplicationUser requester) => _accessService.HasReadAccess(upload.Task, requester);
     }
 }
