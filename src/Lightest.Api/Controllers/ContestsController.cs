@@ -21,7 +21,7 @@ namespace Lightest.Api.Controllers
         {
         }
 
-        [HttpPost("by-name")]
+        [HttpPost("add-users")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<AddToContestView>))]
         [ProducesResponseType(403)]
         [ProducesResponseType(400)]
@@ -78,7 +78,7 @@ namespace Lightest.Api.Controllers
             return result;
         }
 
-        [HttpPost("start/{contestId}")]
+        [HttpPost("{contestId}/start")]
         public async Task<ActionResult<ContestSettings>> StartContest(Guid contestId)
         {
             // TODO: implement assignment helper, which assigns tasks to all users from a list,
@@ -104,7 +104,7 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPost("reset/{contestId}")]
+        [HttpPost("{contestId}/reset")]
         public async Task<ActionResult<ContestSettings>> ResetContest(Guid contestId)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -120,7 +120,7 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPost("stop/{contestId}")]
+        [HttpPost("{contestId}/stop")]
         public async Task<ActionResult<ContestSettings>> StopContest(Guid contestId)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -135,7 +135,8 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPut("settings/{contestId}")]
+        // TODO: Add get method
+        [HttpPut("{contestId}/settings")]
         public async Task<ActionResult<ContestSettings>> ChangeSettings([FromRoute]Guid contestId, [FromBody]UpdateSettingsRequest settings)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -185,6 +186,7 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
+        [HttpGet("{contestId}/table")]
         public async Task<ActionResult<ContestTableView>> GetContestTable(Guid contestId)
         {
             var contest = await _context.Categories.AsNoTracking()
