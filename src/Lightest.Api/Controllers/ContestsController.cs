@@ -30,17 +30,19 @@ namespace Lightest.Api.Controllers
         {
             if (string.IsNullOrEmpty(request.Pattern))
             {
-                return BadRequest(nameof(request.Pattern));
+                ModelState.AddModelError(nameof(request.Pattern), "Pattern required");
+                return BadRequest(ModelState);
             }
 
             if (request.ContestId == default)
             {
-                return BadRequest(nameof(request.ContestId));
+                ModelState.AddModelError(nameof(request.ContestId), "ContestId required");
+                return BadRequest(ModelState);
             }
 
-            var category = _context.Categories
+            var category = await _context.Categories
                 .AsNoTracking().Include(c => c.Users)
-                .First(c => c.Id == request.ContestId);
+                .FirstOrDefaultAsync(c => c.Id == request.ContestId);
 
             if (category == null)
             {
@@ -79,6 +81,8 @@ namespace Lightest.Api.Controllers
         [HttpPost("start/{contestId}")]
         public async Task<ActionResult<ContestSettings>> StartContest(Guid contestId)
         {
+            // TODO: implement assignment helper, which assigns tasks to all users from a list,
+            // removes assignments from users, clears uploads.
             var dbSettings = _context.Contests.Find(contestId);
             if (dbSettings == null)
             {
@@ -154,7 +158,7 @@ namespace Lightest.Api.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return Ok(dbSettings);
+            return dbSettings;
         }
 
         private async Task<ActionResult<ContestSettings>> CreateDefaultSettings(Guid contestId)
@@ -181,10 +185,10 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        public ActionResult<ContestTableView> GetContestTable(Guid contestId)
+        public async Task<ActionResult<ContestTableView>> GetContestTable(Guid contestId)
         {
-            var contest = _context.Categories.AsNoTracking()
-                .First(c => c.Id == contestId);
+            var contest = await _context.Categories.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == contestId);
 
             if (contest == null)
             {
