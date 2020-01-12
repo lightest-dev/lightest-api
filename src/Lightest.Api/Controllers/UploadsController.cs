@@ -91,7 +91,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasReadAccess(upload, user))
+            if (!(await _accessService.HasReadAccess(upload.Id, user)))
             {
                 return Forbid();
             }

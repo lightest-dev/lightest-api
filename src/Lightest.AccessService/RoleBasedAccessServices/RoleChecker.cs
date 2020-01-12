@@ -1,4 +1,5 @@
-﻿using Lightest.Data.Models;
+﻿using System.Threading.Tasks;
+using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
@@ -12,12 +13,10 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             _userManager = userManager;
         }
 
-        protected bool IsAdmin(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Admin")
-                .ConfigureAwait(false).GetAwaiter().GetResult();
+        protected Task<bool> IsAdmin(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Admin");
 
-        protected bool IsTeacher(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Teacher")
-                .ConfigureAwait(false).GetAwaiter().GetResult();
+        protected Task<bool> IsTeacher(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Teacher");
 
-        protected bool IsTeacherOrAdmin(ApplicationUser user) => IsTeacher(user) || IsAdmin(user);
+        protected async Task<bool> IsTeacherOrAdmin(ApplicationUser user) => await IsTeacher(user) || await IsAdmin(user);
     }
 }

@@ -1,4 +1,6 @@
-﻿using Lightest.AccessService.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 
@@ -8,7 +10,7 @@ namespace Lightest.AccessService.MockAccessServices
     {
         public bool HasAdminAccess(ApplicationUser requester) => true;
 
-        public bool HasReadAccess(Language language, ApplicationUser requester) => true;
+        public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
         public bool HasWriteAccess(Language language, ApplicationUser requester) => true;
     }

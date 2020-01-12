@@ -107,7 +107,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!_accessService.HasReadAccess(group, user))
+            if (!(await _accessService.HasReadAccess(group.Id, user)))
             {
                 return Forbid();
             }

@@ -32,7 +32,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BasicCheckerView>))]
         public async Task<IActionResult> GetCheckers()
         {
-            if (!_accessService.HasReadAccess(null, await GetCurrentUser()))
+            if (!(await _accessService.HasReadAccess(default, await GetCurrentUser())))
             {
                 return Forbid();
             }
@@ -55,7 +55,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasReadAccess(checker, await GetCurrentUser()))
+            if (!(await _accessService.HasReadAccess(checker.Id, await GetCurrentUser())))
             {
                 return Forbid();
             }
