@@ -4,7 +4,8 @@ using Lightest.TestingService.RequestModels;
 namespace Lightest.TestingService.Interfaces
 {
     /// <summary>
-    /// Use to transfer data to testing container. Listener in container should understand the format of data.
+    /// Use to transfer data to testing container. Listener in container should understand the
+    /// format of data.
     /// </summary>
     public interface ITransferService
     {

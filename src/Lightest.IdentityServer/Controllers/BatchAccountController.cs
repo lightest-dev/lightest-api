@@ -89,7 +89,6 @@ namespace Lightest.IdentityServer.Controllers
             };
 
             return response;
-
         }
     }
 }

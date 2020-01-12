@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.RequestModels.ContestRequests;
-using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 

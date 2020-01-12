@@ -35,8 +35,8 @@ namespace Lightest.IdentityServer.Controllers
         [Route("login")]
         public async Task<IActionResult> Login([FromBody]LogInRequest model)
         {
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+            // This doesn't count login failures towards account lockout To enable password failures
+            // to trigger account lockout, set lockoutOnFailure: true
             var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, lockoutOnFailure: false);
             if (result.Succeeded)
             {
@@ -70,7 +70,8 @@ namespace Lightest.IdentityServer.Controllers
             // set this so UI rendering sees an anonymous user
             HttpContext.User = new ClaimsPrincipal(new ClaimsIdentity());
 
-            // get context information (client name, post logout redirect URI and iframe for federated signout)
+            // get context information (client name, post logout redirect URI and iframe for
+            // federated signout)
 
             await _persistedGrantService.RemoveAllGrantsAsync(subjectId, model.ClientName);
             return Ok();

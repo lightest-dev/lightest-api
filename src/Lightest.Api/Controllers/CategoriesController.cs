@@ -73,7 +73,6 @@ namespace Lightest.Api.Controllers
                 User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
             }).ToList();
 
-
             foreach (var category in result)
             {
                 if (category.User == null)

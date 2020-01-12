@@ -11,24 +11,30 @@ namespace Lightest.Api.Extensions
     public static class IdentityServiceExtensions
     {
         /// <summary>
-        /// Adds the default identity system configuration for the specified User and Role types. (Without Authentication Scheme)
+        /// Adds the default identity system configuration for the specified User and Role types.
+        /// (Without Authentication Scheme)
         /// </summary>
         /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
         /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
         /// <param name="services">The services available in the application.</param>
-        /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
+        /// <returns>
+        /// An <see cref="IdentityBuilder"/> for creating and configuring the identity system.
+        /// </returns>
         public static IdentityBuilder AddIdentityWithoutAuthenticator<TUser, TRole>(this IServiceCollection services)
             where TUser : class
             where TRole : class => services.AddIdentityWithoutAuthenticator<TUser, TRole>(setupAction: null);
 
         /// <summary>
-        /// Adds and configures the identity system for the specified User and Role types. (Without Authentication Scheme)
+        /// Adds and configures the identity system for the specified User and Role types. (Without
+        /// Authentication Scheme)
         /// </summary>
         /// <typeparam name="TUser">The type representing a User in the system.</typeparam>
         /// <typeparam name="TRole">The type representing a Role in the system.</typeparam>
         /// <param name="services">The services available in the application.</param>
         /// <param name="setupAction">An action to configure the <see cref="IdentityOptions"/>.</param>
-        /// <returns>An <see cref="IdentityBuilder"/> for creating and configuring the identity system.</returns>
+        /// <returns>
+        /// An <see cref="IdentityBuilder"/> for creating and configuring the identity system.
+        /// </returns>
         public static IdentityBuilder AddIdentityWithoutAuthenticator<TUser, TRole>(
             this IServiceCollection services, Action<IdentityOptions> setupAction)
             where TUser : class

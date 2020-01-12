@@ -86,7 +86,6 @@ namespace Lightest.IdentityServer
                 });
             });
 
-
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<RelationalDbContext>()
                 .AddDefaultTokenProviders();
