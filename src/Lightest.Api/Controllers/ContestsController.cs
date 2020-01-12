@@ -162,6 +162,34 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
+        [HttpGet("{contestId}/settings")]
+        public async Task<ActionResult<ContestSettings>> GetSettings([FromRoute]Guid contestId)
+        {
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                var category = await _context.Categories.AsNoTracking()
+                                .Select(c => new { c.Contest, c.Id })
+                                .FirstOrDefaultAsync(c => c.Id == contestId);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                if (!category.Contest)
+                {
+                    ModelState.AddModelError(nameof(contestId), $"Category with id {contestId.ToString()} is not a contest");
+                    return BadRequest(ModelState);
+                }
+
+                dbSettings = ContestSettings.Default;
+            }
+
+            await _context.SaveChangesAsync();
+            return dbSettings;
+        }
+
         private async Task<ActionResult<ContestSettings>> CreateDefaultSettings(Guid contestId)
         {
             var category = await _context.Categories.AsNoTracking()

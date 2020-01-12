@@ -18,6 +18,8 @@ namespace Lightest.Data.Models
 
         public TimeSpan? Length { get; set; }
 
+        public bool Upsolving { get; set; }
+
         [JsonIgnore]
         public static ContestSettings Default => new ContestSettings
         {
