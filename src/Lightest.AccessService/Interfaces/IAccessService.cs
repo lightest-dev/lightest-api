@@ -1,4 +1,6 @@
-﻿using Lightest.Data.Models;
+﻿using System;
+using System.Threading.Tasks;
+using Lightest.Data.Models;
 
 namespace Lightest.AccessService.Interfaces
 {
@@ -6,7 +8,7 @@ namespace Lightest.AccessService.Interfaces
     {
         bool HasAdminAccess(ApplicationUser requester);
 
-        bool HasReadAccess(T requested, ApplicationUser requester);
+        Task<bool> HasReadAccess(Guid id, ApplicationUser requester);
 
         bool HasWriteAccess(T requested, ApplicationUser requester);
     }

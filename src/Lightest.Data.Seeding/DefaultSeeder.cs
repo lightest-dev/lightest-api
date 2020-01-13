@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.Data.Seeding.Interfaces;
-using Microsoft.AspNetCore.Identity;
 using Lightest.Data.Seeding.Properties;
+using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.Data.Seeding
 {

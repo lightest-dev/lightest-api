@@ -17,9 +17,9 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Group>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.GetGroup(_parent.Id);
             Assert.IsAssignableFrom<ForbidResult>(result);

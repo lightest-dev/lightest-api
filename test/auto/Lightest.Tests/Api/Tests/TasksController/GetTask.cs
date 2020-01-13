@@ -74,9 +74,9 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.GetTask(_task.Id);
 

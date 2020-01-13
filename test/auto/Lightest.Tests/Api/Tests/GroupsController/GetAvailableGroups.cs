@@ -9,7 +9,6 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 {
     public class GetAvailableGroups : BaseTest
     {
-
         [Fact]
         public async Task HasAssignedGroup()
         {

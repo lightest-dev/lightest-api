@@ -1,4 +1,6 @@
-﻿using Lightest.AccessService.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
+using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,10 +12,15 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
-        public bool HasAdminAccess(ApplicationUser requester) => IsTeacherOrAdmin(requester);
+        public bool HasAdminAccess(ApplicationUser requester) => IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
 
-        public bool HasReadAccess(ApplicationUser requested, ApplicationUser requester) => requester?.Id == requested.Id || IsTeacherOrAdmin(requester);
+        public async Task<bool> HasReadAccess(Guid id, ApplicationUser requester)
+        {
+            var userId = id.ToString();
+            var sameUser = userId == requester.Id;
+            return sameUser || await IsTeacherOrAdmin(requester);
+        }
 
-        public bool HasWriteAccess(ApplicationUser requested, ApplicationUser requester) => requested?.Id == requester.Id || IsTeacherOrAdmin(requester);
+        public bool HasWriteAccess(ApplicationUser requested, ApplicationUser requester) => requested?.Id == requester.Id || IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
     }
 }

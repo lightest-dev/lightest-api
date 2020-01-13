@@ -73,7 +73,6 @@ namespace Lightest.Api.Controllers
                 User = c.Users.FirstOrDefault(u => u.UserId == user.Id)
             }).ToList();
 
-
             foreach (var category in result)
             {
                 if (category.User == null)
@@ -105,7 +104,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasReadAccess(parent, user))
+            if (!(await _accessService.HasReadAccess(parent.Id, user)))
             {
                 return Forbid();
             }

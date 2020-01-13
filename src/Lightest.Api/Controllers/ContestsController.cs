@@ -21,7 +21,7 @@ namespace Lightest.Api.Controllers
         {
         }
 
-        [HttpPost("by-name")]
+        [HttpPost("add-users")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<AddToContestView>))]
         [ProducesResponseType(403)]
         [ProducesResponseType(400)]
@@ -30,17 +30,19 @@ namespace Lightest.Api.Controllers
         {
             if (string.IsNullOrEmpty(request.Pattern))
             {
-                return BadRequest(nameof(request.Pattern));
+                ModelState.AddModelError(nameof(request.Pattern), "Pattern required");
+                return BadRequest(ModelState);
             }
 
             if (request.ContestId == default)
             {
-                return BadRequest(nameof(request.ContestId));
+                ModelState.AddModelError(nameof(request.ContestId), "ContestId required");
+                return BadRequest(ModelState);
             }
 
-            var category = _context.Categories
+            var category = await _context.Categories
                 .AsNoTracking().Include(c => c.Users)
-                .First(c => c.Id == request.ContestId);
+                .FirstOrDefaultAsync(c => c.Id == request.ContestId);
 
             if (category == null)
             {
@@ -76,9 +78,11 @@ namespace Lightest.Api.Controllers
             return result;
         }
 
-        [HttpPost("start/{contestId}")]
+        [HttpPost("{contestId}/start")]
         public async Task<ActionResult<ContestSettings>> StartContest(Guid contestId)
         {
+            // TODO: implement assignment helper, which assigns tasks to all users from a list,
+            // removes assignments from users, clears uploads.
             var dbSettings = _context.Contests.Find(contestId);
             if (dbSettings == null)
             {
@@ -100,7 +104,7 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPost("reset/{contestId}")]
+        [HttpPost("{contestId}/reset")]
         public async Task<ActionResult<ContestSettings>> ResetContest(Guid contestId)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -116,7 +120,7 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPost("stop/{contestId}")]
+        [HttpPost("{contestId}/stop")]
         public async Task<ActionResult<ContestSettings>> StopContest(Guid contestId)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -131,7 +135,8 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        [HttpPut("settings/{contestId}")]
+        // TODO: Add get method
+        [HttpPut("{contestId}/settings")]
         public async Task<ActionResult<ContestSettings>> ChangeSettings([FromRoute]Guid contestId, [FromBody]UpdateSettingsRequest settings)
         {
             var dbSettings = _context.Contests.Find(contestId);
@@ -154,7 +159,35 @@ namespace Lightest.Api.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return Ok(dbSettings);
+            return dbSettings;
+        }
+
+        [HttpGet("{contestId}/settings")]
+        public async Task<ActionResult<ContestSettings>> GetSettings([FromRoute]Guid contestId)
+        {
+            var dbSettings = _context.Contests.Find(contestId);
+            if (dbSettings == null)
+            {
+                var category = await _context.Categories.AsNoTracking()
+                                .Select(c => new { c.Contest, c.Id })
+                                .FirstOrDefaultAsync(c => c.Id == contestId);
+
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                if (!category.Contest)
+                {
+                    ModelState.AddModelError(nameof(contestId), $"Category with id {contestId.ToString()} is not a contest");
+                    return BadRequest(ModelState);
+                }
+
+                dbSettings = ContestSettings.Default;
+            }
+
+            await _context.SaveChangesAsync();
+            return dbSettings;
         }
 
         private async Task<ActionResult<ContestSettings>> CreateDefaultSettings(Guid contestId)
@@ -181,10 +214,11 @@ namespace Lightest.Api.Controllers
             return dbSettings;
         }
 
-        public ActionResult<ContestTableView> GetContestTable(Guid contestId)
+        [HttpGet("{contestId}/table")]
+        public async Task<ActionResult<ContestTableView>> GetContestTable(Guid contestId)
         {
-            var contest = _context.Categories.AsNoTracking()
-                .First(c => c.Id == contestId);
+            var contest = await _context.Categories.AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Id == contestId);
 
             if (contest == null)
             {

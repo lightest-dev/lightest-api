@@ -6,7 +6,6 @@ using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using Sieve.Services;
 
 namespace Lightest.Tests.Api.Tests.ContestsController
 {
@@ -59,18 +58,14 @@ namespace Lightest.Tests.Api.Tests.ContestsController
                 Languages = new List<TaskLanguage>(),
                 Users = new List<UserTask>()
             };
-            _task.Users.Add(new UserTask
-            {
-                UserId = _user.Id,
-                TaskId = _task.Id
-            });
 
             _category = new Category
             {
                 Id = Guid.NewGuid(),
                 Name = "parent",
                 Public = true,
-                Contest = true
+                Contest = true,
+                Users = new List<CategoryUser>()
             };
 
             _category.Tasks = new List<TaskDefinition>

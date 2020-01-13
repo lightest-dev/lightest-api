@@ -97,7 +97,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasReadAccess(task, user))
+            if (!(await _accessService.HasReadAccess(task.Id, user)))
             {
                 return Forbid();
             }

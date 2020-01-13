@@ -1,22 +1,34 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
+using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
     public class TasksAccessService : RoleChecker, IAccessService<TaskDefinition>
     {
-        public TasksAccessService(UserManager<ApplicationUser> userManager) : base(userManager)
+        private readonly RelationalDbContext _context;
+
+        public TasksAccessService(RelationalDbContext context, UserManager<ApplicationUser> userManager) : base(userManager)
         {
+            _context = context;
         }
 
-        public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester);
+        public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester).GetAwaiter().GetResult();
 
-        public bool HasReadAccess(TaskDefinition task, ApplicationUser requester) => task?.Users?.Any(u => u.UserId == requester.Id) == true || IsTeacherOrAdmin(requester)
-                           || task?.Public == true;
+        public async Task<bool> HasReadAccess(Guid id, ApplicationUser requester)
+        {
+            var userExists = _context.Tasks.Include(t => t.Users)
+                .Any(t => t.Id == id
+                    && (t.Public || t.Users.Any(u => u.UserId == requester.Id)));
+            return userExists || await IsTeacherOrAdmin(requester);
+        }
 
-        public bool HasWriteAccess(TaskDefinition task, ApplicationUser requester) => IsTeacherOrAdmin(requester);
+        public bool HasWriteAccess(TaskDefinition task, ApplicationUser requester) => IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
     }
 }
