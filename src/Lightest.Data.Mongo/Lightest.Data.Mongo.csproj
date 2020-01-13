@@ -5,16 +5,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Configuration.EntityFramework" Version="1.0.1.123" />
-      <PackageReference Include="GH.MongoDb.GenericRepository" Version="3.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
-      <PackageReference Include="mongocsharpdriver" Version="2.10.0" />
+      <Compile Remove="Models\Mongo.cs" />
+    </ItemGroup>
+
+    <ItemGroup>
       <PackageReference Include="MongoDB.Bson" Version="2.10.0" />
-      <PackageReference Include="MongoDB.Driver" Version="2.10.0" />
-      <PackageReference Include="MongoDB.Driver.Core" Version="2.10.0" />
-      <PackageReference Include="MongoDB.Extensions.Repository" Version="2.0.57" />
-      <PackageReference Include="MongoDbGenericRepository" Version="1.4.1" />
-      <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
     </ItemGroup>
 
 </Project>
