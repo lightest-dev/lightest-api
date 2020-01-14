@@ -1,5 +1,6 @@
 using System;
 using Lightest.Data.Mongo.Models.Options;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Lightest.Data.Mongo.Models.Services
@@ -9,12 +10,13 @@ namespace Lightest.Data.Mongo.Models.Services
         private readonly IMongoCollection<UploadData> _uploadData;
         
         protected string CollectionName => nameof(UploadData);
-        
-        public UploadDataService(MongoDBStoreDatabaseSettings settings)
-        {
-            var client = new MongoClient(settings.ConnectionString);
-            var database = client.GetDatabase(settings.DatabaseName);
 
+        private readonly MongoDBStoreDatabaseSettings _mongoDBStoreDatabaseSettings;
+        
+        IMongoDatabase database;
+        public UploadDataService(IOptionsMonitor<MongoDBStoreDatabaseSettings> optionsMonitor)
+        {
+            _mongoDBStoreDatabaseSettings = optionsMonitor.CurrentValue;
             _uploadData = database.GetCollection<UploadData>(CollectionName);
         }
         
