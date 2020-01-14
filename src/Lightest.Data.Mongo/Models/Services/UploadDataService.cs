@@ -27,7 +27,7 @@ namespace Lightest.Data.Mongo.Models.Services
             return uploadData;
         }
         
-        public void Remove(Guid id) => 
+        public void Delete(Guid id) => 
             _uploadData.DeleteOne(uploadData => uploadData.Id == id);
 
     }
