@@ -5,7 +5,7 @@ using MongoDB.Driver;
 
 namespace Lightest.Data.Mongo.Models.Services
 {
-    public class UploadDataService
+    public class UploadDataService : IUploadDataRepository
     {
         private readonly IMongoCollection<UploadData> _uploadData;
         
