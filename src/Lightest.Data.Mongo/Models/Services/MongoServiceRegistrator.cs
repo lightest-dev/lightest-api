@@ -7,7 +7,8 @@ namespace Lightest.Data.Mongo.Models.Services
     {
         public static IServiceCollection AddMongoCodeRepository(IServiceCollection services, IConfiguration config)
         {
-            services.AddScoped<IUploadDataRepository, UploadDataService>();
+            services.AddSingleton<IUploadDataRepository, UploadDataService>();
+            services.Configure<UploadDataService>(config);
             return services;
         }
     }
