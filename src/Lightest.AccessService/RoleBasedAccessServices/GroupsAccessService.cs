@@ -28,6 +28,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return userExists || await IsTeacherOrAdmin(requester);
         }
 
-        public bool HasWriteAccess(Group group, ApplicationUser requester) => IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacherOrAdmin(requester);
     }
 }

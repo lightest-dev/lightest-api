@@ -97,7 +97,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!(await _accessService.HasReadAccess(task.Id, user)))
+            if (!await _accessService.HasReadAccess(task.Id, user))
             {
                 return Forbid();
             }
@@ -127,7 +127,7 @@ namespace Lightest.Api.Controllers
                 })
             };
 
-            if (!_accessService.HasWriteAccess(task, user))
+            if (!await _accessService.HasWriteAccess(task.Id, user))
             {
                 result.Tests = null;
                 result.Checker = null;
@@ -154,7 +154,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -179,7 +179,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.HasWriteAccess(task, user))
+            if (!await _accessService.HasWriteAccess(task.Id, user))
             {
                 return Forbid();
             }
@@ -224,7 +224,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -270,7 +270,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -302,7 +302,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -343,7 +343,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -384,7 +384,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(task, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }

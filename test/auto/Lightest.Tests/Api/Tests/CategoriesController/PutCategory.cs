@@ -63,9 +63,9 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Category>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.PutCategory(_updatedChild.Id, _updatedChild);
 

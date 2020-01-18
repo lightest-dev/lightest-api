@@ -32,7 +32,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BasicCheckerView>))]
         public async Task<IActionResult> GetCheckers()
         {
-            if (!(await _accessService.HasReadAccess(default, await GetCurrentUser())))
+            if (!await _accessService.HasReadAccess(default, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -55,7 +55,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!(await _accessService.HasReadAccess(checker.Id, await GetCurrentUser())))
+            if (!await _accessService.HasReadAccess(checker.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -75,7 +75,7 @@ namespace Lightest.Api.Controllers
                 Code = checker.Code
             };
 
-            if (!_accessService.HasWriteAccess(entry, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -105,7 +105,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!_accessService.HasWriteAccess(entry, await GetCurrentUser()))
+            if (!await _accessService.HasWriteAccess(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -133,18 +133,18 @@ namespace Lightest.Api.Controllers
         {
             var checker = await _context.Checkers.FindAsync(id);
 
-            if (!_accessService.HasWriteAccess(checker, await GetCurrentUser()))
-            {
-                return Forbid();
-            }
-
             if (checker == null)
             {
                 return NotFound();
             }
 
+            if (!await _accessService.HasWriteAccess(checker.Id, await GetCurrentUser()))
+            {
+                return Forbid();
+            }
+
             _context.Checkers.Remove(checker);
-            //catch exception
+            // TODO: catch exception
             await _context.SaveChangesAsync();
 
             return Ok(checker);

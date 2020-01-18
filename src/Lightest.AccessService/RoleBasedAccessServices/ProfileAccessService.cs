@@ -21,6 +21,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return sameUser || await IsTeacherOrAdmin(requester);
         }
 
-        public bool HasWriteAccess(ApplicationUser requested, ApplicationUser requester) => requested?.Id == requester.Id || IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
+        public async Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => id.ToString() == requester.Id || await IsTeacherOrAdmin(requester);
     }
 }

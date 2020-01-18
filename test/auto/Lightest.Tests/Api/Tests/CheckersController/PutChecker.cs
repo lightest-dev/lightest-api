@@ -46,9 +46,9 @@ namespace Lightest.Tests.Api.Tests.CheckersController
             _context.CachedCheckers.Add(_cachedChecker);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Checker>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.PutChecker(_modifiedChecker.Id, _modifiedChecker);
 

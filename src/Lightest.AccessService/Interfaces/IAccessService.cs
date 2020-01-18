@@ -10,6 +10,6 @@ namespace Lightest.AccessService.Interfaces
 
         Task<bool> HasReadAccess(Guid id, ApplicationUser requester);
 
-        bool HasWriteAccess(T requested, ApplicationUser requester);
+        Task<bool> HasWriteAccess(Guid id, ApplicationUser requester);
     }
 }

@@ -11,6 +11,6 @@ namespace Lightest.AccessService.MockAccessServices
 
         public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
-        public bool HasWriteAccess(ApplicationUser requested, ApplicationUser requester) => true;
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
     }
 }

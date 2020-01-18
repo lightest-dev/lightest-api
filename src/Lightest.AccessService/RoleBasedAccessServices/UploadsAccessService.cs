@@ -31,7 +31,10 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return _accessService.HasReadAccess(taskId, requester);
         }
 
-        public bool HasWriteAccess(Upload upload, ApplicationUser requester) => _accessService.HasReadAccess(upload.Task.Id, requester)
-            .GetAwaiter().GetResult();
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester)
+        {
+            var taskId = _context.Uploads.Where(u => u.Id == id).Select(u => u.TaskId).First();
+            return _accessService.HasReadAccess(taskId, requester);
+        }
     }
 }

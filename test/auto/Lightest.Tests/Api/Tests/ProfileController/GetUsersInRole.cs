@@ -40,9 +40,9 @@ namespace Lightest.Tests.Api.Tests.ProfileController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<ApplicationUser>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.GetUsersInRole("qwe");
 

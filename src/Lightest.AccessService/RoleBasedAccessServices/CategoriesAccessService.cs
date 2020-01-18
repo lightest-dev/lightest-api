@@ -16,6 +16,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
 
         public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
-        public bool HasWriteAccess(Category category, ApplicationUser requester) => IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacherOrAdmin(requester);
     }
 }
