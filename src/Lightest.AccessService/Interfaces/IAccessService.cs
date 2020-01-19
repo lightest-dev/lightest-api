@@ -6,8 +6,8 @@ namespace Lightest.AccessService.Interfaces
 {
     public interface IAccessService<in T>
     {
-        Task<bool> HasReadAccess(Guid id, ApplicationUser requester);
+        Task<bool> CanRead(Guid id, ApplicationUser requester);
 
-        Task<bool> HasWriteAccess(Guid id, ApplicationUser requester);
+        Task<bool> CanWrite(Guid id, ApplicationUser requester);
     }
 }

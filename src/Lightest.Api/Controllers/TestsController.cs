@@ -43,7 +43,7 @@ namespace Lightest.Api.Controllers
             }
 
             //user can only view test if he can edit it
-            if (!await _accessService.HasWriteAccess(test.Task.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(test.Task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -68,7 +68,7 @@ namespace Lightest.Api.Controllers
                 return BadRequest();
             }
 
-            if (!await _accessService.HasWriteAccess(task.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -101,7 +101,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.HasWriteAccess(dbEntry.Task.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(dbEntry.Task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -130,7 +130,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.HasWriteAccess(test.Task.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(test.Task.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }

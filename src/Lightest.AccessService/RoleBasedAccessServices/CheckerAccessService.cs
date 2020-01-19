@@ -11,8 +11,8 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
-        public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
+        public Task<bool> CanRead(Guid id, ApplicationUser requester) => IsTeacher(requester);
 
-        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
+        public Task<bool> CanWrite(Guid id, ApplicationUser requester) => IsTeacher(requester);
     }
 }

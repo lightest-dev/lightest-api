@@ -68,10 +68,10 @@ namespace Lightest.Tests.Api
         {
             var mock = new Mock<IAccessService<T>>();
 
-            mock.Setup(m => m.HasReadAccess(It.IsAny<Guid>(),
+            mock.Setup(m => m.CanRead(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
-            mock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
+            mock.Setup(m => m.CanWrite(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
 

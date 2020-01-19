@@ -11,13 +11,13 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
-        public async Task<bool> HasReadAccess(Guid id, ApplicationUser requester)
+        public async Task<bool> CanRead(Guid id, ApplicationUser requester)
         {
             var userId = id.ToString();
             var sameUser = userId == requester.Id;
             return sameUser || await IsTeacher(requester);
         }
 
-        public async Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => id.ToString() == requester.Id || await IsTeacher(requester);
+        public async Task<bool> CanWrite(Guid id, ApplicationUser requester) => id.ToString() == requester.Id || await IsTeacher(requester);
     }
 }

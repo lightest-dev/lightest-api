@@ -20,7 +20,7 @@ namespace Lightest.AccessService.RoleBasedAccessServices
 
         public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester).GetAwaiter().GetResult();
 
-        public async Task<bool> HasReadAccess(Guid id, ApplicationUser requester)
+        public async Task<bool> CanRead(Guid id, ApplicationUser requester)
         {
             var userExists = _context.Tasks.Include(t => t.Users)
                 .Any(t => t.Id == id
@@ -28,6 +28,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return userExists || await IsTeacher(requester);
         }
 
-        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
+        public Task<bool> CanWrite(Guid id, ApplicationUser requester) => IsTeacher(requester);
     }
 }

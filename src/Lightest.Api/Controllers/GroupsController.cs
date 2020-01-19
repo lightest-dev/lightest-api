@@ -110,14 +110,14 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!(await _accessService.HasReadAccess(group.Id, user)))
+            if (!(await _accessService.CanRead(group.Id, user)))
             {
                 return Forbid();
             }
 
             CompleteGroupView result;
 
-            if (await _accessService.HasWriteAccess(group.Id, user))
+            if (await _accessService.CanWrite(group.Id, user))
             {
                 result = new CompleteGroupView
                 {
@@ -159,7 +159,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(group.Id, user))
+            if (!await _accessService.CanWrite(group.Id, user))
             {
                 return Forbid();
             }
@@ -203,7 +203,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(group.Id, currentUser))
+            if (!await _accessService.CanWrite(group.Id, currentUser))
             {
                 return Forbid();
             }
@@ -254,7 +254,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(group.Id, user))
+            if (!await _accessService.CanWrite(group.Id, user))
             {
                 return Forbid();
             }
@@ -280,7 +280,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(group.Id, user))
+            if (!await _accessService.CanWrite(group.Id, user))
             {
                 return Forbid();
             }

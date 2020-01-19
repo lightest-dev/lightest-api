@@ -107,7 +107,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!(await _accessService.HasReadAccess(parent.Id, user)))
+            if (!(await _accessService.CanRead(parent.Id, user)))
             {
                 return Forbid();
             }
@@ -159,7 +159,7 @@ namespace Lightest.Api.Controllers
             }
 
             // full info is disclosed here, so write access is required
-            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
+            if (!await _accessService.CanWrite(category.Id, currentUser))
             {
                 return Forbid();
             }
@@ -198,7 +198,7 @@ namespace Lightest.Api.Controllers
         {
             var currentUser = await GetCurrentUser();
 
-            if (!(await _accessService.HasWriteAccess(category.Id, currentUser)))
+            if (!(await _accessService.CanWrite(category.Id, currentUser)))
             {
                 return Forbid();
             }
@@ -245,7 +245,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
+            if (!await _accessService.CanWrite(category.Id, currentUser))
             {
                 return Forbid();
             }
@@ -298,7 +298,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!(await _accessService.HasWriteAccess(category.Id, currentUser)))
+            if (!(await _accessService.CanWrite(category.Id, currentUser)))
             {
                 return Forbid();
             }
@@ -325,7 +325,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
+            if (!await _accessService.CanWrite(category.Id, currentUser))
             {
                 return Forbid();
             }

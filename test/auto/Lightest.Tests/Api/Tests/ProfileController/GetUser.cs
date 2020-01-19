@@ -19,7 +19,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             _context.Users.Add(_user);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasReadAccess(It.IsAny<Guid>(),
+            _accessServiceMock.Setup(m => m.CanRead(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 

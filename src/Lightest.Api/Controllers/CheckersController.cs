@@ -32,7 +32,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(IEnumerable<BasicCheckerView>))]
         public async Task<IActionResult> GetCheckers()
         {
-            if (!await _accessService.HasReadAccess(default, await GetCurrentUser()))
+            if (!await _accessService.CanRead(default, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -55,7 +55,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.HasReadAccess(checker.Id, await GetCurrentUser()))
+            if (!await _accessService.CanRead(checker.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -75,7 +75,7 @@ namespace Lightest.Api.Controllers
                 Code = checker.Code
             };
 
-            if (!await _accessService.HasWriteAccess(entry.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -105,7 +105,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.HasWriteAccess(entry.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -138,7 +138,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.HasWriteAccess(checker.Id, await GetCurrentUser()))
+            if (!await _accessService.CanWrite(checker.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
