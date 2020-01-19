@@ -2,20 +2,17 @@
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
 using Lightest.Data.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
-    public class CheckerAccessService : RoleChecker, IAccessService<Checker>
+    internal class CheckerAccessService : BaseAccessService, IAccessService<Checker>
     {
-        public CheckerAccessService(UserManager<ApplicationUser> userManager) : base(userManager)
+        public CheckerAccessService(IRoleHelper roleHelper) : base(roleHelper)
         {
         }
 
-        public bool HasAdminAccess(ApplicationUser requester) => IsAdmin(requester).GetAwaiter().GetResult();
+        public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
 
-        public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => IsTeacherOrAdmin(requester);
-
-        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacherOrAdmin(requester);
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
     }
 }

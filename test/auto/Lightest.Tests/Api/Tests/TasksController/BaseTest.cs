@@ -17,7 +17,8 @@ namespace Lightest.Tests.Api.Tests.TasksController
             get
             {
                 var controller = new Lightest.Api.Controllers.TasksController(_context,
-                    _accessServiceMock.Object, _userManager.Object, _sieveProcessorMock.Object);
+                    _userManager.Object, _accessServiceMock.Object, _roleHelper.Object,
+                    _sieveProcessorMock.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -30,6 +31,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
         protected readonly Mock<IAccessService<TaskDefinition>> _accessServiceMock;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
         protected readonly Mock<ISieveProcessor> _sieveProcessorMock;
+        protected readonly Mock<IRoleHelper> _roleHelper;
 
         protected readonly TaskDefinition _task;
         protected readonly Test _test;
@@ -42,6 +44,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
             _sieveProcessorMock = GenerateSieveProcessor<TaskDefinition>();
             _accessServiceMock = GenerateAccessService<TaskDefinition>();
             _claimsPrincipalMock = GenerateClaimsMock();
+            _roleHelper = GenerateRoleHelper();
 
             _checker = new Checker
             {

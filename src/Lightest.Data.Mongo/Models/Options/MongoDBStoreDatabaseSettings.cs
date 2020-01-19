@@ -1,4 +1,4 @@
-namespace Lightest.Data.Mongo.Models.Options
+﻿namespace Lightest.Data.Mongo.Models.Options
 {
     public class MongoDBStoreDatabaseSettings
     {

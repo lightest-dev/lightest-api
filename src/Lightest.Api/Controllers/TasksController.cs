@@ -24,15 +24,18 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<TaskDefinition> _accessService;
         private readonly ISieveProcessor _sieveProcessor;
+        private readonly IRoleHelper _roleHelper;
 
         public TasksController(
             RelationalDbContext context,
-            IAccessService<TaskDefinition> accessService,
             UserManager<ApplicationUser> userManager,
+            IAccessService<TaskDefinition> accessService,
+            IRoleHelper roleHelper,
             ISieveProcessor sieveProcessor) : base(context, userManager)
         {
             _accessService = accessService;
             _sieveProcessor = sieveProcessor;
+            _roleHelper = roleHelper;
         }
 
         // GET: api/Tasks
@@ -43,7 +46,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!_accessService.HasAdminAccess(user))
+            if (!await _roleHelper.IsAdmin(user))
             {
                 return Forbid();
             }

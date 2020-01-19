@@ -68,13 +68,22 @@ namespace Lightest.Tests.Api
         {
             var mock = new Mock<IAccessService<T>>();
 
-            mock.Setup(m => m.HasAdminAccess(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(true);
             mock.Setup(m => m.HasReadAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
             mock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+                .ReturnsAsync(true);
+
+            return mock;
+        }
+
+        protected virtual Mock<IRoleHelper> GenerateRoleHelper()
+        {
+            var mock = new Mock<IRoleHelper>();
+            mock.Setup(m => m.IsAdmin(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+                .ReturnsAsync(true);
+            mock.Setup(m => m.IsTeacher(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
 
             return mock;

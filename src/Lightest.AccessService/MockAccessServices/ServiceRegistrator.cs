@@ -9,6 +9,8 @@ namespace Lightest.AccessService.MockAccessServices
     {
         public static IServiceCollection AddMockAccess(this IServiceCollection services)
         {
+            services.AddTransient<IRoleHelper, FakeRoleHelper>();
+
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();
             services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();

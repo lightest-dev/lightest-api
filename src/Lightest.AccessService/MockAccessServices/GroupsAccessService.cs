@@ -5,10 +5,8 @@ using Lightest.Data.Models;
 
 namespace Lightest.AccessService.MockAccessServices
 {
-    public class GroupsAccessService : IAccessService<Group>
+    internal class GroupsAccessService : IAccessService<Group>
     {
-        public bool HasAdminAccess(ApplicationUser requester) => true;
-
         public Task<bool> HasReadAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
         public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => Task.FromResult(true);
