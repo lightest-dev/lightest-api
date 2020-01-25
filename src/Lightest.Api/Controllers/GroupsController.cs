@@ -110,7 +110,7 @@ namespace Lightest.Api.Controllers
 
             var user = await GetCurrentUser();
 
-            if (!(await _accessService.CanRead(group.Id, user)))
+            if (!await _accessService.CanRead(group.Id, user))
             {
                 return Forbid();
             }
@@ -159,7 +159,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _accessService.CanEdit(group.Id, user))
+            if (!await _accessService.CanAdd(group, user))
             {
                 return Forbid();
             }

@@ -25,7 +25,7 @@ namespace Lightest.Tests.Api.Tests.CheckersController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CanEdit(It.IsAny<Guid>(),
+            _accessServiceMock.Setup(m => m.CanAdd(It.IsAny<Checker>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 

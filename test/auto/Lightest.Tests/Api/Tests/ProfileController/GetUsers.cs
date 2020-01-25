@@ -15,8 +15,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CanEdit(It.IsAny<Guid>(),
-                It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _roleHelperMock.Setup(m => m.IsTeacher(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 
             var result = await _controller.GetUsers(new Sieve.Models.SieveModel());

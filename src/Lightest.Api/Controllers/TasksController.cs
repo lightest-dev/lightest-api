@@ -182,7 +182,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _accessService.CanEdit(task.Id, user))
+            if (!await _accessService.CanAdd(task, user))
             {
                 return Forbid();
             }

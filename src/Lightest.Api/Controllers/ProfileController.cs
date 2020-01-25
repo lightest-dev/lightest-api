@@ -21,15 +21,18 @@ namespace Lightest.Api.Controllers
     public class ProfileController : BaseUserController
     {
         private readonly IAccessService<ApplicationUser> _accessService;
+        private readonly IRoleHelper _roleHelper;
         private readonly ISieveProcessor _sieveProcessor;
 
         public ProfileController(RelationalDbContext context,
             IAccessService<ApplicationUser> accessService,
+            IRoleHelper roleHelper,
             UserManager<ApplicationUser> userManager,
             ISieveProcessor sieveProcessor) : base(context, userManager)
         {
             _accessService = accessService;
             _sieveProcessor = sieveProcessor;
+            _roleHelper = roleHelper;
         }
 
         [HttpGet("all")]
@@ -39,7 +42,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _accessService.CanEdit(default, user))
+            if (!await _roleHelper.IsTeacher(user))
             {
                 return Forbid();
             }
@@ -63,7 +66,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsersInRole(string roleName)
         {
             var user = await GetCurrentUser();
-            if (!await _accessService.CanEdit(default, user))
+            if (!await _roleHelper.IsTeacher(user))
             {
                 return Forbid();
             }

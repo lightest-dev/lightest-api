@@ -14,7 +14,8 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             get
             {
                 var controller = new Lightest.Api.Controllers.ProfileController(_context,
-                    _accessServiceMock.Object, _userManager.Object, _sieveProcessorMock.Object);
+                    _accessServiceMock.Object, _roleHelperMock.Object,
+                    _userManager.Object, _sieveProcessorMock.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -27,12 +28,14 @@ namespace Lightest.Tests.Api.Tests.ProfileController
         protected readonly Mock<IAccessService<ApplicationUser>> _accessServiceMock;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
         protected readonly Mock<ISieveProcessor> _sieveProcessorMock;
+        protected readonly Mock<IRoleHelper> _roleHelperMock;
 
         public BaseTest()
         {
             _sieveProcessorMock = GenerateSieveProcessor<ApplicationUser>();
             _accessServiceMock = GenerateAccessService<ApplicationUser>();
             _claimsPrincipalMock = GenerateClaimsMock();
+            _roleHelperMock = GenerateRoleHelper();
         }
     }
 }

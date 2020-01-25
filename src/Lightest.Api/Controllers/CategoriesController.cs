@@ -198,7 +198,7 @@ namespace Lightest.Api.Controllers
         {
             var currentUser = await GetCurrentUser();
 
-            if (!(await _accessService.CanEdit(category.Id, currentUser)))
+            if (!(await _accessService.CanAdd(category, currentUser)))
             {
                 return Forbid();
             }

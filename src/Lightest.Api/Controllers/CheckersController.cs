@@ -75,7 +75,7 @@ namespace Lightest.Api.Controllers
                 Code = checker.Code
             };
 
-            if (!await _accessService.CanEdit(entry.Id, await GetCurrentUser()))
+            if (!await _accessService.CanAdd(entry, await GetCurrentUser()))
             {
                 return Forbid();
             }

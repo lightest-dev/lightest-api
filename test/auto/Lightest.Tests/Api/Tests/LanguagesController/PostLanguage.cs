@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
+using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -13,7 +14,7 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.CanEdit(It.IsAny<Guid>(),
+            _accessServiceMock.Setup(m => m.CanAdd(It.IsAny<Language>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 
