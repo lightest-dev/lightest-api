@@ -29,5 +29,7 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         }
 
         public Task<bool> CanWrite(Guid id, ApplicationUser requester) => IsTeacher(requester);
+
+        public Task<bool> CanAdd(TaskDefinition item, ApplicationUser requester) => IsTeacher(requester);
     }
 }

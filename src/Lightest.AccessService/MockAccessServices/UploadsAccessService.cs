@@ -8,6 +8,8 @@ namespace Lightest.AccessService.MockAccessServices
 {
     internal class UploadsAccessService : IAccessService<Upload>
     {
+        public Task<bool> CanAdd(Upload item, ApplicationUser requester) => Task.FromResult(true);
+
         public Task<bool> CanRead(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
         public Task<bool> CanWrite(Guid id, ApplicationUser requester) => Task.FromResult(true);

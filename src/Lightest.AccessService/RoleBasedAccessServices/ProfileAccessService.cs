@@ -11,6 +11,8 @@ namespace Lightest.AccessService.RoleBasedAccessServices
         {
         }
 
+        public Task<bool> CanAdd(ApplicationUser item, ApplicationUser requester) => Task.FromResult(false);
+
         public async Task<bool> CanRead(Guid id, ApplicationUser requester)
         {
             var userId = id.ToString();

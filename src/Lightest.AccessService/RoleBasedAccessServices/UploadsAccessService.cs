@@ -22,16 +22,22 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             _context = context;
         }
 
-        public Task<bool> CanRead(Guid id, ApplicationUser requester)
+        public Task<bool> CanAdd(Upload item, ApplicationUser requester)
         {
-            var taskId = _context.Uploads.Where(u => u.Id == id).Select(u => u.TaskId).First();
+            var taskId = item.TaskId;
             return _accessService.CanRead(taskId, requester);
         }
 
-        public Task<bool> CanWrite(Guid id, ApplicationUser requester)
+        public async Task<bool> CanRead(Guid id, ApplicationUser requester)
         {
-            var taskId = _context.Uploads.Where(u => u.Id == id).Select(u => u.TaskId).First();
-            return _accessService.CanRead(taskId, requester);
+            var userId = _context.Uploads.Where(u => u.Id == id).Select(u => u.UserId).First();
+            return userId == requester.Id || await IsTeacher(requester);
+        }
+
+        public async Task<bool> CanWrite(Guid id, ApplicationUser requester)
+        {
+            var userId = _context.Uploads.Where(u => u.Id == id).Select(u => u.UserId).First();
+            return userId == requester.Id || await IsTeacher(requester);
         }
     }
 }

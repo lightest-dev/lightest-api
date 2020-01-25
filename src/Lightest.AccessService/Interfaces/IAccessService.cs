@@ -9,5 +9,7 @@ namespace Lightest.AccessService.Interfaces
         Task<bool> CanRead(Guid id, ApplicationUser requester);
 
         Task<bool> CanWrite(Guid id, ApplicationUser requester);
+
+        Task<bool> CanAdd(T item, ApplicationUser requester);
     }
 }

@@ -8,6 +8,8 @@ namespace Lightest.AccessService.MockAccessServices
 {
     internal class LanguagesAccessService : IAccessService<Language>
     {
+        public Task<bool> CanAdd(Language item, ApplicationUser requester) => Task.FromResult(true);
+
         public Task<bool> CanRead(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
         public Task<bool> CanWrite(Guid id, ApplicationUser requester) => Task.FromResult(true);

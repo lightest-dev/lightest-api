@@ -17,6 +17,8 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             _context = context;
         }
 
+        public Task<bool> CanAdd(Group item, ApplicationUser requester) => IsTeacher(requester);
+
         public async Task<bool> CanRead(Guid id, ApplicationUser requester)
         {
             var userExists = _context.Groups.Include(g => g.Users)
