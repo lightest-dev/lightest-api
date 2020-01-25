@@ -71,7 +71,7 @@ namespace Lightest.Tests.Api
             mock.Setup(m => m.CanRead(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
-            mock.Setup(m => m.CanWrite(It.IsAny<Guid>(),
+            mock.Setup(m => m.CanEdit(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(true);
 

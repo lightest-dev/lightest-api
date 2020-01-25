@@ -56,7 +56,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetAllUploads(Guid taskId)
         {
             var user = await GetCurrentUser();
-            if (!await _accessService.CanWrite(default, user))
+            if (!await _accessService.CanEdit(default, user))
             {
                 return Forbid();
             }
@@ -128,7 +128,7 @@ namespace Lightest.Api.Controllers
 
             upload.Task = task;
 
-            if (!await _accessService.CanWrite(upload.Id, user))
+            if (!await _accessService.CanEdit(upload.Id, user))
             {
                 return Forbid();
             }

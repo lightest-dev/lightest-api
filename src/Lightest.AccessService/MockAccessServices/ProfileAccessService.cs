@@ -11,6 +11,6 @@ namespace Lightest.AccessService.MockAccessServices
 
         public Task<bool> CanRead(Guid id, ApplicationUser requester) => Task.FromResult(true);
 
-        public Task<bool> CanWrite(Guid id, ApplicationUser requester) => Task.FromResult(true);
+        public Task<bool> CanEdit(Guid id, ApplicationUser requester) => Task.FromResult(true);
     }
 }

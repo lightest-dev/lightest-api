@@ -85,7 +85,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
         {
             AddDataToDb();
             await _context.SaveChangesAsync();
-            _accessServiceMock.Setup(m => m.CanWrite(It.IsAny<Guid>(),
+            _accessServiceMock.Setup(m => m.CanEdit(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 

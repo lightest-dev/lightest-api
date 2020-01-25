@@ -75,7 +75,7 @@ namespace Lightest.Api.Controllers
                 Code = checker.Code
             };
 
-            if (!await _accessService.CanWrite(entry.Id, await GetCurrentUser()))
+            if (!await _accessService.CanEdit(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -105,7 +105,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.CanWrite(entry.Id, await GetCurrentUser()))
+            if (!await _accessService.CanEdit(entry.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }
@@ -138,7 +138,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.CanWrite(checker.Id, await GetCurrentUser()))
+            if (!await _accessService.CanEdit(checker.Id, await GetCurrentUser()))
             {
                 return Forbid();
             }

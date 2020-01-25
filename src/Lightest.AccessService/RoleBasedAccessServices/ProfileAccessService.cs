@@ -20,6 +20,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return sameUser || await IsTeacher(requester);
         }
 
-        public async Task<bool> CanWrite(Guid id, ApplicationUser requester) => id.ToString() == requester.Id || await IsTeacher(requester);
+        public async Task<bool> CanEdit(Guid id, ApplicationUser requester) => id.ToString() == requester.Id || await IsTeacher(requester);
     }
 }

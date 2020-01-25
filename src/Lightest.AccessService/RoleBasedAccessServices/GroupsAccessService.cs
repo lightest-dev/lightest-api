@@ -27,6 +27,6 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return userExists || await IsTeacher(requester);
         }
 
-        public Task<bool> CanWrite(Guid id, ApplicationUser requester) => IsTeacher(requester);
+        public Task<bool> CanEdit(Guid id, ApplicationUser requester) => IsTeacher(requester);
     }
 }

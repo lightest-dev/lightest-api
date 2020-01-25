@@ -34,7 +34,7 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             return userId == requester.Id || await IsTeacher(requester);
         }
 
-        public async Task<bool> CanWrite(Guid id, ApplicationUser requester)
+        public async Task<bool> CanEdit(Guid id, ApplicationUser requester)
         {
             var userId = _context.Uploads.Where(u => u.Id == id).Select(u => u.UserId).First();
             return userId == requester.Id || await IsTeacher(requester);

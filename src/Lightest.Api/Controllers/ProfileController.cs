@@ -39,7 +39,7 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _accessService.CanWrite(default, user))
+            if (!await _accessService.CanEdit(default, user))
             {
                 return Forbid();
             }
@@ -63,7 +63,7 @@ namespace Lightest.Api.Controllers
         public async Task<IActionResult> GetUsersInRole(string roleName)
         {
             var user = await GetCurrentUser();
-            if (!await _accessService.CanWrite(default, user))
+            if (!await _accessService.CanEdit(default, user))
             {
                 return Forbid();
             }
@@ -142,7 +142,7 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.CanWrite(Guid.Parse(requestedUser.Id), currentUser))
+            if (!await _accessService.CanEdit(Guid.Parse(requestedUser.Id), currentUser))
             {
                 return Forbid();
             }
