@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Lightest.Data.Models; 
+using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -25,9 +25,9 @@ namespace Lightest.Tests.Api.Tests.TestsController
             _context.Tests.Add(_test);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.DeleteTest(_test.Id);
 

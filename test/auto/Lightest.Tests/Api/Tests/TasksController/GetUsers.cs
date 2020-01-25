@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.ResponseModels;
 using Lightest.Data.Models;
-using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -42,9 +41,9 @@ namespace Lightest.Tests.Api.Tests.TasksController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<TaskDefinition>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.GetUsers(_task.Id);
 

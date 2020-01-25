@@ -17,7 +17,8 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             get
             {
                 var controller = new Lightest.Api.Controllers.CategoriesController(_context,
-                    _accessServiceMock.Object, _userManager.Object, _sieveProcessor.Object);
+                    _userManager.Object, _accessServiceMock.Object, _roleHelper.Object,
+                    _sieveProcessor.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -30,6 +31,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
         protected readonly Mock<IAccessService<Category>> _accessServiceMock;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
         protected readonly Mock<ISieveProcessor> _sieveProcessor;
+        protected readonly Mock<IRoleHelper> _roleHelper;
 
         protected readonly Category _parent;
         protected readonly Category _child1;
@@ -43,6 +45,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             _sieveProcessor = GenerateSieveProcessor<Category>();
             _accessServiceMock = GenerateAccessService<Category>();
             _claimsPrincipalMock = GenerateClaimsMock();
+            _roleHelper = GenerateRoleHelper();
 
             _checker = new Checker
             {

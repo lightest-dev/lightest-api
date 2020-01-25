@@ -41,9 +41,9 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _context.Tasks.Add(_task);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Upload>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.UploadCode(_upload);
 

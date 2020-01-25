@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Data.Models;
@@ -24,9 +25,9 @@ namespace Lightest.Tests.Api.Tests.CheckersController
         [Fact]
         public async Task Forbidden()
         {
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Checker>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.PostChecker(_addModel);
 

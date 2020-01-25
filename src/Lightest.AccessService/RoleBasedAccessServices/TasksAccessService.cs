@@ -5,16 +5,15 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.AccessService.RoleBasedAccessServices
 {
-    public class TasksAccessService : RoleChecker, IAccessService<TaskDefinition>
+    internal class TasksAccessService : BaseAccessService, IAccessService<TaskDefinition>
     {
         private readonly RelationalDbContext _context;
 
-        public TasksAccessService(RelationalDbContext context, UserManager<ApplicationUser> userManager) : base(userManager)
+        public TasksAccessService(RelationalDbContext context, IRoleHelper roleHelper) : base(roleHelper)
         {
             _context = context;
         }
@@ -26,9 +25,9 @@ namespace Lightest.AccessService.RoleBasedAccessServices
             var userExists = _context.Tasks.Include(t => t.Users)
                 .Any(t => t.Id == id
                     && (t.Public || t.Users.Any(u => u.UserId == requester.Id)));
-            return userExists || await IsTeacherOrAdmin(requester);
+            return userExists || await IsTeacher(requester);
         }
 
-        public bool HasWriteAccess(TaskDefinition task, ApplicationUser requester) => IsTeacherOrAdmin(requester).GetAwaiter().GetResult();
+        public Task<bool> HasWriteAccess(Guid id, ApplicationUser requester) => IsTeacher(requester);
     }
 }

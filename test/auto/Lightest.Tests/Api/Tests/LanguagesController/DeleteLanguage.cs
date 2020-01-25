@@ -33,9 +33,9 @@ namespace Lightest.Tests.Api.Tests.LanguagesController
             _context.Languages.Add(_language);
             await _context.SaveChangesAsync();
 
-            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Language>(),
+            _accessServiceMock.Setup(m => m.HasWriteAccess(It.IsAny<Guid>(),
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
-                .Returns(false);
+                .ReturnsAsync(false);
 
             var result = await _controller.DeleteLanguage(_language.Id);
             Assert.IsAssignableFrom<ForbidResult>(result);

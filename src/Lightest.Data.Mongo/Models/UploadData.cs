@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Lightest.Data.Mongo.Models
@@ -11,8 +11,10 @@ namespace Lightest.Data.Mongo.Models
         public string Code { get; set; }
 
         public byte[] Project { get; set; }
-        
-        public UploadData(){}
+
+        public UploadData()
+        {
+        }
 
         public UploadData(Guid uploadId, string code)
         {

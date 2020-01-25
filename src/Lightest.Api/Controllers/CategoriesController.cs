@@ -23,15 +23,18 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Category> _accessService;
         private readonly ISieveProcessor _sieveProcessor;
+        private readonly IRoleHelper _roleHelper;
 
         public CategoriesController(
             RelationalDbContext context,
-            IAccessService<Category> accessService,
             UserManager<ApplicationUser> userManager,
+            IAccessService<Category> accessService,
+            IRoleHelper roleHelper,
             ISieveProcessor sieveProcessor) : base(context, userManager)
         {
             _accessService = accessService;
             _sieveProcessor = sieveProcessor;
+            _roleHelper = roleHelper;
         }
 
         [HttpGet("all")]
@@ -43,7 +46,7 @@ namespace Lightest.Api.Controllers
             var categories = _context.Categories
                 .AsNoTracking();
 
-            if (!_accessService.HasAdminAccess(user))
+            if (!await _roleHelper.IsAdmin(user))
             {
                 return Forbid();
             }
@@ -156,7 +159,7 @@ namespace Lightest.Api.Controllers
             }
 
             // full info is disclosed here, so write access is required
-            if (!_accessService.HasWriteAccess(category, currentUser))
+            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
             {
                 return Forbid();
             }
@@ -195,7 +198,7 @@ namespace Lightest.Api.Controllers
         {
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.HasWriteAccess(category, currentUser))
+            if (!(await _accessService.HasWriteAccess(category.Id, currentUser)))
             {
                 return Forbid();
             }
@@ -242,7 +245,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.HasWriteAccess(category, currentUser))
+            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
             {
                 return Forbid();
             }
@@ -295,7 +298,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.HasWriteAccess(dbEntry, currentUser))
+            if (!(await _accessService.HasWriteAccess(category.Id, currentUser)))
             {
                 return Forbid();
             }
@@ -322,7 +325,7 @@ namespace Lightest.Api.Controllers
 
             var currentUser = await GetCurrentUser();
 
-            if (!_accessService.HasWriteAccess(category, currentUser))
+            if (!await _accessService.HasWriteAccess(category.Id, currentUser))
             {
                 return Forbid();
             }

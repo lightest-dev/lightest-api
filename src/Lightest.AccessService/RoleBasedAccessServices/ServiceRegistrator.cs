@@ -9,6 +9,8 @@ namespace Lightest.AccessService.RoleBasedAccessServices
     {
         public static IServiceCollection AddRoleBasedAccess(this IServiceCollection services)
         {
+            services.AddTransient<IRoleHelper, RoleHelper>();
+
             services.AddTransient<IAccessService<Category>, CategoriesAccessService>();
             services.AddTransient<IAccessService<Group>, GroupsAccessService>();
             services.AddTransient<IAccessService<TaskDefinition>, TasksAccessService>();
