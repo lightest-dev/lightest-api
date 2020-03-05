@@ -7,6 +7,7 @@ using Lightest.Api.RequestModels.CheckerRequests;
 using Lightest.Api.ResponseModels.Checker;
 using Lightest.Data;
 using Lightest.Data.Models;
+using Lightest.Data.Mongo.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

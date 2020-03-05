@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Lightest.Data.Mongo.Models.Options;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -9,18 +10,21 @@ namespace Lightest.Data.Mongo.Models.Services
     {
         private readonly IMongoCollection<UploadData> _uploadData;
 
-        protected string CollectionName => nameof(UploadData);
-
         private readonly MongoDBStoreDatabaseSettings _mongoDBStoreDatabaseSettings;
 
-        private IMongoDatabase database;
+        protected string CollectionName => _mongoDBStoreDatabaseSettings.UploadDataCollectionName;
 
         public UploadDataService(IOptionsMonitor<MongoDBStoreDatabaseSettings> optionsMonitor)
         {
             _mongoDBStoreDatabaseSettings = optionsMonitor.CurrentValue;
+            var client = new MongoClient(_mongoDBStoreDatabaseSettings.ConnectionString);
+            var database = client.GetDatabase(_mongoDBStoreDatabaseSettings.DatabaseName);
             _uploadData = database.GetCollection<UploadData>(CollectionName);
         }
 
+        public List<UploadData> Get() =>
+          _uploadData.Find(uploadData => true).ToList();
+        
         public UploadData Get(Guid id) =>
             _uploadData.Find<UploadData>(uploadData => uploadData.Id == id).FirstOrDefault();
 
