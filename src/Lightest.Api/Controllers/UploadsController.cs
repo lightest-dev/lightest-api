@@ -7,6 +7,7 @@ using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +20,18 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Upload> _accessService;
         private readonly ITestingService _testingService;
+        private readonly IUploadDataRepository _uploadDataRepository;
 
         public UploadsController(
             ITestingService testingService,
             RelationalDbContext context,
             IAccessService<Upload> accessService,
+            IUploadDataRepository uploadDataRepository,
             UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _testingService = testingService;
             _accessService = accessService;
+            _uploadDataRepository = uploadDataRepository;
         }
 
         [HttpGet("{taskId}")]
@@ -46,7 +50,7 @@ namespace Lightest.Api.Controllers
                     Message = u.Message,
                     Status = u.Status,
                     Points = u.Points,
-                    Code = u.Code
+                    Code = _uploadDataRepository.Get(u.Id).Code
                 });
             return Ok(uploads);
         }
@@ -70,7 +74,7 @@ namespace Lightest.Api.Controllers
                     Message = u.Message,
                     Status = u.Status,
                     Points = u.Points,
-                    Code = u.Code
+                    Code = _uploadDataRepository.Get(u.Id).Code
                 });
             return Ok(uploads);
         }
@@ -154,3 +158,8 @@ namespace Lightest.Api.Controllers
         }
     }
 }
+
+
+
+
+

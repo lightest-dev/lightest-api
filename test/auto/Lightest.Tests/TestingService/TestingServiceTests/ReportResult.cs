@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models.Services;
 using Lightest.TestingService.ResponsModels;
 using Moq;
 using Xunit;
@@ -14,6 +15,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly Upload _upload;
         private readonly TaskDefinition _task;
         private readonly UserTask _userTask;
+        private readonly IUploadDataRepository _uploadDataRepository;
 
         public ReportResult()
         {
@@ -38,7 +40,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Status = "ResultStatus",
                 Message = "ResultMessage",
                 SuccessfulTests = 1,
-                Type = "Code"
+                Type = _uploadDataRepository.Get(_upload.Id).Code
             };
 
             _userTask = new UserTask

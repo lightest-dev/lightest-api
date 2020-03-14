@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models.Services;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.RequestModels;
 using Lightest.TestingService.ResponsModels;
@@ -17,12 +18,14 @@ namespace Lightest.TestingService.DefaultServices
         private readonly RelationalDbContext _context;
         private readonly IServerRepository _repository;
         private readonly ITransferServiceFactory _transferServiceFactory;
+        private readonly IUploadDataRepository _uploadDataRepository;
 
-        public DefaultTestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory)
+        public DefaultTestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory, IUploadDataRepository uploadDataRepository)
         {
             _context = context;
             _repository = repository;
             _transferServiceFactory = transferServiceFactory;
+            _uploadDataRepository = uploadDataRepository;
         }
 
         public async Task<bool> BeginTesting(Upload upload)
@@ -166,7 +169,7 @@ namespace Lightest.TestingService.DefaultServices
             }
             await save;
             fileRequest = new SingleFileCodeRequest($"{upload.Id.ToString()}.{upload.Language.Extension}");
-            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(upload.Code));
+            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(_uploadDataRepository.Get(upload.Id).Code));
             return result;
         }
 

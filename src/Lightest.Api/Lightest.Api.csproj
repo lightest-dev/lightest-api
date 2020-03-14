@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Lightest.AccessService\Lightest.AccessService.csproj" />
+    <ProjectReference Include="..\Lightest.Data.Mongo\Lightest.Data.Mongo.csproj" />
     <ProjectReference Include="..\Lightest.Data.Seeding\Lightest.Data.Seeding.csproj" />
     <ProjectReference Include="..\Lightest.TestingService\Lightest.TestingService.csproj" />
     <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
