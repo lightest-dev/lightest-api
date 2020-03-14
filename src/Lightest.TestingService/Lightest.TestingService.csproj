@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Lightest.Data.Mongo\Lightest.Data.Mongo.csproj" />
     <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
   </ItemGroup>
 

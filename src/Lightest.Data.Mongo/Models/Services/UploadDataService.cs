@@ -21,9 +21,6 @@ namespace Lightest.Data.Mongo.Models.Services
             var database = client.GetDatabase(_mongoDBStoreDatabaseSettings.DatabaseName);
             _uploadData = database.GetCollection<UploadData>(CollectionName);
         }
-
-        public List<UploadData> Get() =>
-          _uploadData.Find(uploadData => true).ToList();
         
         public UploadData Get(Guid id) =>
             _uploadData.Find<UploadData>(uploadData => uploadData.Id == id).FirstOrDefault();
