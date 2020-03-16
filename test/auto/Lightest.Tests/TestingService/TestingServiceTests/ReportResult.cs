@@ -15,7 +15,6 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly Upload _upload;
         private readonly TaskDefinition _task;
         private readonly UserTask _userTask;
-        private readonly IUploadDataRepository _uploadDataRepository;
 
         public ReportResult()
         {
@@ -40,7 +39,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Status = "ResultStatus",
                 Message = "ResultMessage",
                 SuccessfulTests = 1,
-                Type = _uploadDataRepository.Get(_upload.Id).Code
+                Type = "Code"
             };
 
             _userTask = new UserTask

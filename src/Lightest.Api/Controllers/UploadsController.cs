@@ -49,12 +49,15 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points,
-                    Code = _uploadDataRepository.Get(u.Id).Code
+                    Points = u.Points
                 });
+            foreach (var upload in uploads)
+            { 
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
+            }
             return Ok(uploads);
         }
-
+ 
         [HttpGet("{taskId}/all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
         public async Task<IActionResult> GetAllUploads(Guid taskId)
@@ -64,6 +67,7 @@ namespace Lightest.Api.Controllers
             {
                 return Forbid();
             }
+
             var uploads = _context.Uploads
                 .AsNoTracking()
                 .Where(u => u.TaskId == taskId)
@@ -73,9 +77,13 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points,
-                    Code = _uploadDataRepository.Get(u.Id).Code
+                    Points = u.Points
                 });
+            foreach (var upload in uploads)
+            { 
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
+            }
+            
             return Ok(uploads);
         }
 
