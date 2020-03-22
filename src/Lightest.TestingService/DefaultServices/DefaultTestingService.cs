@@ -169,7 +169,7 @@ namespace Lightest.TestingService.DefaultServices
             }
             await save;
             fileRequest = new SingleFileCodeRequest($"{upload.Id.ToString()}.{upload.Language.Extension}");
-            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(upload.Code));
+            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(_uploadDataRepository.Get(upload.Id).Code));
             return result;
         }
 

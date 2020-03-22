@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models;
+using Lightest.Data.Mongo.Models.Services;
 using Lightest.TestingService.RequestModels;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -132,12 +135,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
         }
-
+        
         [Fact]
         public async Task UploadSendingFailed()
         {
             _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(),
-                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
+                    It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
                 .Returns(Task.FromResult(false));
 
             var result = await _testingService.BeginTesting(_upload);

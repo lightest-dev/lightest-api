@@ -53,7 +53,7 @@ namespace Lightest.Api.Controllers
                 });
             foreach (var upload in uploads)
             { 
-                upload.Code = _uploadDataRepository.Get(upload.Id) != null ? _uploadDataRepository.Get(upload.Id).Code : String.Empty;
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
             }
             return Ok(uploads);
         }
@@ -80,8 +80,8 @@ namespace Lightest.Api.Controllers
                     Points = u.Points
                 });
             foreach (var upload in uploads)
-            { 
-                upload.Code = _uploadDataRepository.Get(upload.Id) != null ? _uploadDataRepository.Get(upload.Id).Code : String.Empty;
+            {
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
             }
             
             return Ok(uploads);
