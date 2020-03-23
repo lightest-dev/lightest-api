@@ -1,7 +1,7 @@
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lightest.Data.Mongo.Models.Services
+namespace Lightest.Data.Mongo.Services
 {
     public static class MongoServiceRegistrator
     {

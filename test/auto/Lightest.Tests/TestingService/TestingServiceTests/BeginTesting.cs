@@ -5,7 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.RequestModels;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -13,6 +16,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 {
     public class BeginTesting : BaseTests
     {
+        private const string Code = "code";
+
         private readonly TestingServer _testServer;
 
         private readonly Checker _checker;
@@ -82,7 +87,6 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _upload = new Upload
             {
                 Id = Guid.NewGuid(),
-                Code = "code",
                 Task = _task,
                 TaskId = _task.Id,
                 Language = _language,
@@ -97,6 +101,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _serverRepoMock.Setup(r => r.GetFreeServer())
                 .Returns(_testServer);
+
+            _uploadDataRepository.Setup(r => r.Get(_upload.Id))
+                .Returns(new UploadData
+                {
+                    Code = Code
+                });
         }
 
         [Fact]
@@ -132,12 +142,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
         }
-
+        
         [Fact]
         public async Task UploadSendingFailed()
         {
             _transferMock.Setup(t => t.SendFile(It.IsNotNull<FileRequest>(),
-                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))))
+                    It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(Code)))))
                 .Returns(Task.FromResult(false));
 
             var result = await _testingService.BeginTesting(_upload);
@@ -148,7 +158,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),
-                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(Code)))),
                 Times.Once);
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),
@@ -187,7 +197,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
 
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),
-                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_upload.Code)))),
+                It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(Code)))),
                 Times.Never);
             _transferMock.Verify(t => t.SendFile(
                 It.IsNotNull<FileRequest>(),

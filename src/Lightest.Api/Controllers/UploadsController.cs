@@ -7,6 +7,7 @@ using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +20,18 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Upload> _accessService;
         private readonly ITestingService _testingService;
+        private readonly IUploadDataRepository _uploadDataRepository;
 
         public UploadsController(
             ITestingService testingService,
             RelationalDbContext context,
             IAccessService<Upload> accessService,
+            IUploadDataRepository uploadDataRepository,
             UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _testingService = testingService;
             _accessService = accessService;
+            _uploadDataRepository = uploadDataRepository;
         }
 
         [HttpGet("{taskId}")]
@@ -45,12 +49,15 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points,
-                    Code = u.Code
+                    Points = u.Points
                 });
+            foreach (var upload in uploads)
+            {
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
+            }
             return Ok(uploads);
         }
-
+ 
         [HttpGet("{taskId}/all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
         public async Task<IActionResult> GetAllUploads(Guid taskId)
@@ -60,6 +67,7 @@ namespace Lightest.Api.Controllers
             {
                 return Forbid();
             }
+
             var uploads = _context.Uploads
                 .AsNoTracking()
                 .Where(u => u.TaskId == taskId)
@@ -69,9 +77,13 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points,
-                    Code = u.Code
+                    Points = u.Points
                 });
+            foreach (var upload in uploads)
+            {
+                upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
+            }
+
             return Ok(uploads);
         }
 

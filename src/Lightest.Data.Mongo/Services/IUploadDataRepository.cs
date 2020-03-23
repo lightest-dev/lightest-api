@@ -1,6 +1,7 @@
 ﻿using System;
+using Lightest.Data.Mongo.Models;
 
-namespace Lightest.Data.Mongo.Models.Services
+namespace Lightest.Data.Mongo.Services
 {
     public interface IUploadDataRepository
     {
