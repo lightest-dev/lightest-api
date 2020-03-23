@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using Lightest.Data.Mongo.Models;
 using Lightest.Data.Mongo.Models.Options;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Lightest.Data.Mongo.Models.Services
+namespace Lightest.Data.Mongo.Services
 {
     public class UploadDataService : IUploadDataRepository
     {
@@ -21,7 +21,7 @@ namespace Lightest.Data.Mongo.Models.Services
             var database = client.GetDatabase(_mongoDBStoreDatabaseSettings.DatabaseName);
             _uploadData = database.GetCollection<UploadData>(CollectionName);
         }
-        
+
         public UploadData Get(Guid id) =>
             _uploadData.Find<UploadData>(uploadData => uploadData.Id == id).FirstOrDefault();
 

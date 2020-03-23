@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models.Services;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.RequestModels;
 using Lightest.TestingService.ResponsModels;

@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Lightest.Data.Mongo.Models.Services;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Moq;
 

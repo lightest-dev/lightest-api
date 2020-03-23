@@ -14,7 +14,10 @@ namespace Lightest.Data.Mongo.Models
         public string Code { get; set; }
 
         public byte[] Project { get; set; }
-        public UploadData(){}
+
+        public UploadData()
+        {
+        }
 
         public UploadData(Guid uploadId, string code)
         {

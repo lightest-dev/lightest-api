@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.Data.Mongo.Models;
-using Lightest.Data.Mongo.Models.Services;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 using Moq;

@@ -7,7 +7,7 @@ using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models.Services;
+using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -166,8 +166,3 @@ namespace Lightest.Api.Controllers
         }
     }
 }
-
-
-
-
-
