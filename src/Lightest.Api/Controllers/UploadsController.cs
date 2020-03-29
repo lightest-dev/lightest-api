@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.AccessService.Interfaces;
+using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models;
 using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -122,22 +124,24 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(Guid))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> UploadCode([FromBody] Upload upload)
+        public async Task<IActionResult> UploadCode([FromBody] CodeUpload codeUpload)
         {
             var user = await GetCurrentUser();
+            var upload = new Upload();
+            var uploadData = new UploadData();
 
             var task = await _context.Tasks
                             .Include(t => t.Languages)
                             .Include(t => t.Tests)
                             .Include(t => t.Checker)
-                            .SingleOrDefaultAsync(t => t.Id == upload.TaskId);
+                            .SingleOrDefaultAsync(t => t.Id == codeUpload.TaskId);
 
             if (task == null)
             {
-                ModelState.AddModelError(nameof(upload.TaskId), "Task not found");
+                ModelState.AddModelError(nameof(codeUpload.TaskId), "Task not found");
                 return BadRequest(ModelState);
             }
-
+            
             upload.Task = task;
 
             if (!await _accessService.CanAdd(upload, user))
@@ -145,10 +149,10 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            var language = await _context.Languages.FindAsync(upload.LanguageId);
-            if (language == null || task.Languages.All(l => l.LanguageId != upload.LanguageId))
+            var language = await _context.Languages.FindAsync(codeUpload.LanguageId);
+            if (language == null || task.Languages.All(l => l.LanguageId != codeUpload.LanguageId))
             {
-                ModelState.AddModelError(nameof(upload.LanguageId), "Language not found");
+                ModelState.AddModelError(nameof(codeUpload.LanguageId), "Language not found");
                 return BadRequest(ModelState);
             }
 
@@ -157,11 +161,22 @@ namespace Lightest.Api.Controllers
             upload.Points = 0;
             upload.UserId = user.Id;
             upload.UploadDate = DateTime.Now;
+            upload.LanguageId = codeUpload.LanguageId;
+            upload.Code = codeUpload.Code;
+            upload.Message = "message";
+            upload.User = user;
+            upload.TaskId = codeUpload.TaskId;
+            upload.TestingFinished = false;
 
             _context.Uploads.Add(upload);
             await _context.SaveChangesAsync();
 
-            await _testingService.BeginTesting(upload);
+            uploadData.Id = upload.Id;
+            uploadData.Code = codeUpload.Code;
+            
+            _uploadDataRepository.Add(uploadData);
+
+            await _testingService.BeginTesting(upload, uploadData);
             return Ok(upload.Id);
         }
     }

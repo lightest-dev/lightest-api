@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models;
 using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.RequestModels;
@@ -28,7 +29,7 @@ namespace Lightest.TestingService.DefaultServices
             _uploadDataRepository = uploadDataRepository;
         }
 
-        public async Task<bool> BeginTesting(Upload upload)
+        public async Task<bool> BeginTesting(Upload upload, UploadData uploadData)
         {
             await AddToList(upload);
 
@@ -89,7 +90,7 @@ namespace Lightest.TestingService.DefaultServices
             //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
             if (upload != null)
             {
-                return BeginTesting(upload);
+                return BeginTesting(upload, new UploadData());
             }
 
             return Task.CompletedTask;
