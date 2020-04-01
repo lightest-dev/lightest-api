@@ -162,8 +162,6 @@ namespace Lightest.Api.Controllers
             upload.UserId = user.Id;
             upload.UploadDate = DateTime.Now;
             upload.LanguageId = codeUpload.LanguageId;
-            upload.Code = codeUpload.Code;
-            upload.Message = "message";
             upload.User = user;
             upload.TaskId = codeUpload.TaskId;
             upload.TestingFinished = false;

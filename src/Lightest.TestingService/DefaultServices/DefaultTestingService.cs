@@ -51,7 +51,7 @@ namespace Lightest.TestingService.DefaultServices
 
             result = upload switch
             {
-                Upload code => await SendData(code, transferService),
+                Upload code => await SendData(code, uploadData.Code, transferService),
 
                 _ => throw new NotImplementedException(),
             };
@@ -86,11 +86,12 @@ namespace Lightest.TestingService.DefaultServices
         public Task StartNextTesting()
         {
             var upload = _context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+            var uploadData = _uploadDataRepository.Get(upload.Id);
 
             //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
             if (upload != null)
             {
-                return BeginTesting(upload, new UploadData());
+                return BeginTesting(upload, uploadData);
             }
 
             return Task.CompletedTask;
@@ -131,7 +132,7 @@ namespace Lightest.TestingService.DefaultServices
             await StartTrackingCodeUpload(upload);
         }
 
-        private async Task<bool> SendData(Upload upload, ITransferService transferService)
+        private async Task<bool> SendData(Upload upload, string code, ITransferService transferService)
         {
             upload.Status = UploadStatus.Queue;
             var save = _context.SaveChangesAsync();
@@ -170,7 +171,7 @@ namespace Lightest.TestingService.DefaultServices
             }
             await save;
             fileRequest = new SingleFileCodeRequest($"{upload.Id.ToString()}.{upload.Language.Extension}");
-            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(_uploadDataRepository.Get(upload.Id).Code));
+            result = await transferService.SendFile(fileRequest, Encoding.UTF8.GetBytes(code));
             return result;
         }
 
