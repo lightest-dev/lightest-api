@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Lightest.AccessService.Interfaces;
+using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
+using Lightest.Data.Mongo.Models;
 using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +35,10 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         protected readonly Mock<ITestingService> _testingServiceMock;
         protected readonly TaskDefinition _task;
         protected readonly Mock<IUploadDataRepository> _uploadDataRepositoryMock;
+        private readonly Language _language;
+        protected  Upload _upload;
+        protected  CodeUpload _codeUpload;
+        protected  UploadData _uploadData;
 
         public BaseTest()
         {
@@ -54,12 +60,18 @@ namespace Lightest.Tests.Api.Tests.UploadsController
                 Checker = checker,
                 CheckerId = checker.Id
             };
+            _language = new Language
+            {
+                Id = Guid.NewGuid(),
+                Name = "name",
+                Extension = ".ext"
+            };
         }
 
         protected virtual List<Upload> GenerateUploads(int count)
         {
             var result = new List<Upload>();
-
+        
             for (var i = 0; i < count; i++)
             {
                 var upload = new Upload
@@ -73,8 +85,31 @@ namespace Lightest.Tests.Api.Tests.UploadsController
                 };
                 result.Add(upload);
             }
-
+        
             return result;
+        }
+        
+        protected virtual void GenerateCodeUploads()
+        {
+            List<Upload> upload =  GenerateUploads(1);
+            _upload = upload[0];
+            
+            var uploadData = new UploadData
+                {
+                    Id = _upload.Id,
+                    Code = $"code{0}"
+                };
+            _uploadData = uploadData;
+            
+            var codeUpload = new CodeUpload
+            {
+                Id = Guid.NewGuid(),
+                Code = $"code{0}",
+                TaskId = _task.Id,
+                LanguageId = _language.Id
+            };
+            _codeUpload = codeUpload;
+            
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.Data.Mongo.Models;
@@ -27,6 +28,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly TaskDefinition _task;
 
         private readonly Upload _upload;
+        
+        private readonly UploadData _uploadData;
 
         private readonly Test _test;
 
@@ -93,6 +96,12 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 LanguageId = _language.Id
             };
 
+            _uploadData = new UploadData
+            {
+                Id = _upload.Id,
+                Code = Code
+            };
+
             _transferMock.Setup(t => t.SendMessage(It.IsNotNull<string>()))
                 .Returns(Task.FromResult(true));
 
@@ -102,11 +111,8 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Setup(r => r.GetFreeServer())
                 .Returns(_testServer);
 
-            _uploadDataRepository.Setup(r => r.Get(_upload.Id))
-                .Returns(new UploadData
-                {
-                    Code = Code
-                });
+            _uploadDataRepository.Setup(r => r.Get(_uploadData.Id))
+                .Returns(_uploadData);
         }
 
         [Fact]
@@ -115,7 +121,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _serverRepoMock.Setup(r => r.GetFreeServer())
                 .Returns(default(TestingServer));
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
 
             Assert.False(result);
 
@@ -132,7 +138,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _transferMock.Setup(t => t.SendMessage(It.IsNotNull<string>()))
                 .Returns(Task.FromResult(false));
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
 
             Assert.False(result);
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
@@ -150,7 +156,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                     It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(Code)))))
                 .Returns(Task.FromResult(false));
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
 
             Assert.False(result);
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
@@ -189,7 +195,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Input)))))
                 .Returns(Task.FromResult(false));
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
 
             Assert.False(result);
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
@@ -228,7 +234,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 It.Is<byte[]>(b => b.SequenceEqual(Encoding.UTF8.GetBytes(_test.Output)))))
                 .Returns(Task.FromResult(false));
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
 
             Assert.False(result);
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
@@ -264,7 +270,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             });
             _context.SaveChanges();
 
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
             Assert.True(result);
 
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
@@ -278,7 +284,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         [Fact]
         public async Task NonCachedChecker()
         {
-            var result = await _testingService.BeginTesting(_upload);
+            var result = await _testingService.BeginTesting(_upload, _uploadData);
             Assert.True(result);
 
             _serverRepoMock.Verify(s => s.GetFreeServer(), Times.Once);
