@@ -86,11 +86,11 @@ namespace Lightest.TestingService.DefaultServices
         public Task StartNextTesting()
         {
             var upload = _context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
-            var uploadData = _uploadDataRepository.Get(upload.Id);
-
+            
             //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
             if (upload != null)
             {
+                var uploadData = _uploadDataRepository.Get(upload.Id);
                 return BeginTesting(upload, uploadData);
             }
 

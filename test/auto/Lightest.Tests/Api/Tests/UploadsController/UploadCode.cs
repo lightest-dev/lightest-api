@@ -14,12 +14,30 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 {
     public class UploadCode : BaseTest
     {
+        private  CodeUpload _codeUpload;
+        private readonly Language _language;
+
         public UploadCode()
         {
-             GenerateCodeUploads();
-            _upload.Points = 5; 
-            _upload.UserId = Guid.NewGuid().ToString(); 
-            _upload.UploadDate = DateTime.Now.AddDays(-10);
+            _language = new Language
+            {
+                Id = Guid.NewGuid(),
+                Name = "name",
+                Extension = ".ext"
+            };
+            GenerateCodeUploads();
+        }
+
+        public void GenerateCodeUploads()
+        {
+            var codeUpload = new CodeUpload
+            {
+                Id = Guid.NewGuid(),
+                Code = "code",
+                TaskId = _task.Id,
+                LanguageId = _language.Id
+            };
+            _codeUpload = codeUpload;
         }
 
         [Fact]
@@ -115,24 +133,49 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _context.Tasks.Add(_task);
             await _context.SaveChangesAsync();
 
-            // var result = await _controller.UploadCode(_codeUpload);
-            //
-            // var okResult = result as OkObjectResult;
-            // Assert.NotNull(okResult);
-            //
-            //
-            //
-            // var id = (Guid)okResult.Value;
-           // Assert.Equal(_upload.Id, _uploadData.Id);
+            var result = await _controller.UploadCode(_codeUpload);
+            var okResult = result as OkObjectResult;
+            Assert.NotNull(okResult);
+            var id = (Guid)okResult.Value;
             Assert.Single(_context.Uploads); 
-            var upload = _context.Uploads.First();
-            Assert.Equal(_upload.Id, upload.Id);
+            var upload = _context.Uploads.Find(id);
             Assert.Equal(UploadStatus.New, upload.Status);
             Assert.Equal(0, upload.Points);
             Assert.Equal(_user.Id, upload.UserId);
             Assert.Equal(DateTime.Now.Date, upload.UploadDate.Date);
 
-            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.Id == _upload.Id), It.Is<UploadData>(u => u.Id == _uploadData.Id)), Times.Once);
+            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.Id == id), It.Is<UploadData>(u => u.Id == id)), Times.Once);
+        }
+
+        [Fact]
+        public async Task UploadEqualUploadData()
+        { 
+            var language = new Language
+            {
+                Name = "name",
+                Extension = "extension",
+                Id = Guid.NewGuid()
+            };
+            _task.Languages = new List<TaskLanguage>
+            {
+                new TaskLanguage
+                {
+                    Language = language,
+                    LanguageId = language.Id,
+                    Task = _task,
+                    TaskId = _task.Id
+                }
+            };
+            _codeUpload.LanguageId = language.Id;
+            _context.Languages.Add(language);
+            _context.Tasks.Add(_task);
+            await _context.SaveChangesAsync();
+
+            await _controller.UploadCode(_codeUpload);
+            _testingServiceMock.Verify(m => m.BeginTesting(It.IsAny<Upload>(), It.Is<UploadData>(u => u.Code == _codeUpload.Code)), Times.Once);
+            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.LanguageId == _codeUpload.LanguageId), It.IsAny<UploadData>()), Times.Once);
+            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.TaskId == _codeUpload.TaskId), It.IsAny<UploadData>()), Times.Once);
+
         }
     }
 }

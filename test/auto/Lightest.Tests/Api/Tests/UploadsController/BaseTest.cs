@@ -35,10 +35,6 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         protected readonly Mock<ITestingService> _testingServiceMock;
         protected readonly TaskDefinition _task;
         protected readonly Mock<IUploadDataRepository> _uploadDataRepositoryMock;
-        private readonly Language _language;
-        protected  Upload _upload;
-        protected  CodeUpload _codeUpload;
-        protected  UploadData _uploadData;
 
         public BaseTest()
         {
@@ -59,12 +55,6 @@ namespace Lightest.Tests.Api.Tests.UploadsController
                 Name = "name",
                 Checker = checker,
                 CheckerId = checker.Id
-            };
-            _language = new Language
-            {
-                Id = Guid.NewGuid(),
-                Name = "name",
-                Extension = ".ext"
             };
         }
 
@@ -87,29 +77,6 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             }
         
             return result;
-        }
-        
-        protected virtual void GenerateCodeUploads()
-        {
-            List<Upload> upload =  GenerateUploads(1);
-            _upload = upload[0];
-            
-            var uploadData = new UploadData
-                {
-                    Id = _upload.Id,
-                    Code = $"code{0}"
-                };
-            _uploadData = uploadData;
-            
-            var codeUpload = new CodeUpload
-            {
-                Id = Guid.NewGuid(),
-                Code = $"code{0}",
-                TaskId = _task.Id,
-                LanguageId = _language.Id
-            };
-            _codeUpload = codeUpload;
-            
         }
     }
 }
