@@ -107,7 +107,7 @@ namespace Lightest.Api
                 c.ThrowExceptions = true;
             });
 
-            services.AddMongoCodeRepository(Configuration);
+            services.AddSingleton<IUploadDataRepository, MockRepository>();
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
             services.AddTransient<ISeeder, DefaultSeeder>();
