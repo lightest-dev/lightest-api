@@ -65,7 +65,6 @@ namespace Lightest.Tests.Api.Tests.UploadsController
                 var upload = new Upload
                 {
                     Id = Guid.NewGuid(),
-                    Code = $"code{i}",
                     Task = _task,
                     TaskId = _task.Id,
                     UserId = _user.Id,

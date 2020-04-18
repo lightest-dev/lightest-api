@@ -9,9 +9,6 @@ namespace Lightest.Data.Models.TaskModels
         [Key]
         public Guid Id { get; set; }
 
-        [Required]
-        public string Code { get; set; }
-
         [JsonIgnore]
         public virtual Language Language { get; set; }
 

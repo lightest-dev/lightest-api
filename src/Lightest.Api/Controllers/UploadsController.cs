@@ -131,10 +131,10 @@ namespace Lightest.Api.Controllers
             var uploadData = new UploadData();
 
             var task = await _context.Tasks
-                            .Include(t => t.Languages)
-                            .Include(t => t.Tests)
-                            .Include(t => t.Checker)
-                            .SingleOrDefaultAsync(t => t.Id == codeUpload.TaskId);
+                .Include(t => t.Languages)
+                .Include(t => t.Tests)
+                .Include(t => t.Checker)
+                .SingleOrDefaultAsync(t => t.Id == codeUpload.TaskId);
 
             if (task == null)
             {
@@ -143,6 +143,9 @@ namespace Lightest.Api.Controllers
             }
             
             upload.Task = task;
+            upload.TaskId = codeUpload.TaskId;
+            upload.UserId = user.Id;
+            upload.User = user;
 
             if (!await _accessService.CanAdd(upload, user))
             {
@@ -157,13 +160,10 @@ namespace Lightest.Api.Controllers
             }
 
             upload.Language = language;
-            upload.Status = UploadStatus.New;
-            upload.Points = 0;
-            upload.UserId = user.Id;
-            upload.UploadDate = DateTime.Now;
+            upload.Points = 0;            
             upload.LanguageId = codeUpload.LanguageId;
-            upload.User = user;
-            upload.TaskId = codeUpload.TaskId;
+            upload.UploadDate = DateTime.Now;
+            upload.Status = UploadStatus.New;
             upload.TestingFinished = false;
 
             _context.Uploads.Add(upload);
