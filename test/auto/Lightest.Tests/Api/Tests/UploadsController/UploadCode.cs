@@ -28,7 +28,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             GenerateCodeUploads();
         }
 
-        public void GenerateCodeUploads()
+        internal void GenerateCodeUploads()
         {
             var codeUpload = new CodeUpload
             {
