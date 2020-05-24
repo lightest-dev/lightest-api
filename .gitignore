@@ -4,6 +4,8 @@
 # code coverage
 cover.xml
 tools/
+artifacts/
+.tmp/
 
 # private settings
 settings.private.json
