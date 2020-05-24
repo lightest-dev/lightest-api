@@ -1,4 +1,0 @@
-/p:CollectCoverage=true
-/p:CoverletOutput=../../../cover.xml
-/p:CoverletOutputFormat=opencover
-/p:Exclude="[Lightest.Data]*,[Lightest.Data.Seeding]*,[*]*Models*,[*]*Migrations*,[Lightest.AccessService]Lightest.AccessService.MockAccessServices.*,[xunit.*]*,[*]*.Seed,[*]*.Startup,[*]*.ServiceRegistrator,[*]*.Program"

@@ -4,13 +4,8 @@ dist: bionic
 mono: none
 dotnet: 3.1
 
-env:
-  global:
-    - VERSION: 0.10.1.${TRAVIS_BUILD_NUMBER}
-
 install:
   - pip install --user codecov
-before_script:
-  - dotnet restore
 script:  
-  - bash build.sh
+  - bash build.sh Test
+  - codecov -f ./artifacts/cover.xml
