@@ -6,7 +6,7 @@ using Lightest.Data.Models.TaskModels;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Lightest.Tests.Api.Tests.TasksController
+namespace Lightest.Tests.Api.Tests.AssignmentsController
 {
     public class GetAssignedTasks : BaseTest
     {

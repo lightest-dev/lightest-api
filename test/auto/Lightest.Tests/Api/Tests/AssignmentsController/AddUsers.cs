@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
-namespace Lightest.Tests.Api.Tests.TasksController
+namespace Lightest.Tests.Api.Tests.AssignmentsController
 {
     public class AddUsers : BaseTest
     {
