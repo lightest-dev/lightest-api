@@ -19,7 +19,7 @@ namespace Lightest.Data.Models
         [Required]
         public bool IsOwner { get; set; }
 
-        public DateTime Deadline { get; set; }
+        public DateTime? Deadline { get; set; }
 
         [JsonIgnore]
         public TaskDefinition Task { get; set; }

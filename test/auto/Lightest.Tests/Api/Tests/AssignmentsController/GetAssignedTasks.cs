@@ -47,7 +47,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var tasksResult = okResult.Value as IEnumerable<UserTaskView>;
+            var tasksResult = okResult.Value as IEnumerable<AssignmentView>;
 
             Assert.NotNull(tasksResult);
             Assert.Single(tasksResult);
@@ -65,7 +65,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
 
-            var tasksResult = okResult.Value as IEnumerable<UserTaskView>;
+            var tasksResult = okResult.Value as IEnumerable<AssignmentView>;
 
             Assert.NotNull(tasksResult);
             Assert.Empty(tasksResult);

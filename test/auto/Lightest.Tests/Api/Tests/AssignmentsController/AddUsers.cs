@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Lightest.Api.RequestModels.AssignmentRequests;
 using Lightest.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -11,19 +12,28 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
 {
     public class AddUsers : BaseTest
     {
-        private readonly Assignment _userTask;
+        private readonly AddOrUpdateAssignmentsRequest _request;
+        private readonly AssignmentRequest _assignmentRequest;
 
         public AddUsers()
         {
-            _userTask = new Assignment
+            _assignmentRequest = new AssignmentRequest
             {
-                User = _user,
                 UserId = _user.Id,
                 CanChangeAccess = false,
                 CanRead = false,
                 CanWrite = false,
                 Deadline = DateTime.Now,
                 IsOwner = false
+            };
+
+            _request = new AddOrUpdateAssignmentsRequest
+            {
+                TaskId = _task.Id,
+                Assignments = new AssignmentRequest[]
+                {
+                    _assignmentRequest
+                }
             };
         }
 
@@ -37,9 +47,20 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 
-            var result = await _controller.AddUsers(_task.Id, new[] { _userTask });
+            var result = await _controller.AddUsers(_task.Id, _request);
 
             Assert.IsAssignableFrom<ForbidResult>(result);
+        }
+
+        [Fact]
+        public async Task IdsDoNotMatch()
+        {
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.AddUsers(Guid.NewGuid(), _request);
+
+            Assert.IsAssignableFrom<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -48,7 +69,10 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(Guid.NewGuid(), new[] { _userTask });
+            var newId = Guid.NewGuid();
+            _request.TaskId = newId;
+
+            var result = await _controller.AddUsers(newId, _request);
 
             Assert.IsAssignableFrom<NotFoundResult>(result);
         }
@@ -56,12 +80,12 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
         [Fact]
         public async Task NoExistingUser()
         {
-            _userTask.IsOwner = true;
+            _assignmentRequest.IsOwner = true;
             _task.Users = new List<Assignment>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, new[] { _userTask });
+            var result = await _controller.AddUsers(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 
@@ -69,11 +93,11 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             Assert.Single(task.Users);
 
             var user = task.Users.First();
-            Assert.Equal(_userTask.UserId, user.UserId);
-            Assert.Equal(_userTask.CanChangeAccess, user.CanChangeAccess);
-            Assert.Equal(_userTask.CanRead, user.CanRead);
-            Assert.Equal(_userTask.CanWrite, user.CanWrite);
-            Assert.Equal(_userTask.Deadline, user.Deadline);
+            Assert.Equal(_assignmentRequest.UserId, user.UserId);
+            Assert.Equal(_assignmentRequest.CanChangeAccess, user.CanChangeAccess);
+            Assert.Equal(_assignmentRequest.CanRead, user.CanRead);
+            Assert.Equal(_assignmentRequest.CanWrite, user.CanWrite);
+            Assert.Equal(_assignmentRequest.Deadline, user.Deadline);
             Assert.False(user.IsOwner);
         }
 
@@ -81,11 +105,11 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
         public async Task ExistingUser()
         {
             _task.Users.First().IsOwner = false;
-            _userTask.IsOwner = true;
+            _assignmentRequest.IsOwner = true;
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, new[] { _userTask });
+            var result = await _controller.AddUsers(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 
@@ -93,11 +117,11 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             Assert.Single(task.Users);
 
             var user = task.Users.First();
-            Assert.Equal(_userTask.UserId, user.UserId);
-            Assert.Equal(_userTask.CanChangeAccess, user.CanChangeAccess);
-            Assert.Equal(_userTask.CanRead, user.CanRead);
-            Assert.Equal(_userTask.CanWrite, user.CanWrite);
-            Assert.Equal(_userTask.Deadline, user.Deadline);
+            Assert.Equal(_assignmentRequest.UserId, user.UserId);
+            Assert.Equal(_assignmentRequest.CanChangeAccess, user.CanChangeAccess);
+            Assert.Equal(_assignmentRequest.CanRead, user.CanRead);
+            Assert.Equal(_assignmentRequest.CanWrite, user.CanWrite);
+            Assert.Equal(_assignmentRequest.Deadline, user.Deadline);
             Assert.False(user.IsOwner);
         }
 
@@ -109,7 +133,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, new[] { _userTask });
+            var result = await _controller.AddUsers(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 
