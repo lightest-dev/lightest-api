@@ -17,14 +17,14 @@ namespace Lightest.Tests.Api.Tests.ContestsController
         {
             _category.Name = "name";
 
-            _task.Users = new List<UserTask>
+            _task.Users = new List<Assignment>
             {
-                new UserTask
+                new Assignment
                 {
                     UserId = Guid.NewGuid().ToString(),
                     HighScore = 0
                 },
-                new UserTask
+                new Assignment
                 {
                     UserId = Guid.NewGuid().ToString(),
                     HighScore = 60

@@ -42,7 +42,7 @@ namespace Lightest.Data.Models.TaskModels
         public virtual ICollection<Test> Tests { get; set; }
 
         [JsonIgnore]
-        public virtual ICollection<UserTask> Users { get; set; }
+        public virtual ICollection<Assignment> Users { get; set; }
 
         [JsonIgnore]
         public virtual ICollection<TaskLanguage> Languages { get; set; }

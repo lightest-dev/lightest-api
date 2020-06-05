@@ -146,9 +146,9 @@ namespace Lightest.Api.Controllers
                 task.Public = true;
             }
 
-            task.Users = new List<UserTask>
+            task.Users = new List<Assignment>
             {
-                new UserTask { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
+                new Assignment { UserId = user.Id, CanRead = true, CanWrite = true, CanChangeAccess = true, IsOwner = true }
             };
 
             _context.Tasks.Add(task);

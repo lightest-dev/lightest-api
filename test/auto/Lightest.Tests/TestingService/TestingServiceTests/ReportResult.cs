@@ -13,7 +13,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly CheckingResponse _result;
         private readonly Upload _upload;
         private readonly TaskDefinition _task;
-        private readonly UserTask _userTask;
+        private readonly Assignment _userTask;
 
         public ReportResult()
         {
@@ -41,7 +41,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
                 Type = "Code"
             };
 
-            _userTask = new UserTask
+            _userTask = new Assignment
             {
                 UserId = _upload.UserId,
                 TaskId = _task.Id,

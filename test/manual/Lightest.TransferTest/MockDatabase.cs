@@ -70,7 +70,7 @@ namespace Lightest.TransferTest
             {
                 Id = new Guid().ToString()
             };
-            var userTask = new UserTask
+            var userTask = new Assignment
             {
                 UserId = user.Id,
                 TaskId = task.Id

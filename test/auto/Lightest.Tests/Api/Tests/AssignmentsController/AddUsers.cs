@@ -11,11 +11,11 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
 {
     public class AddUsers : BaseTest
     {
-        private readonly UserTask _userTask;
+        private readonly Assignment _userTask;
 
         public AddUsers()
         {
-            _userTask = new UserTask
+            _userTask = new Assignment
             {
                 User = _user,
                 UserId = _user.Id,
@@ -57,7 +57,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
         public async Task NoExistingUser()
         {
             _userTask.IsOwner = true;
-            _task.Users = new List<UserTask>();
+            _task.Users = new List<Assignment>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 

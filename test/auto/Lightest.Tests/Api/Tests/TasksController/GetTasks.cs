@@ -28,7 +28,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
                 Name = "name",
                 Tests = new List<Test>(),
                 Languages = new List<TaskLanguage>(),
-                Users = new List<UserTask>()
+                Users = new List<Assignment>()
             };
         }
 

@@ -56,7 +56,7 @@ namespace Lightest.Tests.Api.Tests.ContestsController
                 Name = "name",
                 Tests = new List<Test>(),
                 Languages = new List<TaskLanguage>(),
-                Users = new List<UserTask>()
+                Users = new List<Assignment>()
             };
 
             _category = new Category

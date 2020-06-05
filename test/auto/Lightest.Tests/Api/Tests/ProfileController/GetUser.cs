@@ -51,14 +51,14 @@ namespace Lightest.Tests.Api.Tests.ProfileController
                     GroupId = group.Id
                 }
             };
-            var userTask = new UserTask
+            var userTask = new Assignment
             {
                 Completed = true,
                 HighScore = 5,
                 Task = task,
                 TaskId = task.Id
             };
-            _user.Tasks = new List<UserTask>
+            _user.Tasks = new List<Assignment>
             {
                 userTask
             };

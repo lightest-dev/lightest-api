@@ -236,9 +236,9 @@ namespace Lightest.Data.Seeding
         {
             var student = await UserManager.FindByNameAsync("student");
             var privateTask = Context.Tasks.First(t => t.Public);
-            privateTask.Users = new List<UserTask>
+            privateTask.Users = new List<Assignment>
             {
-                new UserTask
+                new Assignment
                 {
                     Task = privateTask,
                     TaskId = privateTask.Id,

@@ -76,7 +76,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
         [Fact]
         public async Task PublicTaskOnly()
         {
-            _task.Users = new List<UserTask>();
+            _task.Users = new List<Assignment>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 
@@ -113,7 +113,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
         public async Task NoTaskAvailable()
         {
             _task.Public = false;
-            _task.Users = new List<UserTask>();
+            _task.Users = new List<Assignment>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 

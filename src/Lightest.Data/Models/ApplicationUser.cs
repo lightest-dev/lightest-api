@@ -16,6 +16,6 @@ namespace Lightest.Data.Models
 
         public virtual ICollection<UserGroup> Groups { get; set; }
 
-        public virtual ICollection<UserTask> Tasks { get; set; }
+        public virtual ICollection<Assignment> Tasks { get; set; }
     }
 }

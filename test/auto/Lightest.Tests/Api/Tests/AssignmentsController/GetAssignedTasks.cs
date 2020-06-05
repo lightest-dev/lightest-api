@@ -26,7 +26,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
                 Name = "name",
                 Tests = new List<Test>(),
                 Languages = new List<TaskLanguage>(),
-                Users = new List<Data.Models.UserTask>()
+                Users = new List<Data.Models.Assignment>()
             };
         }
 
@@ -56,7 +56,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
         [Fact]
         public async Task NoAssignedTasks()
         {
-            _task.Users = new List<Data.Models.UserTask>();
+            _task.Users = new List<Data.Models.Assignment>();
             AddDataToDb();
             await _context.SaveChangesAsync();
 

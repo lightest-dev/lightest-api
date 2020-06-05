@@ -85,7 +85,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] UserTask[] users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] Assignment[] users)
         {
             var task = await _context.Tasks
                .Include(t => t.Users)
@@ -126,5 +126,7 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
+        private void UpdateUserAccess(Assignment)
     }
 }

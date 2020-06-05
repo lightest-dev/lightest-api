@@ -5,7 +5,7 @@ using Lightest.Data.Models.TaskModels;
 
 namespace Lightest.Data.Models
 {
-    public class UserTask : IAccessRights
+    public class Assignment : IAccessRights
     {
         [Required]
         public bool CanRead { get; set; }

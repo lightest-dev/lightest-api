@@ -27,7 +27,7 @@ namespace Lightest.Data
 
         public DbSet<Test> Tests { get; set; }
 
-        public DbSet<UserTask> UserTasks { get; set; }
+        public DbSet<Assignment> UserTasks { get; set; }
 
         public DbSet<ServerChecker> CachedCheckers { get; set; }
 
@@ -83,14 +83,14 @@ namespace Lightest.Data
                 .HasForeignKey(tl => tl.LanguageId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<UserTask>()
+            builder.Entity<Assignment>()
                 .HasKey(ut => new { ut.TaskId, ut.UserId });
-            builder.Entity<UserTask>()
+            builder.Entity<Assignment>()
                 .HasOne(ut => ut.User)
                 .WithMany(u => u.Tasks)
                 .HasForeignKey(ut => ut.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-            builder.Entity<UserTask>()
+            builder.Entity<Assignment>()
                 .HasOne(ut => ut.Task)
                 .WithMany(t => t.Users)
                 .HasForeignKey(ut => ut.TaskId)

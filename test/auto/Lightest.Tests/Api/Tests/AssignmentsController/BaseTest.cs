@@ -73,7 +73,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
                 Name = "name",
                 Tests = new List<Test>(),
                 Languages = new List<TaskLanguage>(),
-                Users = new List<UserTask>()
+                Users = new List<Assignment>()
             };
 
             _task.Languages.Add(new TaskLanguage
@@ -86,7 +86,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
                 TimeLimit = 1000
             });
 
-            _task.Users.Add(new UserTask
+            _task.Users.Add(new Assignment
             {
                 User = _user,
                 UserId = _user.Id,

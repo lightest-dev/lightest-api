@@ -64,9 +64,9 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
                 Name = "name",
                 Tests = new List<Test>(),
                 Languages = new List<TaskLanguage>(),
-                Users = new List<UserTask>()
+                Users = new List<Assignment>()
             };
-            _task.Users.Add(new UserTask
+            _task.Users.Add(new Assignment
             {
                 UserId = _user.Id,
                 TaskId = _task.Id
