@@ -59,7 +59,7 @@ namespace Lightest.Api.Controllers
             }
             return Ok(uploads);
         }
- 
+
         [HttpGet("{taskId}/all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
         public async Task<IActionResult> GetAllUploads(Guid taskId)
@@ -141,7 +141,7 @@ namespace Lightest.Api.Controllers
                 ModelState.AddModelError(nameof(codeUpload.TaskId), "Task not found");
                 return BadRequest(ModelState);
             }
-            
+
             upload.Task = task;
             upload.TaskId = codeUpload.TaskId;
             upload.UserId = user.Id;
@@ -160,7 +160,7 @@ namespace Lightest.Api.Controllers
             }
 
             upload.Language = language;
-            upload.Points = 0;            
+            upload.Points = 0;
             upload.LanguageId = codeUpload.LanguageId;
             upload.UploadDate = DateTime.Now;
             upload.Status = UploadStatus.New;
@@ -171,7 +171,7 @@ namespace Lightest.Api.Controllers
 
             uploadData.Id = upload.Id;
             uploadData.Code = codeUpload.Code;
-            
+
             _uploadDataRepository.Add(uploadData);
 
             await _testingService.BeginTesting(upload, uploadData);

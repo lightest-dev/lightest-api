@@ -40,7 +40,7 @@ namespace Lightest.Api.Controllers
         [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetCategories([FromQuery]SieveModel sieveModel)
+        public async Task<IActionResult> GetCategories([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
@@ -58,7 +58,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-        public async Task<IActionResult> GetAvailableCategories([FromQuery]SieveModel sieveModel)
+        public async Task<IActionResult> GetAvailableCategories([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
             var categories = _context.Categories
@@ -232,7 +232,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody]IEnumerable<AccessRights> users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid id, [FromBody] IEnumerable<AccessRights> users)
         {
             var category = await _context.Categories
                 .Include(c => c.Users)

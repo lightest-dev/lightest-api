@@ -86,7 +86,7 @@ namespace Lightest.TestingService.DefaultServices
         public Task StartNextTesting()
         {
             var upload = _context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
-            
+
             //todo: refactor to enable complete testing, maybe move BeginTesting to separate class
             if (upload != null)
             {

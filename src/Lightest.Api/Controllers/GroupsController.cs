@@ -40,7 +40,7 @@ namespace Lightest.Api.Controllers
         [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetGroups([FromQuery]SieveModel sieveModel)
+        public async Task<IActionResult> GetGroups([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
             var groups = _context.Groups.AsNoTracking();
@@ -57,7 +57,7 @@ namespace Lightest.Api.Controllers
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
-        public async Task<IEnumerable<ListGroupView>> GetAvailableGroups([FromQuery]SieveModel sieveModel)
+        public async Task<IEnumerable<ListGroupView>> GetAvailableGroups([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
@@ -191,7 +191,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid groupId, [FromBody]IEnumerable<AccessRights> users)
+        public async Task<IActionResult> AddUsers([FromRoute] Guid groupId, [FromBody] IEnumerable<AccessRights> users)
         {
             var group = await _context.Groups
                 .Include(g => g.Users)

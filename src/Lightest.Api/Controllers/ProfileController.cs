@@ -38,7 +38,7 @@ namespace Lightest.Api.Controllers
         [HttpGet("all")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ProfileView>))]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetUsers([FromQuery]SieveModel sieveModel)
+        public async Task<IActionResult> GetUsers([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 
@@ -129,7 +129,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> PutUser([FromRoute] string id, [FromBody]PersonalDataRequest personalData)
+        public async Task<IActionResult> PutUser([FromRoute] string id, [FromBody] PersonalDataRequest personalData)
         {
             if (id != personalData.UserId)
             {

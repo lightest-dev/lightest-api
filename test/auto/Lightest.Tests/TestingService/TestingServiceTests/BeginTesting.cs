@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
 using Lightest.Data.Mongo.Models;
-using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.RequestModels;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
 
@@ -28,7 +25,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         private readonly TaskDefinition _task;
 
         private readonly Upload _upload;
-        
+
         private readonly UploadData _uploadData;
 
         private readonly Test _test;
@@ -148,7 +145,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             var upload = _context.Uploads.First();
             Assert.Equal(UploadStatus.Queue, upload.Status);
         }
-        
+
         [Fact]
         public async Task UploadSendingFailed()
         {

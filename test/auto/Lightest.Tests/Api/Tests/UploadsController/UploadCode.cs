@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Data.Models;
@@ -14,7 +13,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 {
     public class UploadCode : BaseTest
     {
-        private  CodeUpload _codeUpload;
+        private CodeUpload _codeUpload;
         private readonly Language _language;
 
         public UploadCode()
@@ -137,7 +136,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             var okResult = result as OkObjectResult;
             Assert.NotNull(okResult);
             var id = (Guid)okResult.Value;
-            Assert.Single(_context.Uploads); 
+            Assert.Single(_context.Uploads);
             var upload = _context.Uploads.Find(id);
             Assert.Equal(UploadStatus.New, upload.Status);
             Assert.Equal(0, upload.Points);
@@ -149,7 +148,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 
         [Fact]
         public async Task UploadEqualUploadData()
-        { 
+        {
             var language = new Language
             {
                 Name = "name",
@@ -175,7 +174,6 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _testingServiceMock.Verify(m => m.BeginTesting(It.IsAny<Upload>(), It.Is<UploadData>(u => u.Code == _codeUpload.Code)), Times.Once);
             _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.LanguageId == _codeUpload.LanguageId), It.IsAny<UploadData>()), Times.Once);
             _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.TaskId == _codeUpload.TaskId), It.IsAny<UploadData>()), Times.Once);
-
         }
     }
 }

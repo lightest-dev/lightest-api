@@ -137,7 +137,7 @@ namespace Lightest.Api.Controllers
 
         // TODO: Add get method
         [HttpPut("{contestId}/settings")]
-        public async Task<ActionResult<ContestSettings>> ChangeSettings([FromRoute]Guid contestId, [FromBody]UpdateSettingsRequest settings)
+        public async Task<ActionResult<ContestSettings>> ChangeSettings([FromRoute] Guid contestId, [FromBody] UpdateSettingsRequest settings)
         {
             var dbSettings = _context.Contests.Find(contestId);
             if (dbSettings == null)
@@ -163,7 +163,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet("{contestId}/settings")]
-        public async Task<ActionResult<ContestSettings>> GetSettings([FromRoute]Guid contestId)
+        public async Task<ActionResult<ContestSettings>> GetSettings([FromRoute] Guid contestId)
         {
             var dbSettings = _context.Contests.Find(contestId);
             if (dbSettings == null)

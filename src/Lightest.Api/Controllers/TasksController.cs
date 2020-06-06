@@ -41,7 +41,7 @@ namespace Lightest.Api.Controllers
         [HttpGet]
         [ProducesResponseType(typeof(TaskDefinition), 200)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> GetTasks([FromQuery]SieveModel sieveModel)
+        public async Task<IActionResult> GetTasks([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
 

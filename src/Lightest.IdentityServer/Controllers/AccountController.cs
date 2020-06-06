@@ -33,7 +33,7 @@ namespace Lightest.IdentityServer.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("login")]
-        public async Task<IActionResult> Login([FromBody]LogInRequest model)
+        public async Task<IActionResult> Login([FromBody] LogInRequest model)
         {
             // This doesn't count login failures towards account lockout To enable password failures
             // to trigger account lockout, set lockoutOnFailure: true
@@ -60,7 +60,7 @@ namespace Lightest.IdentityServer.Controllers
 
         [HttpPost]
         [Route("logout")]
-        public async Task<IActionResult> Logout([FromBody]LogOutRequest model)
+        public async Task<IActionResult> Logout([FromBody] LogOutRequest model)
         {
             var subjectId = HttpContext.User.Identity.GetSubjectId();
 

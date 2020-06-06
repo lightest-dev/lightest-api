@@ -24,7 +24,7 @@ namespace Lightest.TestingService.DefaultServices
             _endpoint = new IPEndPoint(ip, port);
         }
 
-        public async Task<bool> SendFile([NotNull]FileRequest fileRequest, string path)
+        public async Task<bool> SendFile([NotNull] FileRequest fileRequest, string path)
         {
             if (!File.Exists(path))
             {
