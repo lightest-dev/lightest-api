@@ -10,12 +10,12 @@ using Xunit;
 
 namespace Lightest.Tests.Api.Tests.AssignmentsController
 {
-    public class AddUsers : BaseTest
+    public class AddAssignments : BaseTest
     {
         private readonly AddOrUpdateAssignmentsRequest _request;
         private readonly AssignmentRequest _assignmentRequest;
 
-        public AddUsers()
+        public AddAssignments()
         {
             _assignmentRequest = new AssignmentRequest
             {
@@ -47,7 +47,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
                 It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 
-            var result = await _controller.AddUsers(_task.Id, _request);
+            var result = await _controller.AddAssignments(_task.Id, _request);
 
             Assert.IsAssignableFrom<ForbidResult>(result);
         }
@@ -58,7 +58,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(Guid.NewGuid(), _request);
+            var result = await _controller.AddAssignments(Guid.NewGuid(), _request);
 
             Assert.IsAssignableFrom<BadRequestObjectResult>(result);
         }
@@ -72,7 +72,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             var newId = Guid.NewGuid();
             _request.TaskId = newId;
 
-            var result = await _controller.AddUsers(newId, _request);
+            var result = await _controller.AddAssignments(newId, _request);
 
             Assert.IsAssignableFrom<NotFoundResult>(result);
         }
@@ -85,7 +85,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, _request);
+            var result = await _controller.AddAssignments(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 
@@ -109,7 +109,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, _request);
+            var result = await _controller.AddAssignments(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 
@@ -133,7 +133,7 @@ namespace Lightest.Tests.Api.Tests.AssignmentsController
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            var result = await _controller.AddUsers(_task.Id, _request);
+            var result = await _controller.AddAssignments(_task.Id, _request);
 
             Assert.IsAssignableFrom<OkResult>(result);
 

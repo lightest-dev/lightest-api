@@ -86,7 +86,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> AddUsers([FromRoute] Guid taskId, [FromBody] AddOrUpdateAssignmentsRequest request)
+        public async Task<IActionResult> AddAssignments([FromRoute] Guid taskId, [FromBody] AddOrUpdateAssignmentsRequest request)
         {
             if (taskId != request.TaskId)
             {
@@ -94,6 +94,43 @@ namespace Lightest.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            return await AddAssignments(taskId, request.Assignments, true);
+        }
+
+        [HttpPost("{taskId}/from-group")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        public async Task<IActionResult> AddGroupAssignments([FromRoute] Guid taskId, [FromBody] AssignGroupRequest request)
+        {
+            if (taskId != request.TaskId)
+            {
+                ModelState.AddModelError(nameof(taskId), "Task IDs do not match");
+                return BadRequest(ModelState);
+            }
+
+            var assignments = await _context.Groups.Include(g => g.Users)
+                .Where(g => g.Id == request.GroupId)
+                .SelectMany(g => g.Users
+                    .Select(u => new AssignmentRequest
+                    {
+                        UserId = u.UserId,
+                        Deadline = request.Deadline
+                    }))
+                .ToArrayAsync();
+
+            if (assignments.Length == 0)
+            {
+                ModelState.AddModelError(nameof(request.GroupId), "No users in group or group does not exist.");
+                return NotFound(ModelState);
+            }
+
+            return await AddAssignments(taskId, assignments, false);
+        }
+
+        private async Task<IActionResult> AddAssignments(Guid taskId, AssignmentRequest[] assignments,
+            bool updateExistingAssignments)
+        {
             var task = await _context.Tasks
                .Include(t => t.Users)
                .SingleOrDefaultAsync(t => t.Id == taskId);
@@ -108,7 +145,7 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
-            foreach (var assignment in request.Assignments)
+            foreach (var assignment in assignments)
             {
                 var existingAssignment = task.Users.SingleOrDefault(u => u.UserId == assignment.UserId);
                 if (existingAssignment == null)
@@ -120,6 +157,10 @@ namespace Lightest.Api.Controllers
                         UserId = assignment.UserId
                     };
                     task.Users.Add(existingAssignment);
+                }
+                else if (!updateExistingAssignments)
+                {
+                    continue;
                 }
                 UpdateAssignment(existingAssignment, assignment);
             }
