@@ -1,20 +1,21 @@
 ﻿using System;
-using Lightest.Data.Mongo.Models;
-using Lightest.Data.Mongo.Models.Options;
+using Lightest.Data.CodeManagment.Mongo;
+using Lightest.Data.CodeManagment.Services;
+using Lightest.CodeManagment.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-namespace Lightest.Data.Mongo.Services
+namespace Lightest.CodeManagment.Services
 {
-    public class UploadDataService : IUploadDataRepository
+    public class MongoCodeManagmentService : ICodeManagmentService
     {
         private readonly IMongoCollection<UploadData> _uploadData;
 
-        private readonly MongoDBStoreDatabaseSettings _mongoDBStoreDatabaseSettings;
+        private readonly MongoSettings _mongoDBStoreDatabaseSettings;
 
         protected string CollectionName => _mongoDBStoreDatabaseSettings.UploadDataCollectionName;
 
-        public UploadDataService(IOptionsMonitor<MongoDBStoreDatabaseSettings> optionsMonitor)
+        public MongoCodeManagmentService(IOptionsMonitor<MongoSettings> optionsMonitor)
         {
             _mongoDBStoreDatabaseSettings = optionsMonitor.CurrentValue;
             var client = new MongoClient(_mongoDBStoreDatabaseSettings.ConnectionString);

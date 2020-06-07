@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lightest.Api.RequestModels.UploadRequests
 {
-    public class CodeUpload
+    public class CodeUploadRequest
     {
         [Required]
         public Guid Id { get; set; }

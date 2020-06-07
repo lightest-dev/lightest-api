@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models;
+using Lightest.CodeManagment.Models;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -13,7 +13,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 {
     public class UploadCode : BaseTest
     {
-        private CodeUpload _codeUpload;
+        private CodeUploadRequest _codeUpload;
         private readonly Language _language;
 
         public UploadCode()
@@ -29,7 +29,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 
         internal void GenerateCodeUploads()
         {
-            var codeUpload = new CodeUpload
+            var codeUpload = new CodeUploadRequest
             {
                 Id = Guid.NewGuid(),
                 Code = "code",

@@ -33,6 +33,8 @@ namespace Lightest.Data
 
         public DbSet<ContestSettings> Contests { get; set; }
 
+        public DbSet<CodeUpload> CodeUploads { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -163,6 +165,15 @@ namespace Lightest.Data
             builder.Entity<ContestSettings>()
                 .HasOne(s => s.Category)
                 .WithOne()
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<CodeUpload>()
+                .HasKey(cu => cu.UploadId);
+
+            builder.Entity<Upload>()
+                .HasOne<CodeUpload>()
+                .WithOne()
+                .HasForeignKey<CodeUpload>(cu => cu.UploadId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

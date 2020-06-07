@@ -1,9 +1,9 @@
 ﻿using System;
-using Lightest.Data.Mongo.Models;
+using Lightest.CodeManagment.Models;
 
-namespace Lightest.Data.Mongo.Services
+namespace Lightest.Data.CodeManagment.Services
 {
-    public interface IUploadDataRepository
+    public interface ICodeManagmentService
     {
         UploadData Get(Guid id);
 

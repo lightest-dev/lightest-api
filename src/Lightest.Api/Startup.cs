@@ -3,8 +3,9 @@ using Lightest.AccessService;
 using Lightest.Api.Extensions;
 using Lightest.Api.Services;
 using Lightest.Data;
+using Lightest.Data.CodeManagment.InMemory;
+using Lightest.Data.CodeManagment.Services;
 using Lightest.Data.Models;
-using Lightest.Data.Mongo.Services;
 using Lightest.Data.Seeding;
 using Lightest.Data.Seeding.Interfaces;
 using Lightest.TestingService.DefaultServices;
@@ -107,7 +108,7 @@ namespace Lightest.Api
                 c.ThrowExceptions = true;
             });
 
-            services.AddSingleton<IUploadDataRepository, MockRepository>();
+            services.AddCodeManagmentService(Configuration);
             services.AddDefaultTestingServices();
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
             services.AddTransient<ISeeder, DefaultSeeder>();

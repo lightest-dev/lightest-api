@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Lightest.Data.Mongo.Services;
+using Lightest.Data.CodeManagment.Services;
 using Lightest.TestingService.Interfaces;
 using Moq;
 
@@ -13,7 +13,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
         protected readonly Mock<IServerRepository> _serverRepoMock;
         protected readonly Mock<ITransferServiceFactory> _factoryMock;
         protected readonly Mock<ITransferService> _transferMock;
-        protected readonly Mock<IUploadDataRepository> _uploadDataRepository;
+        protected readonly Mock<ICodeManagmentService> _uploadDataRepository;
 
         public BaseTests()
         {
@@ -22,7 +22,7 @@ namespace Lightest.Tests.TestingService.TestingServiceTests
             _factoryMock = new Mock<ITransferServiceFactory>();
             _factoryMock.Setup(f => f.Create(It.IsAny<IPAddress>(), It.IsAny<int>()))
                 .Returns(_transferMock.Object);
-            _uploadDataRepository = new Mock<IUploadDataRepository>();
+            _uploadDataRepository = new Mock<ICodeManagmentService>();
         }
     }
 }

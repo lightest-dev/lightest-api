@@ -3,10 +3,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Lightest.Data;
+using Lightest.Data.CodeManagment.Services;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models;
-using Lightest.Data.Mongo.Services;
+using Lightest.CodeManagment.Models;
 using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.RequestModels;
 using Lightest.TestingService.ResponsModels;
@@ -19,9 +19,9 @@ namespace Lightest.TestingService.DefaultServices
         private readonly RelationalDbContext _context;
         private readonly IServerRepository _repository;
         private readonly ITransferServiceFactory _transferServiceFactory;
-        private readonly IUploadDataRepository _uploadDataRepository;
+        private readonly ICodeManagmentService _uploadDataRepository;
 
-        public DefaultTestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory, IUploadDataRepository uploadDataRepository)
+        public DefaultTestingService(IServerRepository repository, RelationalDbContext context, ITransferServiceFactory transferServiceFactory, ICodeManagmentService uploadDataRepository)
         {
             _context = context;
             _repository = repository;

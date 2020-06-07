@@ -40,7 +40,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Auto", "Auto", "{34FE60CB-3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Tests", "test\auto\Lightest.Tests\Lightest.Tests.csproj", "{BDDD8F57-8090-49D6-BB0F-55578B600016}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.Data.Mongo", "src\Lightest.Data.Mongo\Lightest.Data.Mongo.csproj", "{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lightest.CodeManagment", "src\Lightest.CodeManagment\Lightest.CodeManagment.csproj", "{C954FC5C-919A-4EFC-BAC4-C6F5D3586421}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{18D0C49A-0F71-46E5-953E-AE3ED5F434C9}"
 EndProject

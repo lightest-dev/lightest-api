@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lightest.Data.Mongo.Models;
+using Lightest.Data.CodeManagment.Services;
+using Lightest.CodeManagment.Models;
 
-namespace Lightest.Data.Mongo.Services
+namespace Lightest.Data.CodeManagment.InMemory
 {
-    public class MockRepository : IUploadDataRepository
+    public class InMemoryCodeManagmentService : ICodeManagmentService
     {
         private readonly Dictionary<Guid, UploadData> _uploadsDictionary;
 
-        public MockRepository()
+        public InMemoryCodeManagmentService()
         {
             _uploadsDictionary = new Dictionary<Guid, UploadData>();
         }
@@ -25,7 +26,7 @@ namespace Lightest.Data.Mongo.Services
             return uploadData;
         }
 
-        public void Delete(Guid id) => throw new NotImplementedException();
+        public void Delete(Guid id) => _uploadsDictionary.Remove(id);
 
         public UploadData Get(Guid id)
             => (_uploadsDictionary.TryGetValue(id, out var value)) ? value : null;

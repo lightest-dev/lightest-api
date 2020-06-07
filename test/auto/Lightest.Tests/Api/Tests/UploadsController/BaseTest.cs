@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using Lightest.AccessService.Interfaces;
+using Lightest.Data.CodeManagment.Services;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Services;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Moq;
@@ -32,14 +32,14 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
         protected readonly Mock<ITestingService> _testingServiceMock;
         protected readonly TaskDefinition _task;
-        protected readonly Mock<IUploadDataRepository> _uploadDataRepositoryMock;
+        protected readonly Mock<ICodeManagmentService> _uploadDataRepositoryMock;
 
         public BaseTest()
         {
             _accessServiceMock = GenerateAccessService<Upload>();
             _claimsPrincipalMock = GenerateClaimsMock();
             _testingServiceMock = new Mock<ITestingService>();
-            _uploadDataRepositoryMock = new Mock<IUploadDataRepository>();
+            _uploadDataRepositoryMock = new Mock<ICodeManagmentService>();
 
             var checker = new Checker
             {

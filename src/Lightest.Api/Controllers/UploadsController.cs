@@ -6,10 +6,10 @@ using Lightest.AccessService.Interfaces;
 using Lightest.Api.RequestModels.UploadRequests;
 using Lightest.Api.ResponseModels.UploadViews;
 using Lightest.Data;
+using Lightest.Data.CodeManagment.Services;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models;
-using Lightest.Data.Mongo.Services;
+using Lightest.CodeManagment.Models;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,13 +22,13 @@ namespace Lightest.Api.Controllers
     {
         private readonly IAccessService<Upload> _accessService;
         private readonly ITestingService _testingService;
-        private readonly IUploadDataRepository _uploadDataRepository;
+        private readonly ICodeManagmentService _uploadDataRepository;
 
         public UploadsController(
             ITestingService testingService,
             RelationalDbContext context,
             IAccessService<Upload> accessService,
-            IUploadDataRepository uploadDataRepository,
+            ICodeManagmentService uploadDataRepository,
             UserManager<ApplicationUser> userManager) : base(context, userManager)
         {
             _testingService = testingService;
@@ -124,7 +124,7 @@ namespace Lightest.Api.Controllers
         [ProducesResponseType(200, Type = typeof(Guid))]
         [ProducesResponseType(400)]
         [ProducesResponseType(403)]
-        public async Task<IActionResult> UploadCode([FromBody] CodeUpload codeUpload)
+        public async Task<IActionResult> UploadCode([FromBody] CodeUploadRequest codeUpload)
         {
             var user = await GetCurrentUser();
             var upload = new Upload();

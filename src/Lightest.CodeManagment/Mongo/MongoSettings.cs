@@ -1,6 +1,6 @@
-﻿namespace Lightest.Data.Mongo.Models.Options
+﻿namespace Lightest.Data.CodeManagment.Mongo
 {
-    public class MongoDBStoreDatabaseSettings
+    public class MongoSettings
     {
         public string UploadDataCollectionName { get; set; }
         public string ConnectionString { get; set; }

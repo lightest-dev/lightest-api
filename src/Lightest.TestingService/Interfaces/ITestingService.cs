@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data.Models.TaskModels;
-using Lightest.Data.Mongo.Models;
+using Lightest.CodeManagment.Models;
 using Lightest.TestingService.ResponsModels;
 
 namespace Lightest.TestingService.Interfaces
