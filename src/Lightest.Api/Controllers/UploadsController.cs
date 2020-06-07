@@ -60,9 +60,9 @@ namespace Lightest.Api.Controllers
             return Ok(uploads);
         }
 
-        [HttpGet("{taskId}/all")]
+        [HttpGet("{taskId}/all/{userId?}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
-        public async Task<IActionResult> GetAllUploads(Guid taskId)
+        public async Task<IActionResult> GetAllUploads(Guid taskId, string userId = null)
         {
             var user = await GetCurrentUser();
             if (!await _accessService.CanEdit(taskId, user))
@@ -72,7 +72,7 @@ namespace Lightest.Api.Controllers
 
             var uploads = _context.Uploads
                 .AsNoTracking()
-                .Where(u => u.TaskId == taskId)
+                .Where(u => u.TaskId == taskId && (userId == null || u.UserId == userId))
                 .OrderByDescending(u => u.UploadDate)
                 .Select(u => new LastUploadView
                 {

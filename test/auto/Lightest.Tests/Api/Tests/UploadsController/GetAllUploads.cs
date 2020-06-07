@@ -56,6 +56,26 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         }
 
         [Fact]
+        public async Task VerifyUploadsAreFilteredByUserReturned()
+        {
+            var uploads = GenerateUploads(10);
+            uploads[0].UserId = Guid.NewGuid().ToString();
+            uploads[1].UserId = uploads[0].UserId;
+            _context.Tasks.Add(_task);
+            _context.Uploads.AddRange(uploads);
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.GetAllUploads(_task.Id, uploads[0].UserId);
+            var okResult = result as OkObjectResult;
+            Assert.NotNull(okResult);
+
+            var uploadsResult = okResult.Value as IEnumerable<LastUploadView>;
+            Assert.NotNull(uploadsResult);
+
+            Assert.Equal(2, uploadsResult.Count());
+        }
+
+        [Fact]
         public async Task Forbidden()
         {
             _context.Tasks.Add(_task);
