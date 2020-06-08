@@ -5,6 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.12.3" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.29.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.29.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\CodeTester.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Lightest.CodeManagment\Lightest.CodeManagment.csproj" />
     <ProjectReference Include="..\Lightest.Data\Lightest.Data.csproj" />
   </ItemGroup>
