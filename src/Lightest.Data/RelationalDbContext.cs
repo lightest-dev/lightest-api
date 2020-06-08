@@ -11,7 +11,7 @@ namespace Lightest.Data
         {
         }
 
-        public DbSet<TestingServer> Servers { get; set; }
+        public DbSet<TestingServerInfo> Servers { get; set; }
 
         public DbSet<Category> Categories { get; set; }
 
@@ -153,7 +153,7 @@ namespace Lightest.Data
                 .HasForeignKey(up => up.LanguageId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            builder.Entity<TestingServer>()
+            builder.Entity<TestingServerInfo>()
                 .HasMany(s => s.Checkers)
                 .WithOne(c => c.Server)
                 .HasForeignKey(c => c.ServerIp)

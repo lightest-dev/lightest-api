@@ -13,7 +13,7 @@ namespace Lightest.Data.Models
         public string ServerIp { get; set; }
 
         [JsonIgnore]
-        public TestingServer Server { get; set; }
+        public TestingServerInfo Server { get; set; }
 
         [JsonIgnore]
         public Checker Checker { get; set; }
