@@ -11,8 +11,11 @@ namespace Lightest.TestingService.Interfaces
     public interface ITransferService : IDisposable
     {
         Task<CheckerResponse> SendChecker(CheckerRequest request);
+
         Task<TestingResponse> SendUpload(TestingRequest request);
+
         Task<CheckerStatusResponse> GetStatus();
+
         Task<CheckerStatusResponse> GetStatus(CheckerStatusRequest request);
     }
 }
