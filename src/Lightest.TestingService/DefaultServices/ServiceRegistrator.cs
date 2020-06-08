@@ -8,7 +8,7 @@ namespace Lightest.TestingService.DefaultServices
         public static IServiceCollection AddDefaultTestingServices(this IServiceCollection services)
         {
             services.AddScoped<IServerRepository, ServerRepository>();
-            services.AddScoped<ITransferServiceFactory, TransferServiceFactory>();
+            services.AddScoped<ITransferServiceFactory, TransferServiceManager>();
             services.AddScoped<ITestingService, DefaultTestingService>();
             return services;
         }

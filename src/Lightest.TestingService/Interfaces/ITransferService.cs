@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using Lightest.TestingService.RequestModels;
+﻿using System;
+using System.Threading.Tasks;
+using GrpcServices;
 
 namespace Lightest.TestingService.Interfaces
 {
@@ -9,10 +10,9 @@ namespace Lightest.TestingService.Interfaces
     /// </summary>
     public interface ITransferService
     {
-        Task<bool> SendFile(FileRequest fileRequest, string path);
-
-        Task<bool> SendFile(FileRequest fileRequest, byte[] data);
-
-        Task<bool> SendMessage(string message);
+        Task<CheckerResponse> SendChecker(CheckerRequest request);
+        Task<TestingResponse> SendUpload(TestingRequest request);
+        Task<CheckerStatusResponse> GetStatus();
+        Task<CheckerStatusResponse> GetStatus(CheckerStatusRequest request);
     }
 }
