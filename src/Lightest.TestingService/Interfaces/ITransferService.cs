@@ -8,7 +8,7 @@ namespace Lightest.TestingService.Interfaces
     /// Use to transfer data to testing container. Listener in container should understand the
     /// format of data.
     /// </summary>
-    public interface ITransferService
+    public interface ITransferService : IDisposable
     {
         Task<CheckerResponse> SendChecker(CheckerRequest request);
         Task<TestingResponse> SendUpload(TestingRequest request);

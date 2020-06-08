@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace Lightest.Data.Models
 {
-    public class TestingServer
+    public class TestingServerInfo
     {
         [Key]
         public string Ip { get; set; }
@@ -15,6 +15,7 @@ namespace Lightest.Data.Models
         public int Port { get; set; }
 
         [Required]
+        [ConcurrencyCheck]
         public ServerStatus Status { get; set; }
 
         [Required]

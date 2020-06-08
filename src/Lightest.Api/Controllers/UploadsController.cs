@@ -174,7 +174,7 @@ namespace Lightest.Api.Controllers
 
             _uploadDataRepository.Add(uploadData);
 
-            await _testingService.BeginTesting(upload, uploadData);
+            _ = _testingService.AddToTestingQueue(upload);
             return Ok(upload.Id);
         }
     }

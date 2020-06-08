@@ -1,20 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data.Models.TaskModels;
 using Lightest.CodeManagment.Models;
-using Lightest.TestingService.ResponsModels;
 
 namespace Lightest.TestingService.Interfaces
 {
     public interface ITestingService
     {
-        Task<bool> BeginTesting(Upload upload, UploadData uploadData);
+        Task AddToTestingQueue(Upload upload);
 
-        Task ReportResult(CheckingResponse result);
-
-        Task ReportNewServer(ServerStatusResponse server);
-
-        Task ReportBrokenServer(ServerStatusResponse server);
-
-        Task StartNextTesting();
+        Task ReportNewServer(string ip);
     }
 }

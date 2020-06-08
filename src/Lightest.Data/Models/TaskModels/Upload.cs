@@ -22,6 +22,7 @@ namespace Lightest.Data.Models.TaskModels
         public double Points { get; set; }
 
         [JsonIgnore]
+        [ConcurrencyCheck]
         public string Status { get; set; }
 
         [JsonIgnore]

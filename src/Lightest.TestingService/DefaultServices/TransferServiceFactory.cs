@@ -6,11 +6,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Lightest.TestingService.DefaultServices
 {
-    public class TransferServiceManager : ITransferServiceFactory
+    public class TransferServiceFactory : ITransferServiceFactory
     {
         private readonly ILoggerFactory _loggerFactory;
 
-        public TransferServiceManager(ILoggerFactory loggerFactory)
+        public TransferServiceFactory(ILoggerFactory loggerFactory)
         {
             _loggerFactory = loggerFactory;
         }

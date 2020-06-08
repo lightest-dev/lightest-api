@@ -143,7 +143,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             Assert.Equal(_user.Id, upload.UserId);
             Assert.Equal(DateTime.Now.Date, upload.UploadDate.Date);
 
-            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.Id == id), It.Is<UploadData>(u => u.Id == id)), Times.Once);
+            _testingServiceMock.Verify(m => m.AddToTestingQueue(It.Is<Upload>(u => u.Id == id)), Times.Once);
         }
 
         [Fact]
@@ -171,9 +171,8 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             await _context.SaveChangesAsync();
 
             await _controller.UploadCode(_codeUpload);
-            _testingServiceMock.Verify(m => m.BeginTesting(It.IsAny<Upload>(), It.Is<UploadData>(u => u.Code == _codeUpload.Code)), Times.Once);
-            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.LanguageId == _codeUpload.LanguageId), It.IsAny<UploadData>()), Times.Once);
-            _testingServiceMock.Verify(m => m.BeginTesting(It.Is<Upload>(u => u.TaskId == _codeUpload.TaskId), It.IsAny<UploadData>()), Times.Once);
+            _testingServiceMock.Verify(m => m.AddToTestingQueue(It.Is<Upload>(u => u.LanguageId == _codeUpload.LanguageId 
+                && u.TaskId == _codeUpload.TaskId)), Times.Once);
         }
     }
 }

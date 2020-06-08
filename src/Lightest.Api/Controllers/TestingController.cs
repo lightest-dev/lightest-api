@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.ResponsModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,54 +36,11 @@ namespace Lightest.Api.Controllers
             _logger = logger;
         }
 
-        [HttpPost("result")]
-        public async Task<IActionResult> AddResult([FromBody] CheckingResponse result)
-        {
-            if (result.Ip == null)
-            {
-                result.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            }
-            await Task.WhenAll(_testingService.ReportResult(result),
-                _testingService.StartNextTesting());
-            return Ok();
-        }
-
-        [HttpPost("checker-result")]
-        public async Task<IActionResult> AddCheckerResult([FromBody] CheckerCompilationResponse result)
-        {
-            var checker = await _context.Checkers.FindAsync(result.Id);
-
-            if (checker == null)
-            {
-                return BadRequest(nameof(result.Id));
-            }
-
-            checker.Compiled = result.Compiled;
-            checker.Message = result.Message;
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
-
         [HttpPost("new")]
-        public async Task<IActionResult> ReportNewServer([FromBody] ServerStatusResponse server)
+        public async Task<IActionResult> ReportNewServer()
         {
-            if (server.Ip == null)
-            {
-                server.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            }
-            await _testingService.ReportNewServer(server);
-            return Ok();
-        }
-
-        [HttpPost("error")]
-        public async Task<IActionResult> ReportError([FromBody] TestingErrorResponse error)
-        {
-            if (error.Ip == null)
-            {
-                error.Ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
-            }
-            _logger.LogError("{Ip}:{ErrorMessage}", error.Ip, error.ErrorMessage);
-            await _testingService.ReportBrokenServer(error);
+            var ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            await _testingService.ReportNewServer(ip);
             return Ok();
         }
     }
