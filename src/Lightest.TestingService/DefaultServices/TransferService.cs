@@ -1,152 +1,59 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
+using Grpc.Core;
+using Grpc.Net.Client;
+using GrpcServices;
 using Lightest.TestingService.Interfaces;
-using Lightest.TestingService.RequestModels;
 using Microsoft.Extensions.Logging;
 
 namespace Lightest.TestingService.DefaultServices
 {
     public class TransferService : ITransferService
     {
-        //todo: refactor to use custom TcpClient for testing
-        private readonly IPEndPoint _endpoint;
+        private bool _disposedValue;
+        private readonly GrpcChannel _grpcChannel;
+        private readonly CodeTester.CodeTesterClient _client;
 
-        private readonly ILogger _logger;
-
-        public TransferService(ILogger logger, IPAddress ip, int port)
+        public TransferService(ILoggerFactory loggerFactory, Uri address, ChannelCredentials credentials)
         {
-            _logger = logger;
-            _endpoint = new IPEndPoint(ip, port);
+            _grpcChannel = GrpcChannel.ForAddress(address, new GrpcChannelOptions
+            {
+                Credentials = credentials,
+                LoggerFactory = loggerFactory
+            });
+
+            _client = new CodeTester.CodeTesterClient(_grpcChannel);
         }
 
-        public async Task<bool> SendFile([NotNull] FileRequest fileRequest, string path)
+        public async Task<CheckerResponse> SendChecker(CheckerRequest request)
+            => await _client.CompileCheckerAsync(request);
+
+        public async Task<TestingResponse> SendUpload(TestingRequest request)
+            => await _client.TestUploadAsync(request);
+
+        public async Task<CheckerStatusResponse> GetStatus(CheckerStatusRequest request)
+            => await _client.GetStatusAsync(request);
+
+        public Task<CheckerStatusResponse> GetStatus()
+            => GetStatus(new CheckerStatusRequest());
+
+        protected virtual void Dispose(bool disposing)
         {
-            if (!File.Exists(path))
+            if (!_disposedValue)
             {
-                return false;
-            }
-
-            try
-            {
-                using var client = new TcpClient();
-                _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port.ToString()}");
-                try
+                if (disposing)
                 {
-                    await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                }
-                catch (SocketException)
-                {
-                    await Task.Delay(3000);
-                    await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                }
-                if (!client.Connected)
-                {
-                    return false;
+                    _grpcChannel.Dispose();
                 }
 
-                using var netStream = client.GetStream();
-                using var writer = new BinaryWriter(netStream);
-                using var fileStream = File.OpenRead(path);
-                var message = fileRequest.ToString();
-                var bytes = Encoding.UTF8.GetBytes(message);
-                // 1 for type, 4 for message length
-                var length = fileStream.Length + bytes.Length + 1 + 4;
-                writer.Write(length);
-                writer.Write(RequestType.File);
-                writer.Write(bytes.Length);
-                writer.Write(bytes);
-                await fileStream.CopyToAsync(netStream);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return false;
+                _disposedValue = true;
             }
         }
 
-        public async Task<bool> SendFile(FileRequest fileRequest, byte[] data)
+        public void Dispose()
         {
-            try
-            {
-                using (var client = new TcpClient())
-                {
-                    _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port.ToString()}");
-                    try
-                    {
-                        await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                    }
-                    catch (SocketException)
-                    {
-                        await Task.Delay(3000);
-                        await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                    }
-                    if (!client.Connected)
-                    {
-                        return false;
-                    }
-                    using var netStream = client.GetStream();
-                    using var writer = new BinaryWriter(netStream);
-                    var message = fileRequest.ToString();
-                    var bytes = Encoding.UTF8.GetBytes(message);
-                    // 1 for type, 4 for message length
-                    long length = data.Length + bytes.Length + 1 + 4;
-                    writer.Write(length);
-                    writer.Write(RequestType.File);
-                    writer.Write(bytes.Length);
-                    writer.Write(bytes);
-                    writer.Write(data);
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return false;
-            }
-        }
-
-        public async Task<bool> SendMessage(string message)
-        {
-            try
-            {
-                using (var client = new TcpClient())
-                {
-                    _logger.LogInformation($"Endpoint: {_endpoint.Address}:{_endpoint.Port.ToString()}");
-                    try
-                    {
-                        await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                    }
-                    catch (SocketException)
-                    {
-                        await Task.Delay(3000);
-                        await client.ConnectAsync(_endpoint.Address, _endpoint.Port);
-                    }
-                    if (!client.Connected)
-                    {
-                        return false;
-                    }
-                    using var stream = client.GetStream();
-                    using var writer = new BinaryWriter(stream);
-                    var bytes = Encoding.UTF8.GetBytes(message);
-                    long length = bytes.Length + 1;
-                    writer.Write(length);
-                    writer.Write(RequestType.Message);
-                    writer.Write(bytes);
-                }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.ToString());
-                return false;
-            }
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
