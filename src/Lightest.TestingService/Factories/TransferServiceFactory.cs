@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Net;
 using Grpc.Core;
+using Lightest.TestingService.DefaultServices;
 using Lightest.TestingService.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace Lightest.TestingService.DefaultServices
+namespace Lightest.TestingService.Factories
 {
     public class TransferServiceFactory : ITransferServiceFactory
     {

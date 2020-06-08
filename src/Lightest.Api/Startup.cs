@@ -8,7 +8,7 @@ using Lightest.Data.CodeManagment.Services;
 using Lightest.Data.Models;
 using Lightest.Data.Seeding;
 using Lightest.Data.Seeding.Interfaces;
-using Lightest.TestingService.DefaultServices;
+using Lightest.TestingService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
