@@ -50,12 +50,16 @@ namespace Lightest.TestingService.DefaultServices
                 var uploadData = codeManagmentService.Get(upload.Id);
 
                 serverInfo.Status = ServerStatus.Busy;
-                upload.Status = "In Progress";
+                upload.Status = UploadStatus.EnvironmentSetup;
 
                 await context.SaveChangesAsync();
 
                 var processor = _uploadProcessorFactory.Create(upload, uploadData,
                     server, context);
+
+                await processor.Process();
+
+                upload = context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
             }
 
             serverInfo.Status = ServerStatus.Free;
