@@ -44,7 +44,7 @@ namespace Lightest.TestingService.DefaultServices
             return result.Compiled;
         }
 
-        public async Task<bool> CacheChecker()
+        public virtual async Task<bool> CacheChecker()
         {
             var result = true;
             var checker = _upload.Task.Checker;
@@ -66,7 +66,7 @@ namespace Lightest.TestingService.DefaultServices
             return result;
         }
 
-        public async Task<TestingResponse> SendData()
+        public virtual async Task<TestingResponse> SendData()
         {
             _upload.Status = UploadStatus.Testing;
             await _context.SaveChangesAsync();
@@ -94,7 +94,7 @@ namespace Lightest.TestingService.DefaultServices
             return await _server.TransferService.SendUpload(request);
         }
 
-        public async Task ReportCodeResult(TestingResponse result)
+        public virtual async Task ReportCodeResult(TestingResponse result)
         {
             var uploadId = Guid.Parse(result.UploadId);
             var userTask = await _context.UserTasks
@@ -115,6 +115,23 @@ namespace Lightest.TestingService.DefaultServices
                 }
             }
             await _context.SaveChangesAsync();
+        }
+
+        public async Task Process()
+        {
+            var checkerUploaded = await CacheChecker();
+
+            if (!checkerUploaded)
+            {
+                _upload.Status = UploadStatus.Failed;
+                _upload.Message = "Checker compilation failed";
+                await _context.SaveChangesAsync();
+
+                return;
+            }
+
+            var testingResult = await SendData();
+            await ReportCodeResult(testingResult);
         }
     }
 }
