@@ -20,6 +20,7 @@ namespace Lightest.TestingService.Factories
         {
             var uriBuilder = new UriBuilder("https", ip.ToString(), port);
             return new TransferService(_loggerFactory,
+            // TODO: set up HTTPS credentials
                 uriBuilder.Uri, ChannelCredentials.Insecure);
         }
     }
