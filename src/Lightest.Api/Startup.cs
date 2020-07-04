@@ -109,7 +109,7 @@ namespace Lightest.Api
             });
 
             services.AddCodeManagmentService(Configuration);
-            services.AddDefaultTestingServices();
+            services.AddDefaultTestingServices(Configuration);
             services.AddAccessServices(Configuration.GetSection("AccessMode"));
             services.AddTransient<ISeeder, DefaultSeeder>();
             services.AddScoped<ISieveProcessor, ApiSieveProcessor>();
