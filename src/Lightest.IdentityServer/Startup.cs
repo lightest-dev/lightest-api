@@ -97,7 +97,7 @@ namespace Lightest.IdentityServer
             });
 
             services.ConfigureApplicationCookie(o =>
-                o.Cookie.Domain = Configuration.GetSection("Domain").Value);
+                o.Cookie.Domain = Configuration.GetSection("CookieDomain").Value);
             services.AddIdentityServer(Configuration.GetSection("IdentityServer"))
                 .AddDeveloperSigningCredential()
                 .AddDefaultEndpoints()
