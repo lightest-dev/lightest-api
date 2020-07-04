@@ -39,6 +39,13 @@ internal class Build : NukeBuild
 
     private AbsolutePath CoveragePath => ArtifactsDirectory / "cover.xml";
 
+    private AbsolutePath ApiPath => SourceDirectory / "Lightest.Api";
+    private AbsolutePath ApiArtifactPath => ArtifactsDirectory / "api";
+
+    private AbsolutePath IdentityPath => SourceDirectory / "Lightest.IdentityServer";
+    private AbsolutePath IdentityArtifactPath => ArtifactsDirectory / "identity";
+
+
     private Target Clean => _ => _
          .Before(Restore)
          .Executes(() =>
@@ -88,4 +95,37 @@ internal class Build : NukeBuild
 
              DotNetTest(testSettings);
          });
+
+    private Target PublishApi => _ => _
+        .Executes(() =>
+        {
+            DeleteDirectory(ApiArtifactPath);
+
+            DotNetPublish(s => s
+                .SetProject(ApiPath)
+                .SetConfiguration(Configuration)
+                .SetOutput(ApiArtifactPath)
+                .SetAssemblyVersion(Version)
+                .SetFileVersion(Version));
+
+            ApiArtifactPath.GlobFiles("settings.private*.json").ForEach(DeleteFile);
+        });
+
+    private Target PublishIdentityServer => _ => _
+        .Executes(() =>
+        {
+            DeleteDirectory(IdentityArtifactPath);
+
+            DotNetPublish(s => s
+                .SetProject(IdentityPath)
+                .SetConfiguration(Configuration)
+                .SetOutput(IdentityArtifactPath)
+                .SetAssemblyVersion(Version)
+                .SetFileVersion(Version));
+
+            IdentityArtifactPath.GlobFiles("settings.private*.json").ForEach(DeleteFile);
+        });
+
+    private Target Publish => _ => _
+        .DependsOn(PublishApi, PublishIdentityServer);
 }
