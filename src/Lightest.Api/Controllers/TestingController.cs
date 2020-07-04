@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Lightest.Api.RequestModels.TestingRequests;
 using Lightest.Data;
 using Lightest.TestingService.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -37,9 +38,17 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpPost("new")]
-        public async Task<IActionResult> ReportNewServer()
+        public async Task<IActionResult> ReportNewServer([FromBody]NewServerRequest request)
         {
-            var ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            string ip;
+            if (!string.IsNullOrWhiteSpace(request?.Ip))
+            {
+                ip = request.Ip;
+            }
+            else
+            {
+                ip = _accessor.HttpContext.Connection.RemoteIpAddress.ToString();
+            }
             await _testingService.ReportNewServer(ip);
             return Ok();
         }
