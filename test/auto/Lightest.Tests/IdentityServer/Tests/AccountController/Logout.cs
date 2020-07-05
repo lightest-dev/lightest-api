@@ -41,7 +41,7 @@ namespace Lightest.Tests.IdentityServer.Tests.AccountController
             var result = await _controller.Logout(_logOutRequest);
 
             Assert.IsAssignableFrom<OkResult>(result);
-            _persistedGrantService.Verify(g => g.RemoveAllGrantsAsync(_subjectClaim.Value, _logOutRequest.ClientName));
+            _persistedGrantService.Verify(g => g.RemoveAllGrantsAsync(_subjectClaim.Value, _logOutRequest.ClientName, null));
         }
     }
 }
