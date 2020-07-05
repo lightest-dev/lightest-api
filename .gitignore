@@ -13,6 +13,7 @@ settings.private.json
 # keys
 localcert.pfx
 tempkey.rsa
+tempkey.jwk
 
 # User-specific files
 *.suo

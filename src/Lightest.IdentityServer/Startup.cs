@@ -27,7 +27,16 @@ namespace Lightest.IdentityServer
 
         public IConfiguration Configuration { get; }
 
-        public static IEnumerable<ApiResource> GetApiResources() => new List<ApiResource>
+        public static IEnumerable<ApiScope> ApiScopes => new List<ApiScope>
+        {
+            new ApiScope
+            {
+                Name = "api",
+                DisplayName = "Api"
+            }
+        };
+
+        public static IEnumerable<ApiResource> ApiResources => new List<ApiResource>
             {
                 new ApiResource
                 {
@@ -35,12 +44,12 @@ namespace Lightest.IdentityServer
                     DisplayName = "Api",
                     Scopes =
                     {
-                        new Scope("api", "API")
+                        "api"
                     }
                 }
             };
 
-        public static IEnumerable<IdentityResource> GetIdentityResources() => new List<IdentityResource>
+        public static IEnumerable<IdentityResource> IdentityResources => new List<IdentityResource>
             {
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile()
@@ -103,8 +112,9 @@ namespace Lightest.IdentityServer
                 .AddDefaultEndpoints()
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddInMemoryClients(Clients)
-                .AddInMemoryIdentityResources(GetIdentityResources())
-                .AddInMemoryApiResources(GetApiResources())
+                .AddInMemoryApiScopes(ApiScopes)
+                .AddInMemoryIdentityResources(IdentityResources)
+                .AddInMemoryApiResources(ApiResources)
                 .AddOperationalStore(options =>
                 {
                     options.ConfigureDbContext = b => b.UseNpgsql(Configuration.GetConnectionString("Relational"),

@@ -25,3 +25,4 @@ LICENSE
 README.md
 **/settings.private*.json
 **/localcert.pfx
+**/tempkey.jwk
