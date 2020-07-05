@@ -11,6 +11,10 @@ using Nuke.Common.Utilities.Collections;
 using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
+using static Nuke.Common.Tools.Docker.DockerTasks;
+using Nuke.Common.Tools.Docker;
+using YamlDotNet.Core.Tokens;
+using System;
 
 [CheckBuildProjectConfigurations]
 [UnsetVisualStudioEnvironmentVariables]
@@ -32,6 +36,8 @@ internal class Build : NukeBuild
     [CI] private readonly TravisCI TravisCi;
 
     private string Version => $"0.10.1.{TravisCi?.BuildNumber ?? 0}";
+
+    private string TravisCommit => TravisCi?.Commit ?? "0";
 
     private AbsolutePath SourceDirectory => RootDirectory / "src";
     private AbsolutePath TestsDirectory => RootDirectory / "test";
@@ -128,4 +134,35 @@ internal class Build : NukeBuild
 
     private Target Publish => _ => _
         .DependsOn(PublishApi, PublishIdentityServer);
+
+    private Target BuildApiContainer => _ => _
+        .DependsOn(PublishApi)
+        .Executes(() =>
+        {
+            var tagName = "deadsith/lightest-api:{0}";
+            DockerBuild(s => s
+                .SetFile(ApiPath / "Dockerfile")
+                .SetTag(string.Format(tagName, "latest"), string.Format(tagName, Version))
+                .SetBuildArg($"version={Version}",
+                    $"vcs_ref={TravisCommit}",
+                    $"build_date={DateTime.Now:s}")
+                .SetPath("."));
+        });
+
+    private Target BuildIdentityContainer => _ => _
+        .DependsOn(PublishIdentityServer)
+        .Executes(() =>
+        {
+            var tagName = "deadsith/lightest-identity:{0}";
+            DockerBuild(s => s
+                .SetFile(IdentityPath / "Dockerfile")
+                .SetTag(string.Format(tagName, "latest"), string.Format(tagName, Version))
+                .SetBuildArg($"version={Version}",
+                    $"vcs_ref={TravisCommit}",
+                    $"build_date={DateTime.Now:s}")
+                .SetPath(RootDirectory));
+        });
+
+    private Target BuildContainers => _ => _
+        .DependsOn(BuildApiContainer, BuildIdentityContainer);
 }
