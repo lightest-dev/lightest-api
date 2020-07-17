@@ -39,7 +39,7 @@ namespace Lightest.Tests.Api.Tests.TasksController
         }
 
         [Fact]
-        public async Task HasAdminAccess()
+        public async Task HasTeacherAccess()
         {
             AddDataToDb();
             await _context.SaveChangesAsync();
@@ -56,12 +56,12 @@ namespace Lightest.Tests.Api.Tests.TasksController
         }
 
         [Fact]
-        public async Task NoAdminAccess()
+        public async Task NoTeacherAccess()
         {
             AddDataToDb();
             await _context.SaveChangesAsync();
 
-            _roleHelper.Setup(m => m.IsAdmin(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
+            _roleHelper.Setup(m => m.IsTeacher(It.Is<ApplicationUser>(u => u.Id == _user.Id)))
                 .ReturnsAsync(false);
 
             var result = await _controller.GetTasks(new Sieve.Models.SieveModel());

@@ -45,7 +45,8 @@ namespace Lightest.Api.Controllers
         {
             var user = await GetCurrentUser();
 
-            if (!await _roleHelper.IsAdmin(user))
+            // TODO: disallow teacher access (update to UI is required)
+            if (!await _roleHelper.IsTeacher(user))
             {
                 return Forbid();
             }

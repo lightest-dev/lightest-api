@@ -16,6 +16,7 @@ namespace Lightest.AccessService
 
         public Task<bool> IsAdmin(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Admin");
 
-        public Task<bool> IsTeacher(ApplicationUser user) => _userManager.IsInRoleAsync(user, "Teacher");
+        public async Task<bool> IsTeacher(ApplicationUser user) =>
+            await IsAdmin(user) || await _userManager.IsInRoleAsync(user, "Teacher");
     }
 }
