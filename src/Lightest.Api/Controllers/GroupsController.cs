@@ -125,6 +125,7 @@ namespace Lightest.Api.Controllers
                     Name = group.Name,
                     Parent = group.Parent,
                     SubGroups = group.SubGroups,
+                    Public = group.Public,
                     Users = group.Users.Select(u => new AccessRightsUser
                     {
                         Id = u.User.Id,
@@ -144,6 +145,7 @@ namespace Lightest.Api.Controllers
                     Name = group.Name,
                     Parent = group.Parent,
                     SubGroups = group.SubGroups,
+                    Public = group.Public,
                     Users = null
                 };
             }
@@ -261,6 +263,7 @@ namespace Lightest.Api.Controllers
 
             dbEntry.Name = group.Name;
             dbEntry.ParentId = group.ParentId;
+            dbEntry.Public = group.Public;
             await _context.SaveChangesAsync();
             return Ok();
         }

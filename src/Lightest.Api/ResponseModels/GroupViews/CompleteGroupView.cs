@@ -5,6 +5,8 @@ namespace Lightest.Api.ResponseModels.GroupViews
 {
     public class CompleteGroupView : BasicNameView
     {
+        public bool Public { get; set; }
+
         public Group Parent { get; set; }
 
         public ICollection<Group> SubGroups { get; set; }

@@ -18,7 +18,8 @@ namespace Lightest.Tests.Api.Tests.GroupsController
             {
                 Id = _child2.Id,
                 Name = "updatedName",
-                ParentId = null
+                ParentId = null,
+                Public = true
             };
         }
 
@@ -93,6 +94,7 @@ namespace Lightest.Tests.Api.Tests.GroupsController
 
             Assert.Equal(_updatedChild.Name, categoryResult.Name);
             Assert.Equal(_updatedChild.ParentId, categoryResult.ParentId);
+            Assert.Equal(_updatedChild.Public, categoryResult.Public);
         }
     }
 }
