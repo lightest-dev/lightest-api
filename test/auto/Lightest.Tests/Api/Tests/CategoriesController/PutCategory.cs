@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lightest.Data.Models;
@@ -18,8 +19,22 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
             {
                 Id = _child2.Id,
                 Name = "updatedName",
-                ParentId = null
+                ParentId = null,
+                Public = true
             };
+        }
+
+        protected override void AddDataToDb()
+        {
+            _parent.SubCategories = new List<Category>
+            {
+                _child1,
+                _child2
+            };
+            _context.Tasks.Add(_task);
+            _context.Categories.Add(_parent);
+            _context.Categories.Add(_child1);
+            _context.Categories.Add(_child2);
         }
 
         [Fact]
@@ -37,6 +52,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
             Assert.Equal(_child2.Name, categoryResult.Name);
             Assert.Equal(_child2.ParentId, categoryResult.ParentId);
+            Assert.Equal(_child2.Public, categoryResult.Public);
         }
 
         [Fact]
@@ -55,6 +71,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
             Assert.Equal(_child2.Name, categoryResult.Name);
             Assert.Equal(_child2.ParentId, categoryResult.ParentId);
+            Assert.Equal(_child2.Public, categoryResult.Public);
         }
 
         [Fact]
@@ -76,6 +93,7 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
             Assert.Equal(_child2.Name, categoryResult.Name);
             Assert.Equal(_child2.ParentId, categoryResult.ParentId);
+            Assert.Equal(_child2.Public, categoryResult.Public);
         }
 
         [Fact]
@@ -93,6 +111,31 @@ namespace Lightest.Tests.Api.Tests.CategoriesController
 
             Assert.Equal(_updatedChild.Name, categoryResult.Name);
             Assert.Equal(_updatedChild.ParentId, categoryResult.ParentId);
+            Assert.Equal(_updatedChild.Public, categoryResult.Public);
+        }
+
+        [Fact]
+        public async Task ParentNotPublic()
+        {
+            _child2.Public = true;
+            _parent.Public = false;
+            AddDataToDb();
+            await _context.SaveChangesAsync();
+
+            var result = await _controller.PutCategory(_child2.Id, _child2);
+            var badRequest = result as BadRequestObjectResult;
+            Assert.NotNull(badRequest);
+
+            var error = badRequest.Value as string;
+            Assert.NotNull(error);
+            Assert.Equal(nameof(_child2.ParentId), error);
+
+            var categoryResult = _context.Categories
+                .Single(c => c.Id == _child2.Id);
+
+            Assert.Equal(_child2.Name, categoryResult.Name);
+            Assert.Equal(_child2.ParentId, categoryResult.ParentId);
+            Assert.Equal(_child2.Public, categoryResult.Public);
         }
     }
 }

@@ -208,15 +208,11 @@ namespace Lightest.Api.Controllers
                 return BadRequest(nameof(category.Contest));
             }
 
-            if (category.Public && category.ParentId != null)
+            var publicCheckResult = await CheckIfCategoryCanBePublic(category);
+
+            if (publicCheckResult != null)
             {
-                var parent = await _context.Categories
-                    .AsNoTracking()
-                    .SingleOrDefaultAsync(t => t.Id == category.ParentId);
-                if (parent?.Public != true)
-                {
-                    return BadRequest(nameof(category.ParentId));
-                }
+                return publicCheckResult;
             }
 
             _context.Categories.Add(category);
@@ -303,8 +299,16 @@ namespace Lightest.Api.Controllers
                 return Forbid();
             }
 
+            var publicCheckResult = await CheckIfCategoryCanBePublic(category);
+
+            if (publicCheckResult != null)
+            {
+                return publicCheckResult;
+            }
+
             dbEntry.Name = category.Name;
             dbEntry.ParentId = category.ParentId;
+            dbEntry.Public = category.Public;
             await _context.SaveChangesAsync();
             return Ok();
         }
@@ -334,6 +338,22 @@ namespace Lightest.Api.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(category);
+        }
+
+        private async Task<IActionResult> CheckIfCategoryCanBePublic(Category category)
+        {
+            if (category.Public && category.ParentId != null)
+            {
+                var parent = await _context.Categories
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(t => t.Id == category.ParentId);
+                if (parent?.Public != true)
+                {
+                    return BadRequest(nameof(category.ParentId));
+                }
+            }
+
+            return null;
         }
     }
 }
