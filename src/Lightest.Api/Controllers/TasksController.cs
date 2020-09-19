@@ -257,6 +257,7 @@ namespace Lightest.Api.Controllers
             dbEntry.Description = task.Description;
             dbEntry.Points = task.Points;
             dbEntry.CheckerId = task.CheckerId;
+            dbEntry.Name = task.Name;
 
             if (dbEntry.Public != task.Public)
             {
