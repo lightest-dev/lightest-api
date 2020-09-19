@@ -9,6 +9,7 @@ using Lightest.TestingService.Interfaces;
 using Lightest.TestingService.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Lightest.TestingService.DefaultServices
 {
@@ -43,7 +44,7 @@ namespace Lightest.TestingService.DefaultServices
             using var transferService = _transferServiceFactory.Create(serverInfo.IPAddress, serverInfo.Port);
             var server = new TestingServer(serverInfo, transferService);
 
-            var upload = context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+            var upload = await FetchNextUpload(context);
 
             while (upload != null)
             {
@@ -59,11 +60,23 @@ namespace Lightest.TestingService.DefaultServices
 
                 await processor.Process();
 
-                upload = context.Uploads.FirstOrDefault(c => c.Status == UploadStatus.Queue);
+                upload = await FetchNextUpload(context);
             }
 
             serverInfo.Status = ServerStatus.Free;
             await context.SaveChangesAsync();
+        }
+
+        private static Task<Upload> FetchNextUpload(RelationalDbContext context)
+        {
+            var upload = context.Uploads
+                .Include(u => u.Language)
+                .Include(u => u.Task).ThenInclude(t => t.Checker)
+                .Include(u => u.Task).ThenInclude(t => t.Languages)
+                .Include(u => u.Task).ThenInclude(t => t.Tests)
+                .FirstOrDefaultAsync(c => c.Status == UploadStatus.Queue);
+
+            return upload;
         }
 
         public async Task UpdateServerStatuses()
