@@ -31,8 +31,9 @@ namespace Lightest.TestingService.DefaultServices
             var server = new TestingServerInfo
             {
                 Ip = ip,
-                Port = 443,
-                Status = ServerStatus.Free
+                Port = 10000,
+                Status = ServerStatus.Free,
+                Version = "grpc"
             };
             var existingServer = await _context.Servers.FirstOrDefaultAsync(s => s.Ip == ip);
             if (existingServer == null)

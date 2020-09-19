@@ -21,7 +21,7 @@ namespace Lightest.Tests.TestingService.DefaultTestingServiceTests
 
             Assert.Equal(ServerStatus.Free, entry.Status);
             Assert.Equal(Ip, entry.Ip);
-            Assert.Equal(443, entry.Port);
+            Assert.Equal(10000, entry.Port);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace Lightest.Tests.TestingService.DefaultTestingServiceTests
 
             Assert.Equal(ServerStatus.Free, entry.Status);
             Assert.Equal(Ip, entry.Ip);
-            Assert.Equal(443, entry.Port);
+            Assert.Equal(10000, entry.Port);
         }
     }
 }
