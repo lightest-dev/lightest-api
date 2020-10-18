@@ -99,7 +99,7 @@ namespace Lightest.Tests.TestingService.TestingRunner
             Assert.Equal(ServerStatus.Free, server.Status);
         }
 
-        [Fact (Skip = "Should be fixed")]
+        [Fact]
         public async Task MultipleItemsProcessed()
         {
             var uploads = new[]
@@ -116,6 +116,13 @@ namespace Lightest.Tests.TestingService.TestingRunner
                     Status = UploadStatus.Queue
                 }
             };
+
+            var language = new Language
+            {
+                Id = Guid.NewGuid()
+            };
+
+            _context.Languages.Add(language);
 
             var data = new CodeManagment.Models.UploadData[3];
 
@@ -136,6 +143,19 @@ namespace Lightest.Tests.TestingService.TestingRunner
             }
 
             await AddToDb();
+
+            foreach (var upload in _context.Uploads)
+            {
+                upload.Task = new TaskDefinition
+                {
+                    Checker = new Checker(),
+                    Languages = new List<TaskLanguage>(),
+                    Tests = new List<Test>(),
+                };
+
+                upload.Language = language;
+            }
+            await _context.SaveChangesAsync();
 
             await _testingRunner.TryStartNewWorker();
 
