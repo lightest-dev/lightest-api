@@ -5,6 +5,8 @@ using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using Lightest.Data.Models;
 using Lightest.IdentityServer.RequestModels;
+using Lightest.IdentityServer.ResponseModels;
+using Lightest.IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -19,15 +21,18 @@ namespace Lightest.IdentityServer.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IPersistedGrantService _persistedGrantService;
+        private readonly IPasswordGenerator _passwordGenerator;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             IPersistedGrantService persistedGrantService,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            IPasswordGenerator passwordGenerator)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _persistedGrantService = persistedGrantService;
+            _passwordGenerator = passwordGenerator;
         }
 
         [HttpPost]
@@ -121,6 +126,76 @@ namespace Lightest.IdentityServer.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [Route("reset-password")]
+        public async Task<ActionResult<PasswordResponse>> ResetPassword(ResetPasswordRequest model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Login);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var password = _passwordGenerator.GeneratePassword();
+            var result = await ChangePassword(user, password);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+
+                return BadRequest(ModelState);
+            }
+
+            var response = new PasswordResponse
+            {
+                Id = user.Id,
+                Login = user.UserName,
+                Password = password
+            };
+
+            return response;
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordRequest model)
+        {
+
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await ChangePassword(user, model.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(error.Code, error.Description);
+                }
+
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        private async Task<IdentityResult> ChangePassword(ApplicationUser user, string password)
+        {
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, password);
+            return result;
         }
     }
 }

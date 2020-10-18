@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using IdentityServer4.Services;
 using Lightest.Data.Models;
+using Lightest.IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -16,13 +17,14 @@ namespace Lightest.Tests.IdentityServer.Tests.AccountController
         protected readonly Mock<SignInManager<ApplicationUser>> _signInManager;
         protected readonly Mock<IPersistedGrantService> _persistedGrantService;
         protected readonly Mock<ClaimsPrincipal> _claimsPrincipalMock;
+        protected readonly Mock<IPasswordGenerator> _passwordGenerator;
 
         protected Lightest.IdentityServer.Controllers.AccountController _controller
         {
             get
             {
                 var controller = new Lightest.IdentityServer.Controllers.AccountController(_userManager.Object,
-                    _persistedGrantService.Object, _signInManager.Object);
+                    _persistedGrantService.Object, _signInManager.Object, _passwordGenerator.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -46,6 +48,7 @@ namespace Lightest.Tests.IdentityServer.Tests.AccountController
                 new Mock<IUserConfirmation<ApplicationUser>>().Object);
             _persistedGrantService = new Mock<IPersistedGrantService>();
             _claimsPrincipalMock = new Mock<ClaimsPrincipal>();
+            _passwordGenerator = new Mock<IPasswordGenerator>();
         }
     }
 }
