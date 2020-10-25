@@ -74,7 +74,7 @@ namespace Lightest.Tests.Api.Tests.ProfileController
             Assert.Equal(_user.Name, user.Name);
             Assert.Equal(_user.Surname, user.Surname);
             Assert.Equal(_user.Email, user.Email);
-            Assert.Equal(_user.UserName, user.Login);
+            Assert.Equal(_user.UserName, user.UserName);
 
             Assert.Single(user.Groups);
             var resultGroup = user.Groups.First();

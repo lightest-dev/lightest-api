@@ -115,7 +115,7 @@ namespace Lightest.Api.Controllers
                 Name = requestedUser.Name,
                 Surname = requestedUser.Surname,
                 Email = requestedUser.Email,
-                Login = requestedUser.UserName,
+                UserName = requestedUser.UserName,
                 Groups = requestedUser.Groups.Select(g => new BasicNameView
                 {
                     Id = g.GroupId,

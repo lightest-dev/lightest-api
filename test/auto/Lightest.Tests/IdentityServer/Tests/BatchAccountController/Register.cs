@@ -97,9 +97,9 @@ namespace Lightest.Tests.IdentityServer.Tests.BatchAccountController
             Assert.Equal(2, result.Value.GeneratedCount);
             var users = registeredUsers.ToArray();
 
-            Assert.Equal("pr01", users[0].Login);
+            Assert.Equal("pr01", users[0].UserName);
             Assert.Equal(password, users[0].Password);
-            Assert.Equal("pr02", users[1].Login);
+            Assert.Equal("pr02", users[1].UserName);
             Assert.Equal(password, users[1].Password);
         }
 
@@ -127,8 +127,8 @@ namespace Lightest.Tests.IdentityServer.Tests.BatchAccountController
             Assert.Equal(11, result.Value.GeneratedCount);
             foreach (var user in registeredUsers)
             {
-                Assert.Equal(4, user.Login.Length);
-                Assert.StartsWith(request.Prefix, user.Login);
+                Assert.Equal(4, user.UserName.Length);
+                Assert.StartsWith(request.Prefix, user.UserName);
 
                 Assert.Equal(password, user.Password);
             }

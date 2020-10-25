@@ -133,7 +133,7 @@ namespace Lightest.IdentityServer.Controllers
         [Route("reset-password")]
         public async Task<ActionResult<PasswordResponse>> ResetPassword(ResetPasswordRequest model)
         {
-            var user = await _userManager.FindByNameAsync(model.Login);
+            var user = await _userManager.FindByNameAsync(model.UserName);
 
             if (user == null)
             {
@@ -156,7 +156,7 @@ namespace Lightest.IdentityServer.Controllers
             var response = new PasswordResponse
             {
                 Id = user.Id,
-                Login = user.UserName,
+                UserName = user.UserName,
                 Password = password
             };
 

@@ -51,13 +51,13 @@ namespace Lightest.IdentityServer.Controllers
 
             for (var i = request.StartIndex; i <= request.EndIndex; i++)
             {
-                var login = string.Format(format, i);
+                var userName = string.Format(format, i);
                 var password = _passwordGenerator.GeneratePassword();
 
                 var user = new ApplicationUser
                 {
                     Id = Guid.NewGuid().ToString(),
-                    UserName = login
+                    UserName = userName
                 };
 
                 var result = await _userManager.CreateAsync(user, password);
@@ -67,7 +67,7 @@ namespace Lightest.IdentityServer.Controllers
                     users.Add(new PasswordResponse
                     {
                         Id = user.Id,
-                        Login = user.UserName,
+                        UserName = user.UserName,
                         Password = password
                     });
                 }

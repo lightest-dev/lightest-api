@@ -18,12 +18,12 @@ namespace Lightest.Tests.IdentityServer.Tests.AccountController
         {
             _request = new ResetPasswordRequest
             {
-                Login = "sample_login",
+                UserName = "sample_login",
             };
 
             _user = new ApplicationUser
             {
-                UserName = _request.Login,
+                UserName = _request.UserName,
                 Id = "id"
             };
 
@@ -53,7 +53,7 @@ namespace Lightest.Tests.IdentityServer.Tests.AccountController
             Assert.NotNull(result.Value);
 
             Assert.Equal(_user.Id, result.Value.Id);
-            Assert.Equal(_user.UserName, result.Value.Login);
+            Assert.Equal(_user.UserName, result.Value.UserName);
             Assert.Equal(GeneratedPassword, result.Value.Password);
         }
 
