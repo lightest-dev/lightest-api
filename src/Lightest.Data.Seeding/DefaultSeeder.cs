@@ -58,8 +58,8 @@ namespace Lightest.Data.Seeding
             Context.Languages.Add(new Language
             {
                 Id = Guid.NewGuid(),
-                Extension = "Pascal",
-                Name = "pas"
+                Extension = "pp",
+                Name = "Pascal"
             });
             await Context.SaveChangesAsync();
         }
