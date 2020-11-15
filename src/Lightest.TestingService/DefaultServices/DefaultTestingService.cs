@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using System.Linq;
 using Lightest.Data;
 using Lightest.Data.Models;
 using Lightest.Data.Models.TaskModels;
@@ -35,6 +36,10 @@ namespace Lightest.TestingService.DefaultServices
                 Status = ServerStatus.Free,
                 Version = "grpc"
             };
+
+            var checkersToDelete = _context.CachedCheckers.Where(c => c.ServerIp == ip);
+            _context.CachedCheckers.RemoveRange(checkersToDelete);
+
             var existingServer = await _context.Servers.FirstOrDefaultAsync(s => s.Ip == ip);
             if (existingServer == null)
             {
