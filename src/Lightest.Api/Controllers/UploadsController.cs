@@ -89,7 +89,7 @@ namespace Lightest.Api.Controllers
                     Message = u.Message,
                     Status = u.Status,
                     Points = u.Points
-                });
+                }).ToList();
             foreach (var upload in uploads)
             {
                 upload.Code = _uploadDataRepository.Get(upload.Id)?.Code;
