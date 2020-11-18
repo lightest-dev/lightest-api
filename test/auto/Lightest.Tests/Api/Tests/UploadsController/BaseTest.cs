@@ -18,7 +18,8 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             get
             {
                 var controller = new Lightest.Api.Controllers.UploadsController(_testingServiceMock.Object,
-                    _context, _accessServiceMock.Object, _uploadDataRepositoryMock.Object, _userManager.Object);
+                    _context, _accessServiceMock.Object, _uploadDataRepositoryMock.Object, _userManager.Object,
+                    _roleHelperMock.Object);
 
                 controller.ControllerContext.HttpContext = new DefaultHttpContext
                 {
@@ -33,6 +34,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
         protected readonly Mock<ITestingService> _testingServiceMock;
         protected readonly TaskDefinition _task;
         protected readonly Mock<ICodeManagmentService> _uploadDataRepositoryMock;
+        protected readonly Mock<IRoleHelper> _roleHelperMock;
 
         public BaseTest()
         {
@@ -40,6 +42,7 @@ namespace Lightest.Tests.Api.Tests.UploadsController
             _claimsPrincipalMock = GenerateClaimsMock();
             _testingServiceMock = new Mock<ITestingService>();
             _uploadDataRepositoryMock = new Mock<ICodeManagmentService>();
+            _roleHelperMock = new Mock<IRoleHelper>();
 
             var checker = new Checker
             {

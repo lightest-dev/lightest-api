@@ -21,6 +21,7 @@ namespace Lightest.Api.Controllers
     public class UploadsController : BaseUserController
     {
         private readonly IAccessService<Upload> _accessService;
+        private readonly IRoleHelper _roleHelper;
         private readonly ITestingService _testingService;
         private readonly ICodeManagmentService _uploadDataRepository;
 
@@ -29,11 +30,13 @@ namespace Lightest.Api.Controllers
             RelationalDbContext context,
             IAccessService<Upload> accessService,
             ICodeManagmentService uploadDataRepository,
-            UserManager<ApplicationUser> userManager) : base(context, userManager)
+            UserManager<ApplicationUser> userManager,
+            IRoleHelper roleHelper) : base(context, userManager)
         {
             _testingService = testingService;
             _accessService = accessService;
             _uploadDataRepository = uploadDataRepository;
+            _roleHelper = roleHelper;
         }
 
         [HttpGet("{taskId}")]
@@ -62,10 +65,16 @@ namespace Lightest.Api.Controllers
 
         [HttpGet("{taskId}/all/{userId?}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<LastUploadView>))]
+        [ProducesResponseType(403)]
         public async Task<IActionResult> GetAllUploads(Guid taskId, string userId = null)
         {
             var user = await GetCurrentUser();
             if (!await _accessService.CanEdit(taskId, user))
+            {
+                return Forbid();
+            }
+
+            if (user.Id != userId && !await _roleHelper.IsTeacher(user))
             {
                 return Forbid();
             }

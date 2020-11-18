@@ -36,8 +36,8 @@ namespace Lightest.AccessService.RoleBasedAccessServices
 
         public async Task<bool> CanEdit(Guid id, ApplicationUser requester)
         {
-            var userId = _context.Uploads.Where(u => u.Id == id).Select(u => u.UserId).First();
-            return userId == requester.Id || await IsTeacher(requester);
+            var hasUploads = _context.Uploads.Where(u => u.TaskId == id && u.UserId == requester.Id).Any();
+            return hasUploads || await IsTeacher(requester);
         }
     }
 }

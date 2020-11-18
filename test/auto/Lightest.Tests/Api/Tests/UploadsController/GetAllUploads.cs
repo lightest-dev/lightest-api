@@ -12,6 +12,12 @@ namespace Lightest.Tests.Api.Tests.UploadsController
 {
     public class GetAllUploads : BaseTest
     {
+        public GetAllUploads()
+        {
+            _roleHelperMock.Setup(r => r.IsTeacher(It.IsAny<ApplicationUser>()))
+                .ReturnsAsync(true);
+        }
+
         [Fact]
         public async Task VerifyUnlimitedAndSorted()
         {
