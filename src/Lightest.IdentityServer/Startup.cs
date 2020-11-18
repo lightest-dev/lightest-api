@@ -161,7 +161,8 @@ namespace Lightest.IdentityServer
                         AllowAccessTokensViaBrowser = true,
                         RedirectUris = links,
                         RequireConsent = false,
-                        AccessTokenType = AccessTokenType.Jwt
+                        AccessTokenType = AccessTokenType.Jwt,
+                        AccessTokenLifetime = 60 * 60 * 12,
                     }
                 };
             }
