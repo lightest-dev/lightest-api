@@ -56,7 +56,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Group>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ListGroupView>))]
         public async Task<IEnumerable<ListGroupView>> GetAvailableGroups([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();

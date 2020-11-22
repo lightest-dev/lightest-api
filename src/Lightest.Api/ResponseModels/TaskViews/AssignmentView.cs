@@ -9,5 +9,9 @@ namespace Lightest.Api.ResponseModels.TaskViews
         public double HighScore { get; set; }
 
         public DateTime? Deadline { get; set; }
+
+        public Guid CategoryId { get; set; }
+
+        public bool Public { get; set; }
     }
 }

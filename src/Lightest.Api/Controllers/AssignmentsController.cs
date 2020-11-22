@@ -133,6 +133,8 @@ namespace Lightest.Api.Controllers
         {
             var task = await _context.Tasks
                .Include(t => t.Users)
+               .Include(t => t.Category)
+               .ThenInclude(c => c.Users)
                .SingleOrDefaultAsync(t => t.Id == taskId);
 
             if (task == null)
@@ -140,10 +142,12 @@ namespace Lightest.Api.Controllers
                 return NotFound();
             }
 
-            if (!await _accessService.CanEdit(task.Id, await GetCurrentUser()))
+            if (!await _accessService.CanEdit(taskId, await GetCurrentUser()))
             {
                 return Forbid();
             }
+
+            var categoryTree = ConstructCategoryHierarchy(task.Category);
 
             foreach (var assignment in assignments)
             {
@@ -163,9 +167,41 @@ namespace Lightest.Api.Controllers
                     continue;
                 }
                 UpdateAssignment(existingAssignment, assignment);
+
+                foreach(var category in categoryTree)
+                {
+                    if (category.Users.Any(u => u.UserId == assignment.UserId))
+                    {
+                        continue;
+                    }
+                    category.Users.Add(new CategoryUser
+                    {
+                        UserId = assignment.UserId,
+                        CategoryId = category.Id,
+                        CanRead = true
+                    });
+                }
             }
             await _context.SaveChangesAsync();
             return Ok();
+        }
+
+        private IEnumerable<Category> ConstructCategoryHierarchy(Category rootCategory)
+        {
+            var currentCategory = rootCategory;
+            var categoriesList = new List<Category>
+            {
+                currentCategory
+            };
+
+            while (currentCategory.ParentId.HasValue)
+            {
+                currentCategory = _context.Categories.Include(c => c.Users)
+                    .Single(c => c.Id == currentCategory.ParentId.Value);
+                categoriesList.Add(currentCategory);
+            }
+
+            return categoriesList;
         }
 
         private void UpdateAssignment(Assignment existingAssignment, AssignmentRequest newAssignment)

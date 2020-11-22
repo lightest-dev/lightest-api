@@ -57,7 +57,7 @@ namespace Lightest.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<ListCategoryView>))]
         public async Task<IActionResult> GetAvailableCategories([FromQuery] SieveModel sieveModel)
         {
             var user = await GetCurrentUser();
