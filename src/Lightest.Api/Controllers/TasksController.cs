@@ -212,6 +212,7 @@ namespace Lightest.Api.Controllers
             }
 
             task.Tests.Clear();
+            await _context.SaveChangesAsync();
 
             foreach (var test in tests)
             {
