@@ -44,7 +44,10 @@ namespace Lightest.Api.Controllers
                 Name = t.Task.Name,
                 Deadline = t.Deadline,
                 Completed = t.Completed,
-                HighScore = t.HighScore
+                HighScore = t.HighScore,
+                CategoryId = t.Task.CategoryId,
+                Public = t.Task.Public,
+                Points = t.Task.Points
             }));
         }
 

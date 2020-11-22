@@ -13,5 +13,7 @@ namespace Lightest.Api.ResponseModels.TaskViews
         public Guid CategoryId { get; set; }
 
         public bool Public { get; set; }
+
+        public int Points { get; set; }
     }
 }
