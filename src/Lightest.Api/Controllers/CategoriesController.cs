@@ -116,7 +116,7 @@ namespace Lightest.Api.Controllers
                 .AsNoTracking()
                 .Include(c => c.Users)
                 .Where(c => (c.Public || c.Users.Select(u => u.UserId).Contains(user.Id))
-                    && c.ParentId == id);
+                    && c.ParentId == id).ToList();
 
             var tasks = _context.Tasks
                 .Include(t => t.Users)
