@@ -54,7 +54,9 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points
+                    Points = u.Points,
+                    UploadDate = u.UploadDate,
+                    LanguageId = u.LanguageId
                 }).ToList();
             foreach (var upload in uploads)
             {
@@ -88,7 +90,9 @@ namespace Lightest.Api.Controllers
                     Id = u.Id,
                     Message = u.Message,
                     Status = u.Status,
-                    Points = u.Points
+                    Points = u.Points,
+                    UploadDate = u.UploadDate,
+                    LanguageId = u.LanguageId
                 }).ToList();
             foreach (var upload in uploads)
             {
